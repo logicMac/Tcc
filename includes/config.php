@@ -84,6 +84,9 @@ define('DOC_STATUSES', [
     'Declined'          => ['label' => 'Declined',          'color' => 'danger',    'icon' => 'x-circle'],
 ]);
 
+// ── Enrollment types (must match pre_registrations.enrollment_type enum) ──────
+define('ENROLLMENT_TYPES', ['New Student', 'Transferee', 'Returnee', 'Cross-Enrollee', '2nd Undergraduate']);
+
 // ── Timezone ──────────────────────────────────────────────────────────────────
 date_default_timezone_set('Asia/Manila');
 

@@ -10,12 +10,10 @@ $activePage  = $activePage ?? '';
   <div class="container">
     <!-- Brand -->
     <a class="navbar-brand d-flex align-items-center gap-2" href="<?= BASE_URL ?>/student/index.php">
-      <div style="width:34px;height:34px;background:rgba(255,255,255,.18);border-radius:8px;
-                  display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <i class="bi bi-building" style="color:#fff;font-size:.95rem;"></i>
-      </div>
+      <img src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="TCC seal"
+           class="brand-logo brand-logo-sm">
       <div style="line-height:1.15;">
-        <div class="fw-bold" style="font-size:.85rem;color:#fff;">Tampakan Community College</div>
+        <div class="fw-bold" style="font-size:.85rem;color:#fff;"><?= e($schoolName) ?></div>
         <div style="font-size:.6rem;color:rgba(255,255,255,.6);">Registration &amp; Records System</div>
       </div>
     </a>

@@ -10,7 +10,7 @@ $currentFile = basename($_SERVER['PHP_SELF']);
 
   <!-- Brand -->
   <a href="<?= BASE_URL ?>/registrar/dashboard.php" class="sidebar-brand" title="Registrar Dashboard">
-    <div class="brand-icon"><i class="bi bi-building"></i></div>
+    <img src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="TCC seal" class="brand-logo">
     <div class="brand-text">
       <div class="brand-name">Tampakan CC</div>
       <div class="brand-sub">Registrar Panel</div>

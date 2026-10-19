@@ -164,6 +164,15 @@ include isRegistrar()
         <?php endforeach; ?>
       </select>
     </div>
+    <div class="col-sm-4 col-md-1">
+      <label class="form-label">Semester</label>
+      <select name="semester" class="form-select form-select-sm">
+        <option value="">All</option>
+        <?php foreach (['1st Semester','2nd Semester','Summer'] as $sm): ?>
+        <option value="<?= e($sm) ?>" <?= $filterSem===$sm?'selected':'' ?>><?= e($sm) ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
     <div class="col-sm-4 col-md-2">
       <label class="form-label">Status</label>
       <select name="status" class="form-select form-select-sm">

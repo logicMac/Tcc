@@ -60,111 +60,77 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 <div class="page-content">
 <?= renderFlash() ?>
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4>Document Requests</h4>
-    <p>Review and process student document requests.</p>
-  </div>
-</div>
+<?= ui_page_header('Document Requests', 'Review and process student document requests.', 'file-earmark-text') ?>
 
-<!-- Filter Bar -->
-<div class="filter-bar">
-  <form method="GET" class="row g-2 align-items-end">
-    <?php if ($showArchived): ?><input type="hidden" name="archived" value="1"><?php endif; ?>
-    <div class="col-sm-4 col-md-3">
-      <label class="form-label small text-muted mb-1">Search</label>
-      <input type="text" name="search" class="form-control form-control-sm"
-             value="<?= e($filterSearch) ?>" placeholder="Name, code, student ID...">
-    </div>
-    <div class="col-sm-4 col-md-2">
-      <label class="form-label small text-muted mb-1">Status</label>
-      <select name="status" class="form-select form-select-sm">
-        <option value="">All Statuses</option>
-        <?php foreach (array_keys(DOC_STATUSES) as $s): ?>
-        <option value="<?= e($s) ?>" <?= $filterStatus === $s ? 'selected' : '' ?>><?= e($s) ?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <div class="col-sm-4 col-md-3">
-      <label class="form-label small text-muted mb-1">Document Type</label>
-      <select name="doc_type" class="form-select form-select-sm">
-        <option value="">All Types</option>
-        <?php foreach ($docTypes as $dt): ?>
-        <option value="<?= (int)$dt['id'] ?>" <?= $filterDocType === (int)$dt['id'] ? 'selected' : '' ?>>
-          <?= e($dt['name']) ?>
-        </option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <div class="col-auto">
-      <button type="submit" class="btn btn-primary btn-sm">
-        <i class="bi bi-search me-1"></i>Filter
-      </button>
-      <a href="<?= BASE_URL ?>/staff/document_requests.php" class="btn btn-outline-secondary btn-sm ms-1">Reset</a>
-    </div>
-    <div class="col-auto ms-auto">
-      <a href="<?= BASE_URL ?>/staff/document_requests.php?archived=1"
-         class="btn btn-sm <?= $showArchived ? 'btn-dark' : 'btn-outline-secondary' ?>">
-        <i class="bi bi-archive me-1"></i><?= $showArchived ? 'Viewing Archived' : 'Archived' ?>
-      </a>
-    </div>
-  </form>
-</div>
+<?php
+// ── Status quick tabs ──
+$tabs = [[
+    'label' => 'All', 'url' => BASE_URL . '/staff/document_requests.php',
+    'active' => !$filterStatus && !$showArchived, 'variant' => 'primary',
+]];
+foreach (DOC_STATUSES as $s => $info) {
+    $tabs[] = [
+        'label'   => $s,
+        'url'     => BASE_URL . '/staff/document_requests.php?status=' . urlencode($s) . ($filterSearch ? '&search=' . urlencode($filterSearch) : ''),
+        'active'  => $filterStatus === $s && !$showArchived,
+        'variant' => $info['color'],
+    ];
+}
+$tabs[] = ['spacer' => true];
+$tabs[] = [
+    'label' => 'Archived', 'url' => BASE_URL . '/staff/document_requests.php?archived=1',
+    'active' => $showArchived, 'variant' => 'dark', 'icon' => 'archive',
+];
+echo ui_status_tabs($tabs);
 
-<!-- Table -->
-<div class="content-card">
-  <div class="content-card-header">
-    <h5>Document Requests <span class="badge bg-light text-dark ms-1"><?= number_format($result['total']) ?></span></h5>
-    <span class="text-muted small">
-      Showing <?= number_format(($page-1)*$perPage+1) ?>–<?= number_format(min($page*$perPage,$result['total'])) ?>
-      of <?= number_format($result['total']) ?>
-    </span>
-  </div>
-  <div class="table-responsive">
-    <table class="table">
-      <thead><tr>
-        <th>#</th><th>Tracking Code</th><th>Name</th><th>Student ID</th>
-        <th>Document</th><th>Copies</th><th>Status</th><th>Submitted</th><th>Actions</th>
-      </tr></thead>
-      <tbody>
-      <?php if (empty($result['data'])): ?>
-        <tr><td colspan="9">
-          <div class="empty-state"><i class="bi bi-inbox"></i><p>No document requests found.</p></div>
-        </td></tr>
-      <?php else: foreach ($result['data'] as $i => $d): ?>
-      <tr>
-        <td class="text-muted small"><?= ($page-1)*$perPage + $i + 1 ?></td>
-        <td><span class="font-monospace small fw-semibold"><?= e($d['tracking_code']) ?></span></td>
-        <td>
-          <div class="fw-semibold small"><?= e(fullName($d, true)) ?></div>
-          <div class="text-muted" style="font-size:.7rem;"><?= e($d['email']) ?></div>
-        </td>
-        <td><span class="small"><?= e($d['student_id'] ?: '—') ?></span></td>
-        <td>
-          <span class="badge bg-light text-dark small"><?= e($d['doc_code'] ?? '—') ?></span>
-          <?php if ($d['document_type_other']): ?>
-            <div class="text-muted" style="font-size:.7rem;"><?= e(substr($d['document_type_other'],0,25)) ?></div>
-          <?php endif; ?>
-        </td>
-        <td class="text-center small"><?= (int)$d['copies'] ?></td>
-        <td><?= statusBadge($d['status'],'document_request') ?></td>
-        <td><span class="text-muted small"><?= formatDate($d['submitted_at']) ?></span></td>
-        <td>
-          <a href="<?= BASE_URL ?>/staff/view_document.php?id=<?= (int)$d['id'] ?>"
-             class="btn btn-sm btn-outline-success py-0 px-2">
-            <i class="bi bi-eye"></i> View
-          </a>
-        </td>
-      </tr>
-      <?php endforeach; endif; ?>
-      </tbody>
-    </table>
-  </div>
-  <?php if ($result['pages'] > 1): ?>
-  <div class="px-3 py-2 border-top d-flex justify-content-end">
-    <?= paginationLinks($page, $result['pages'], $baseUrl) ?>
-  </div>
-  <?php endif; ?>
-</div>
+// ── Filters ──
+echo ui_filter_bar(
+    BASE_URL . '/staff/document_requests.php',
+    [
+        ['type' => 'search', 'name' => 'search', 'label' => 'Search', 'value' => $filterSearch,
+         'placeholder' => 'Name, code, student ID…', 'col' => 'col-md-3'],
+        ['type' => 'select', 'name' => 'status', 'label' => 'Status', 'value' => $filterStatus,
+         'options' => ['' => 'All Statuses'] + array_combine(array_keys(DOC_STATUSES), array_keys(DOC_STATUSES))],
+        ['type' => 'select', 'name' => 'doc_type', 'label' => 'Document Type', 'value' => $filterDocType,
+         'options' => ['' => 'All Types'] + array_column($docTypes, 'name', 'id'), 'col' => 'col-md-3'],
+    ],
+    ['archived' => $showArchived ? '1' : null],
+    BASE_URL . '/staff/document_requests.php'
+);
+
+// ── Table rows ──
+$rows = [];
+foreach ($result['data'] as $i => $d) {
+    $rows[] = [
+        '<span class="text-muted small">' . (($page - 1) * $perPage + $i + 1) . '</span>',
+        ui_code($d['tracking_code']),
+        '<div class="row-name">' . e(fullName($d, true)) . '</div><div class="row-sub">' . e($d['email']) . '</div>',
+        '<span class="small">' . e($d['student_id'] ?: '—') . '</span>',
+        '<span class="badge bg-light text-dark">' . e($d['doc_code'] ?? '—') . '</span>'
+            . ($d['document_type_other'] ? '<div class="row-sub">' . e(mb_strimwidth($d['document_type_other'], 0, 25, '…')) . '</div>' : ''),
+        ['html' => '<span class="small">' . (int)$d['copies'] . '</span>', 'class' => 'text-center'],
+        statusBadge($d['status'], 'document_request'),
+        '<span class="small text-muted">' . formatDate($d['submitted_at']) . '</span><div class="row-sub">' . timeAgo($d['submitted_at']) . '</div>',
+        '<a href="' . BASE_URL . '/staff/view_document.php?id=' . (int)$d['id'] . '" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View &amp; Process"><i class="bi bi-eye"></i></a>',
+    ];
+}
+
+echo ui_card_open(
+    'Document Requests <span class="badge bg-light text-dark ms-1 fw-normal">' . number_format($result['total']) . '</span>',
+    'list-ul'
+);
+echo ui_table(
+    [
+        ['label' => '#', 'style' => 'width:40px'], 'Tracking Code', 'Name', 'Student ID',
+        'Document', ['label' => 'Copies', 'class' => 'text-center'], 'Status', 'Submitted',
+        ['label' => 'Action', 'style' => 'width:80px'],
+    ],
+    $rows,
+    ['empty_title' => 'No document requests found',
+     'empty_msg'   => ($filterStatus || $filterSearch) ? 'Try adjusting your filters.' : 'No student document requests have been submitted yet.']
+);
+echo ui_list_footer($page, $result['pages'], $result['total'], $perPage, $baseUrl);
+echo ui_card_close();
+?>
 </div>
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>

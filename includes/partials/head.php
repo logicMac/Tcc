@@ -12,6 +12,7 @@ $pageTitle = $pageTitle ?? 'TCC RRS';
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title><?= e($pageTitle) ?> – TCC Registration &amp; Records System</title>
+<link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/images/school_logo.png">
 <!-- Inter font -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -67,7 +67,7 @@ $breadcrumbs = $breadcrumbs ?? [];
       <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0"
            style="min-width:260px;border-radius:12px;overflow:hidden;">
         <div class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center"
-             style="background:#f8fafc;">
+             style="background:var(--surface-subtle);">
           <span class="fw-semibold small">Notifications</span>
           <?php if ($pendingTotal > 0): ?>
           <span class="badge bg-danger rounded-pill"><?= $pendingTotal ?></span>
@@ -102,7 +102,7 @@ $breadcrumbs = $breadcrumbs ?? [];
         </a>
         <?php endif; ?>
         <?php endif; ?>
-        <div class="px-3 py-2 border-top text-center" style="background:#f8fafc;">
+        <div class="px-3 py-2 border-top text-center" style="background:var(--surface-subtle);">
           <a href="<?= BASE_URL ?>/<?= currentRole() ?>/reports.php"
              class="small text-muted text-decoration-none">
             <i class="bi bi-bar-chart me-1"></i>View Reports
@@ -113,34 +113,27 @@ $breadcrumbs = $breadcrumbs ?? [];
 
     <!-- User menu -->
     <div class="dropdown">
-      <button class="d-flex align-items-center gap-2 border rounded-pill px-2 py-1 bg-white"
-              style="cursor:pointer;border-color:#e2e8f0!important;"
+      <button class="topbar-user-btn d-flex align-items-center gap-2 px-2 py-1"
               data-bs-toggle="dropdown" data-bs-offset="0,8">
-        <div class="avatar-circle bg-primary text-white"
-             style="width:28px;height:28px;font-size:.7rem;flex-shrink:0;">
-          <?= e($initials) ?>
-        </div>
+        <?= ui_avatar($user['full_name'], 28) ?>
         <div class="d-none d-md-block text-start" style="line-height:1.1;">
           <div class="small fw-semibold" style="font-size:.78rem;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
             <?= e($user['full_name']) ?>
           </div>
-          <div style="font-size:.65rem;color:#94a3b8;text-transform:capitalize;"><?= e(currentRole()) ?></div>
+          <div style="font-size:.65rem;color:var(--text-muted);text-transform:capitalize;"><?= e(currentRole()) ?></div>
         </div>
-        <i class="bi bi-chevron-down d-none d-md-block" style="font-size:.6rem;color:#94a3b8;"></i>
+        <i class="bi bi-chevron-down d-none d-md-block" style="font-size:.6rem;color:var(--text-muted);"></i>
       </button>
       <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0"
           style="min-width:220px;border-radius:12px;overflow:hidden;">
         <!-- User info header -->
         <li>
-          <div class="px-3 pt-3 pb-2 border-bottom" style="background:#f8fafc;">
+          <div class="px-3 pt-3 pb-2 border-bottom" style="background:var(--surface-subtle);">
             <div class="d-flex align-items-center gap-2 mb-1">
-              <div class="avatar-circle bg-primary text-white"
-                   style="width:36px;height:36px;font-size:.82rem;">
-                <?= e($initials) ?>
-              </div>
+              <?= ui_avatar($user['full_name'], 36) ?>
               <div style="min-width:0;">
                 <div class="fw-semibold small" style="line-height:1.1;"><?= e($user['full_name']) ?></div>
-                <div style="font-size:.7rem;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px;">
+                <div style="font-size:.7rem;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px;">
                   <?= e($user['email']) ?>
                 </div>
               </div>

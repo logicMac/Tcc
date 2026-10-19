@@ -66,7 +66,7 @@ function generateQrCode(targetElement, url, options = {}) {
     text:         url,
     width:        200,
     height:       200,
-    colorDark:    '#0f2a56',
+    colorDark:    '#0a3524',
     colorLight:   '#ffffff',
     correctLevel: QRCode.CorrectLevel.H,
   };

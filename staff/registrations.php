@@ -68,193 +68,84 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 <div class="page-content">
 <?= renderFlash() ?>
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4><i class="bi bi-person-plus me-2 text-primary"></i>Pre-Registrations</h4>
-    <p>Review and process student enrollment pre-registrations.</p>
-  </div>
-</div>
+<?= ui_page_header('Pre-Registrations', 'Review and process student enrollment pre-registrations.', 'person-plus') ?>
 
-<!-- Status Quick Tiles -->
-<div class="row g-2 mb-3">
-  <div class="col-auto">
-    <a href="<?= BASE_URL ?>/staff/registrations.php"
-       class="btn btn-sm <?= !$filterStatus && !$showArchived ? 'btn-primary' : 'btn-outline-secondary' ?>">
-      All <span class="badge bg-white text-dark ms-1"><?= number_format(array_sum($statusCounts)) ?></span>
-    </a>
-  </div>
-  <?php foreach (REG_STATUSES as $s => $info): ?>
-  <div class="col-auto">
-    <a href="<?= BASE_URL ?>/staff/registrations.php?status=<?= urlencode($s) ?><?= $filterSearch ? '&search='.urlencode($filterSearch) : '' ?>"
-       class="btn btn-sm <?= $filterStatus === $s && !$showArchived ? 'btn-'.$info['color'].' text-white' : 'btn-outline-secondary' ?>">
-      <?= e($s) ?>
-      <?php if ($statusCounts[$s] > 0): ?>
-        <span class="badge <?= $filterStatus === $s && !$showArchived ? 'bg-white text-dark' : 'bg-secondary' ?> ms-1">
-          <?= $statusCounts[$s] ?>
-        </span>
-      <?php endif; ?>
-    </a>
-  </div>
-  <?php endforeach; ?>
-  <div class="col-auto ms-auto">
-    <a href="<?= BASE_URL ?>/staff/registrations.php?archived=1"
-       class="btn btn-sm <?= $showArchived ? 'btn-dark' : 'btn-outline-secondary' ?>">
-      <i class="bi bi-archive me-1"></i>Archived
-      <?php if ($archivedCount > 0): ?>
-        <span class="badge <?= $showArchived ? 'bg-white text-dark' : 'bg-secondary' ?> ms-1"><?= $archivedCount ?></span>
-      <?php endif; ?>
-    </a>
-  </div>
-</div>
+<?php
+// ── Status quick tabs ──
+$tabs = [[
+    'label' => 'All', 'url' => BASE_URL . '/staff/registrations.php',
+    'count' => array_sum($statusCounts), 'active' => !$filterStatus && !$showArchived, 'variant' => 'primary',
+]];
+foreach (REG_STATUSES as $s => $info) {
+    $tabs[] = [
+        'label'   => $s,
+        'url'     => BASE_URL . '/staff/registrations.php?status=' . urlencode($s) . ($filterSearch ? '&search=' . urlencode($filterSearch) : ''),
+        'count'   => $statusCounts[$s] ?: null,
+        'active'  => $filterStatus === $s && !$showArchived,
+        'variant' => $info['color'],
+    ];
+}
+$tabs[] = ['spacer' => true];
+$tabs[] = [
+    'label' => 'Archived', 'url' => BASE_URL . '/staff/registrations.php?archived=1',
+    'count' => $archivedCount ?: null, 'active' => $showArchived,
+    'variant' => 'dark', 'icon' => 'archive',
+];
+echo ui_status_tabs($tabs);
 
-<!-- Filter Bar -->
-<div class="filter-bar">
-  <form method="GET" class="row g-2 align-items-end">
-    <?php if ($filterStatus): ?>
-      <input type="hidden" name="status" value="<?= e($filterStatus) ?>">
-    <?php endif; ?>
-    <?php if ($showArchived): ?>
-      <input type="hidden" name="archived" value="1">
-    <?php endif; ?>
-    <div class="col-sm-4 col-md-3">
-      <label class="form-label">Search</label>
-      <div class="input-group input-group-sm">
-        <span class="input-group-text bg-light"><i class="bi bi-search text-muted"></i></span>
-        <input type="text" name="search" class="form-control"
-               value="<?= e($filterSearch) ?>" placeholder="Name, code, email…">
-      </div>
-    </div>
-    <?php if (!$filterStatus): ?>
-    <div class="col-sm-4 col-md-2">
-      <label class="form-label">Status</label>
-      <select name="status" class="form-select form-select-sm">
-        <option value="">All Statuses</option>
-        <?php foreach (array_keys(REG_STATUSES) as $s): ?>
-        <option value="<?= e($s) ?>" <?= $filterStatus === $s ? 'selected' : '' ?>><?= e($s) ?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <?php endif; ?>
-    <div class="col-sm-4 col-md-2">
-      <label class="form-label">Program</label>
-      <select name="program_id" class="form-select form-select-sm">
-        <option value="">All Programs</option>
-        <?php foreach ($programs as $prog): ?>
-        <option value="<?= (int)$prog['id'] ?>"
-                <?= $filterProgram === (int)$prog['id'] ? 'selected' : '' ?>
-                title="<?= e($prog['name']) ?>">
-          <?= e($prog['code']) ?>
-        </option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <div class="col-sm-4 col-md-2">
-      <label class="form-label">Enrollment Type</label>
-      <select name="enrollment_type" class="form-select form-select-sm">
-        <option value="">All Types</option>
-        <?php foreach (['New Student','Transferee','Returnee','Cross-Enrollee'] as $et): ?>
-        <option value="<?= e($et) ?>" <?= $filterType === $et ? 'selected' : '' ?>><?= e($et) ?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <div class="col-auto d-flex gap-1">
-      <button type="submit" class="btn btn-primary btn-sm">
-        <i class="bi bi-search me-1"></i>Filter
-      </button>
-      <a href="<?= BASE_URL ?>/staff/registrations.php" class="btn btn-outline-secondary btn-sm">
-        <i class="bi bi-x-lg"></i>
-      </a>
-    </div>
-  </form>
-</div>
+// ── Filters ──
+$fields = [
+    ['type' => 'search', 'name' => 'search', 'label' => 'Search', 'value' => $filterSearch,
+     'placeholder' => 'Name, code, email…', 'col' => 'col-md-3'],
+];
+if (!$filterStatus) {
+    $fields[] = ['type' => 'select', 'name' => 'status', 'label' => 'Status', 'value' => $filterStatus,
+                 'options' => ['' => 'All Statuses'] + array_combine(array_keys(REG_STATUSES), array_keys(REG_STATUSES))];
+}
+$fields[] = ['type' => 'select', 'name' => 'program_id', 'label' => 'Program', 'value' => $filterProgram,
+             'options' => ['' => 'All Programs'] + array_column($programs, 'code', 'id')];
+$fields[] = ['type' => 'select', 'name' => 'enrollment_type', 'label' => 'Enrollment Type', 'value' => $filterType,
+             'options' => ['' => 'All Types'] + array_combine(ENROLLMENT_TYPES, ENROLLMENT_TYPES)];
+echo ui_filter_bar(
+    BASE_URL . '/staff/registrations.php', $fields,
+    ['status' => $filterStatus ?: null, 'archived' => $showArchived ? '1' : null],
+    BASE_URL . '/staff/registrations.php'
+);
 
-<!-- Table -->
-<div class="content-card">
-  <div class="content-card-header">
-    <h5>
-      <?php if ($filterStatus): ?>
-        <?= statusBadge($filterStatus) ?>
-      <?php else: ?>
-        <i class="bi bi-list-ul me-1 text-muted"></i> All Pre-Registrations
-      <?php endif; ?>
-      <span class="badge bg-light text-dark ms-1 fw-normal"><?= number_format($result['total']) ?></span>
-    </h5>
-    <span class="text-muted small">
-      <?= number_format(($page-1)*$perPage + 1) ?>–<?= number_format(min($page*$perPage, $result['total'])) ?>
-      of <?= number_format($result['total']) ?>
-    </span>
-  </div>
-  <div class="table-responsive">
-    <table class="table">
-      <thead>
-        <tr>
-          <th style="width:40px">#</th>
-          <th>Tracking Code</th>
-          <th>Student Name</th>
-          <th>Program</th>
-          <th>Type</th>
-          <th>Year</th>
-          <th>Status</th>
-          <th>Submitted</th>
-          <th style="width:80px">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php if (empty($result['data'])): ?>
-        <tr><td colspan="9">
-          <div class="empty-state">
-            <i class="bi bi-inbox"></i>
-            <h6>No pre-registrations found</h6>
-            <p><?= ($filterStatus || $filterSearch) ? 'Try adjusting your filters.' : 'No student registrations have been submitted yet.' ?></p>
-          </div>
-        </td></tr>
-        <?php else: foreach ($result['data'] as $i => $r): ?>
-        <tr>
-          <td class="text-muted small"><?= ($page-1)*$perPage + $i + 1 ?></td>
-          <td>
-            <span class="font-monospace fw-semibold" style="font-size:.78rem;">
-              <?= e($r['tracking_code']) ?>
-            </span>
-          </td>
-          <td>
-            <div class="fw-semibold small"><?= e(fullName($r, true)) ?></div>
-            <div class="text-muted" style="font-size:.7rem;"><?= e($r['email']) ?></div>
-          </td>
-          <td>
-            <span class="badge bg-light text-dark"
-                  title="<?= e($r['prog_name'] ?? $r['program_other'] ?? '') ?>"
-                  data-bs-toggle="tooltip">
-              <?= e($r['prog_code'] ?? ($r['program_other'] ? 'Other' : '—')) ?>
-            </span>
-          </td>
-          <td><span class="small"><?= e($r['enrollment_type']) ?></span></td>
-          <td><span class="small text-muted"><?= e($r['year_level']) ?></span></td>
-          <td><?= statusBadge($r['status']) ?></td>
-          <td>
-            <span class="small text-muted"><?= formatDate($r['submitted_at']) ?></span>
-            <div class="text-muted" style="font-size:.65rem;"><?= timeAgo($r['submitted_at']) ?></div>
-          </td>
-          <td>
-            <a href="<?= BASE_URL ?>/staff/view_registration.php?id=<?= (int)$r['id'] ?>"
-               class="btn btn-sm btn-outline-primary"
-               data-bs-toggle="tooltip" title="View & Process">
-              <i class="bi bi-eye"></i>
-            </a>
-          </td>
-        </tr>
-        <?php endforeach; endif; ?>
-      </tbody>
-    </table>
-  </div>
-  <?php if ($result['pages'] > 1): ?>
-  <div class="px-3 py-2 border-top d-flex justify-content-between align-items-center">
-    <span class="text-muted small">
-      Page <?= $page ?> of <?= $result['pages'] ?>
-    </span>
-    <?= paginationLinks($page, $result['pages'], $baseUrl) ?>
-  </div>
-  <?php endif; ?>
-</div>
+// ── Table rows ──
+$rows = [];
+foreach ($result['data'] as $i => $r) {
+    $rows[] = [
+        '<span class="text-muted small">' . (($page - 1) * $perPage + $i + 1) . '</span>',
+        ui_code($r['tracking_code']),
+        '<div class="row-name">' . e(fullName($r, true)) . '</div><div class="row-sub">' . e($r['email']) . '</div>',
+        '<span class="badge bg-light text-dark" title="' . e($r['prog_name'] ?? $r['program_other'] ?? '') . '" data-bs-toggle="tooltip">'
+            . e($r['prog_code'] ?? ($r['program_other'] ? 'Other' : '—')) . '</span>',
+        '<span class="small">' . e($r['enrollment_type']) . '</span>',
+        '<span class="small text-muted">' . e($r['year_level']) . '</span>',
+        statusBadge($r['status']),
+        '<span class="small text-muted">' . formatDate($r['submitted_at']) . '</span><div class="row-sub">' . timeAgo($r['submitted_at']) . '</div>',
+        '<a href="' . BASE_URL . '/staff/view_registration.php?id=' . (int)$r['id'] . '" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View &amp; Process"><i class="bi bi-eye"></i></a>',
+    ];
+}
+
+$cardTitle = $filterStatus ? statusBadge($filterStatus) : 'All Pre-Registrations';
+echo ui_card_open(
+    $cardTitle . ' <span class="badge bg-light text-dark ms-1 fw-normal">' . number_format($result['total']) . '</span>',
+    $filterStatus ? '' : 'list-ul'
+);
+echo ui_table(
+    [
+        ['label' => '#', 'style' => 'width:40px'], 'Tracking Code', 'Student Name', 'Program',
+        'Type', 'Year', 'Status', 'Submitted', ['label' => 'Action', 'style' => 'width:80px'],
+    ],
+    $rows,
+    ['empty_title' => 'No pre-registrations found',
+     'empty_msg'   => ($filterStatus || $filterSearch) ? 'Try adjusting your filters.' : 'No student registrations have been submitted yet.']
+);
+echo ui_list_footer($page, $result['pages'], $result['total'], $perPage, $baseUrl);
+echo ui_card_close();
+?>
 
 </div>
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>

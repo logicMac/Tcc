@@ -175,6 +175,11 @@ $activePage = 'home';
             Or <a href="<?= BASE_URL ?>/student/track.php" class="text-primary fw-semibold">go to the tracking page</a>
             to scan your QR Code with your camera.
           </p>
+          <p class="text-muted small mt-1 mb-0">
+            <i class="bi bi-patch-check me-1"></i>
+            Verifying an issued document?
+            <a href="<?= BASE_URL ?>/verify.php" class="text-primary fw-semibold">Check its authenticity</a>.
+          </p>
         </form>
       </div>
     </div>
@@ -242,6 +247,10 @@ $activePage = 'home';
              class="btn btn-sm btn-outline-light">Documents</a>
           <a href="<?= BASE_URL ?>/student/track.php"
              class="btn btn-sm btn-outline-light">Track</a>
+          <a href="<?= BASE_URL ?>/verify.php"
+             class="btn btn-sm btn-outline-light">Verify Doc</a>
+          <a href="<?= BASE_URL ?>/student/login.php"
+             class="btn btn-sm btn-outline-light">My Account</a>
         </div>
         <div class="small">&copy; <?= date('Y') ?> <?= e($schoolName) ?>. All rights reserved.</div>
       </div>
