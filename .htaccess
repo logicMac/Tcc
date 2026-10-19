@@ -1,0 +1,17 @@
+# TCC Registration & Records System – Apache config (WAMP/XAMPP)
+
+# Prevent directory listing
+Options -Indexes
+
+# Block direct web access to sensitive directories from any base path.
+# Matches any URI containing an /includes/ or /database/ path segment.
+<IfModule mod_alias.c>
+    RedirectMatch 403 /(includes|database)(/|$)
+</IfModule>
+
+# Fallback for setups where mod_alias RedirectMatch is unavailable
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} /(includes|database)(/|$) [NC]
+    RewriteRule .* - [F,L]
+</IfModule>
