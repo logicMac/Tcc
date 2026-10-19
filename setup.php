@@ -184,6 +184,9 @@ $allOk = !in_array(false, array_column($steps, 'ok'), true);
 </head>
 <body class="d-flex align-items-center" style="min-height:100vh;background:var(--bg-app);">
 <div class="container py-5" style="max-width:640px;">
+  <div class="text-center mb-3">
+    <img src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="School seal" class="brand-logo" style="width:56px;height:56px;">
+  </div>
   <div class="content-card">
     <div class="content-card-header">
       <h5><i class="bi bi-tools me-2"></i>TCC RRS – Setup Checklist</h5>
