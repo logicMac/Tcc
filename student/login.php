@@ -51,34 +51,18 @@ if (isPost()) {
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Student Sign In – <?= e($schoolName) ?></title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
-<style>
-  body { background: linear-gradient(135deg, #0f2a56 0%, #1a4a8a 50%, #0f2a56 100%); min-height:100vh; }
-</style>
-</head>
-<body class="d-flex align-items-center py-5">
-
+<?php
+$pageTitle = 'Student Sign In';
+include __DIR__ . '/../includes/partials/portal_head.php';
+?>
+<div class="auth-shell">
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-5 col-lg-4">
 
-      <div class="card border-0 shadow-lg" style="border-radius:16px;overflow:hidden;">
-        <div class="text-center text-white" style="background:linear-gradient(135deg,#0f2a56,#1a4a8a);padding:28px 24px;">
-          <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white mb-2"
-               style="width:64px;height:64px;">
-            <i class="bi bi-mortarboard-fill" style="font-size:1.8rem;color:#0f2a56;"></i>
-          </div>
+      <div class="auth-card">
+        <div class="auth-brand">
+          <img src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="School seal" class="mb-2">
           <h5 class="fw-bold mb-1">Student Portal</h5>
           <p class="mb-0 small opacity-75"><?= e($schoolName) ?></p>
         </div>
@@ -126,11 +110,12 @@ if (isPost()) {
         </div>
       </div>
 
-      <p class="text-center text-white-50 small mt-3">
+      <p class="text-center text-muted small mt-3">
         &copy; <?= date('Y') ?> <?= e($schoolName) ?>
       </p>
     </div>
   </div>
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -194,21 +194,21 @@ function emailLayout(string $content, string $title = ''): string
       <style>
         body { font-family: Arial, sans-serif; background:#f4f6f9; margin:0; padding:20px; }
         .email-wrap { max-width:600px; margin:0 auto; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.1); }
-        .email-header { background:#1a3c6e; color:#fff; padding:24px 32px; text-align:center; }
+        .email-header { background:#0d4530; color:#fff; padding:24px 32px; text-align:center; border-bottom:4px solid #c9a227; }
         .email-header h1 { margin:0; font-size:22px; }
         .email-header p  { margin:4px 0 0; font-size:13px; opacity:.85; }
         .email-body { padding:28px 32px; color:#333; line-height:1.6; }
-        .email-body h2 { color:#1a3c6e; font-size:18px; }
-        .tracking-box { background:#eef2fb; border-left:4px solid #1a3c6e; border-radius:4px; padding:14px 18px; margin:16px 0; }
-        .tracking-box .code { font-family:monospace; font-size:20px; font-weight:700; color:#1a3c6e; letter-spacing:1px; }
+        .email-body h2 { color:#0d4530; font-size:18px; }
+        .tracking-box { background:#edf6f0; border-left:4px solid #115540; border-radius:4px; padding:14px 18px; margin:16px 0; }
+        .tracking-box .code { font-family:monospace; font-size:20px; font-weight:700; color:#0d4530; letter-spacing:1px; }
         .status-badge { display:inline-block; padding:4px 12px; border-radius:20px; font-size:13px; font-weight:600; }
         .status-pending    { background:#e2e8f0; color:#475569; }
-        .status-processing { background:#dbeafe; color:#1d4ed8; }
+        .status-processing { background:#d9ede1; color:#115540; }
         .status-approved   { background:#dcfce7; color:#15803d; }
         .status-released   { background:#f0fdf4; color:#166534; }
         .status-declined   { background:#fee2e2; color:#dc2626; }
         .status-correction { background:#fef9c3; color:#854d0e; }
-        .btn { display:inline-block; padding:10px 22px; background:#1a3c6e; color:#fff; text-decoration:none; border-radius:5px; font-size:14px; margin-top:10px; }
+        .btn { display:inline-block; padding:10px 22px; background:#115540; color:#fff; text-decoration:none; border-radius:5px; font-size:14px; margin-top:10px; }
         .divider { border:none; border-top:1px solid #e2e8f0; margin:20px 0; }
         .email-footer { background:#f8fafc; padding:16px 32px; text-align:center; font-size:12px; color:#94a3b8; }
       </style>

@@ -71,92 +71,62 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 <div class="page-content">
 <?= renderFlash() ?>
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4><i class="bi bi-mortarboard me-2 text-primary"></i>Student Accounts</h4>
-    <p>Manage student portal accounts — <?= $activeStudents ?> of <?= $totalStudents ?> active.</p>
-  </div>
-</div>
+<?= ui_page_header(
+    'Student Accounts',
+    "Manage student portal accounts — {$activeStudents} of {$totalStudents} active.",
+    'mortarboard'
+) ?>
 
-<!-- Filter bar -->
-<div class="filter-bar">
-  <form method="GET" class="row g-2 align-items-end">
-    <div class="col-sm-5">
-      <input type="text" name="search" class="form-control form-control-sm"
-             value="<?= e($filterSearch) ?>" placeholder="Name, email, student number…">
-    </div>
-    <div class="col-sm-3">
-      <select name="state" class="form-select form-select-sm">
-        <option value="">All States</option>
-        <option value="active" <?= $filterState==='active'?'selected':'' ?>>Active</option>
-        <option value="inactive" <?= $filterState==='inactive'?'selected':'' ?>>Inactive</option>
-      </select>
-    </div>
-    <div class="col-auto">
-      <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search me-1"></i>Filter</button>
-      <a href="<?= BASE_URL ?>/registrar/students.php" class="btn btn-outline-secondary btn-sm ms-1">Reset</a>
-    </div>
-  </form>
-</div>
+<?php
+echo ui_filter_bar(
+    BASE_URL . '/registrar/students.php',
+    [
+        ['type' => 'search', 'name' => 'search', 'label' => 'Search', 'value' => $filterSearch,
+         'placeholder' => 'Name, email, student number…', 'col' => 'col-sm-5'],
+        ['type' => 'select', 'name' => 'state', 'label' => 'Status', 'value' => $filterState,
+         'options' => ['' => 'All States', 'active' => 'Active', 'inactive' => 'Inactive'], 'col' => 'col-sm-3'],
+    ],
+    [],
+    BASE_URL . '/registrar/students.php'
+);
 
-<div class="content-card">
-  <div class="content-card-header">
-    <h5>Accounts <span class="badge bg-light text-dark ms-1"><?= number_format($result['total']) ?></span></h5>
-  </div>
-  <div class="table-responsive">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Student</th><th>Student No.</th><th>Submissions</th>
-          <th>Last Login</th><th>Registered</th><th>Status</th><th style="width:120px">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-      <?php if (empty($result['data'])): ?>
-        <tr><td colspan="7"><div class="empty-state"><i class="bi bi-people"></i><p>No student accounts found.</p></div></td></tr>
-      <?php else: foreach ($result['data'] as $s): ?>
-      <tr>
-        <td>
-          <div class="fw-semibold small"><?= e(fullName($s, true)) ?></div>
-          <div class="text-muted" style="font-size:.7rem;"><?= e($s['email']) ?></div>
-        </td>
-        <td><span class="small font-monospace"><?= e($s['student_no'] ?: '—') ?></span></td>
-        <td>
-          <span class="badge bg-light text-dark"><?= (int)$s['reg_count'] ?> reg</span>
-          <span class="badge bg-light text-dark"><?= (int)$s['doc_count'] ?> doc</span>
-        </td>
-        <td><span class="small text-muted"><?= $s['last_login'] ? timeAgo($s['last_login']) : 'Never' ?></span></td>
-        <td><span class="small text-muted"><?= formatDate($s['created_at']) ?></span></td>
-        <td>
-          <?php if ($s['is_active']): ?>
-            <span class="badge bg-success">Active</span>
-          <?php else: ?>
-            <span class="badge bg-danger">Deactivated</span>
-          <?php endif; ?>
-        </td>
-        <td>
-          <form method="POST" class="d-inline"
-                onsubmit="return confirm('<?= $s['is_active'] ? 'Deactivate' : 'Reactivate' ?> this student account?')">
-            <?= csrfField() ?>
-            <input type="hidden" name="student_id" value="<?= (int)$s['id'] ?>">
-            <input type="hidden" name="action" value="<?= $s['is_active'] ? 'deactivate' : 'activate' ?>">
-            <button type="submit" class="btn btn-sm <?= $s['is_active'] ? 'btn-outline-danger' : 'btn-outline-success' ?>">
-              <?= $s['is_active'] ? 'Deactivate' : 'Activate' ?>
-            </button>
-          </form>
-        </td>
-      </tr>
-      <?php endforeach; endif; ?>
-      </tbody>
-    </table>
-  </div>
-  <?php if ($result['pages'] > 1): ?>
-  <div class="px-3 py-2 border-top d-flex justify-content-between align-items-center">
-    <span class="text-muted small">Page <?= $page ?> of <?= $result['pages'] ?></span>
-    <?= paginationLinks($page, $result['pages'], $baseUrl) ?>
-  </div>
-  <?php endif; ?>
-</div>
+$rows = [];
+foreach ($result['data'] as $s) {
+    $btnClass = $s['is_active'] ? 'btn-outline-danger' : 'btn-outline-success';
+    $action   = $s['is_active'] ? 'deactivate' : 'activate';
+    $rows[] = [
+        '<div class="row-name">' . e(fullName($s, true)) . '</div><div class="row-sub">' . e($s['email']) . '</div>',
+        '<span class="small font-monospace">' . e($s['student_no'] ?: '—') . '</span>',
+        '<span class="badge bg-light text-dark">' . (int)$s['reg_count'] . ' reg</span> '
+            . '<span class="badge bg-light text-dark">' . (int)$s['doc_count'] . ' doc</span>',
+        '<span class="small text-muted">' . ($s['last_login'] ? timeAgo($s['last_login']) : 'Never') . '</span>',
+        '<span class="small text-muted">' . formatDate($s['created_at']) . '</span>',
+        '<span class="badge ' . ($s['is_active'] ? 'bg-success' : 'bg-danger') . '">'
+            . ($s['is_active'] ? 'Active' : 'Deactivated') . '</span>',
+        '<form method="POST" class="d-inline" onsubmit="return confirm(\''
+            . ($s['is_active'] ? 'Deactivate' : 'Reactivate') . ' this student account?\')">'
+            . csrfField()
+            . '<input type="hidden" name="student_id" value="' . (int)$s['id'] . '">'
+            . '<input type="hidden" name="action" value="' . $action . '">'
+            . '<button type="submit" class="btn btn-sm ' . $btnClass . '">'
+            . ($s['is_active'] ? 'Deactivate' : 'Activate') . '</button>'
+        . '</form>',
+    ];
+}
+
+echo ui_card_open(
+    'Accounts <span class="badge bg-light text-dark ms-1 fw-normal">' . number_format($result['total']) . '</span>',
+    'mortarboard'
+);
+echo ui_table(
+    ['Student', 'Student No.', 'Submissions', 'Last Login', 'Registered', 'Status',
+     ['label' => 'Action', 'style' => 'width:120px']],
+    $rows,
+    ['empty_icon' => 'people', 'empty_msg' => 'No student accounts found.']
+);
+echo ui_list_footer($page, $result['pages'], $result['total'], $perPage, $baseUrl);
+echo ui_card_close();
+?>
 
 </div>
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>

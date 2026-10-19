@@ -124,27 +124,14 @@ if (isPost()) {
 }
 
 $trackingUrl = $submitted ? trackingUrl($trackingCode) : '';
+$pageTitle   = 'Pre-Registration';
+include __DIR__ . '/../includes/partials/portal_head.php';
+include __DIR__ . '/../includes/partials/portal_nav.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pre-Registration – <?= e($schoolName) ?></title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
-</head>
-<body style="background:var(--bg-app);">
-
-<?php include __DIR__ . '/../includes/partials/portal_nav.php'; ?>
 
 <!-- ── Page breadcrumb bar ── -->
-<div style="background:#fff;border-bottom:1px solid #e2e8f0;">
-  <div class="container py-2 d-flex align-items-center gap-2" style="font-size:.8rem;color:#64748b;">
+<div class="portal-crumbs">
+  <div class="container py-2 d-flex align-items-center gap-2">
     <a href="<?= BASE_URL ?>/student/index.php" class="text-muted text-decoration-none">
       <i class="bi bi-house me-1"></i>Home
     </a>
@@ -160,10 +147,9 @@ $trackingUrl = $submitted ? trackingUrl($trackingCode) : '';
 <?php if ($submitted): ?>
 <!-- ════ SUCCESS ════ -->
 <div class="card border-0 shadow" style="border-radius:16px;overflow:hidden;">
-  <div class="text-center p-4 text-white"
-       style="background:linear-gradient(135deg,#0f2a56,#1a4a8a);">
-    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success mb-3"
-         style="width:72px;height:72px;">
+  <div class="verify-banner good text-center p-4">
+    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+         style="width:72px;height:72px;background:rgba(255,255,255,.2);">
       <i class="bi bi-check-lg fs-1"></i>
     </div>
     <h3 class="fw-bold mb-1">Pre-Registration Submitted!</h3>
@@ -173,6 +159,7 @@ $trackingUrl = $submitted ? trackingUrl($trackingCode) : '';
     <div class="row g-4 align-items-center">
       <div class="col-md-7">
         <h5 class="fw-bold mb-3">Your Tracking Information</h5>
+
         <div class="tracking-code-display mb-3">
           <div class="small opacity-75 mb-1">Tracking Code</div>
           <div class="code"><?= e($trackingCode) ?></div>
@@ -251,9 +238,8 @@ $trackingUrl = $submitted ? trackingUrl($trackingCode) : '';
 <!-- ════ FORM ════ -->
 <!-- Page heading -->
 <div class="d-flex align-items-center gap-3 mb-4">
-  <div class="d-inline-flex align-items-center justify-content-center rounded-3"
-       style="width:48px;height:48px;background:#dbeafe;flex-shrink:0;">
-    <i class="bi bi-person-plus-fill text-primary fs-5"></i>
+  <div class="portal-card-icon" style="width:48px;height:48px;flex-shrink:0;">
+    <i class="bi bi-person-plus-fill fs-5"></i>
   </div>
   <div>
     <h3 class="fw-bold mb-0">Pre-Registration for Enrollment</h3>
@@ -285,8 +271,7 @@ $trackingUrl = $submitted ? trackingUrl($trackingCode) : '';
   <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
     <div class="card-header border-0 bg-white pt-4 px-4 pb-0">
       <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
-        <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white fw-bold"
-              style="width:26px;height:26px;font-size:.8rem;background:#1a4a8a;flex-shrink:0;">1</span>
+        <span class="section-num">1</span>
         Personal Information
       </h5>
       <hr class="mt-3 mb-0">
@@ -368,8 +353,7 @@ $trackingUrl = $submitted ? trackingUrl($trackingCode) : '';
   <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
     <div class="card-header border-0 bg-white pt-4 px-4 pb-0">
       <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
-        <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white fw-bold"
-              style="width:26px;height:26px;font-size:.8rem;background:#1a4a8a;flex-shrink:0;">2</span>
+        <span class="section-num">2</span>
         Contact Information &amp; Address
       </h5>
       <hr class="mt-3 mb-0">
@@ -449,8 +433,7 @@ $trackingUrl = $submitted ? trackingUrl($trackingCode) : '';
   <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
     <div class="card-header border-0 bg-white pt-4 px-4 pb-0">
       <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
-        <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white fw-bold"
-              style="width:26px;height:26px;font-size:.8rem;background:#1a4a8a;flex-shrink:0;">3</span>
+        <span class="section-num">3</span>
         Academic Information
       </h5>
       <hr class="mt-3 mb-0">
@@ -540,8 +523,7 @@ $trackingUrl = $submitted ? trackingUrl($trackingCode) : '';
   <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
     <div class="card-header border-0 bg-white pt-4 px-4 pb-0">
       <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
-        <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white fw-bold"
-              style="width:26px;height:26px;font-size:.8rem;background:#1a4a8a;flex-shrink:0;">4</span>
+        <span class="section-num">4</span>
         Review &amp; Submit
       </h5>
       <hr class="mt-3 mb-0">
@@ -591,8 +573,6 @@ $trackingUrl = $submitted ? trackingUrl($trackingCode) : '';
   </div><!-- /row -->
 </div><!-- /container -->
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="<?= BASE_URL ?>/assets/js/main.js"></script>
 <script>
 // Show/hide Other program field
 document.getElementById('program_select').addEventListener('change',function(){
@@ -615,5 +595,4 @@ document.getElementById('reg-form').addEventListener('submit',function(e){
   btn.innerHTML='<span class="spinner-border spinner-border-sm me-2"></span>Submitting…';
 });
 </script>
-</body>
-</html>
+<?php include __DIR__ . '/../includes/partials/portal_foot.php'; ?>

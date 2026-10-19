@@ -78,6 +78,7 @@ if (isPost()) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Login – TCC Registration & Records System</title>
+<link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/images/school_logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
@@ -85,34 +86,27 @@ if (isPost()) {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
 <style>
-  body { background: linear-gradient(135deg, #0f2a56 0%, #1a4a8a 50%, #0f2a56 100%); min-height:100vh; }
-  .login-card { border:none; border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.35); }
-  .login-brand { background:linear-gradient(135deg,#0f2a56,#1a4a8a); border-radius:16px 16px 0 0; padding:32px; text-align:center; color:#fff; }
-  .login-brand .school-seal { width:80px; height:80px; background:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px; }
-  .login-brand .school-seal i { font-size:2.5rem; color:#0f2a56; }
+  .login-card { border:none; border-radius:16px; box-shadow:0 20px 60px rgba(4,28,19,.35); }
   .login-body { padding:32px; }
   .form-floating label { color:#6c757d; }
-  .btn-login { background:linear-gradient(135deg,#0f2a56,#1a4a8a); border:none; padding:12px; font-size:1rem; font-weight:600; letter-spacing:.5px; transition:opacity .2s; }
-  .btn-login:hover { opacity:.9; }
   .divider-text { position:relative; text-align:center; margin:16px 0; }
   .divider-text::before { content:''; position:absolute; top:50%; left:0; right:0; height:1px; background:#dee2e6; }
   .divider-text span { position:relative; background:#fff; padding:0 12px; color:#6c757d; font-size:.8rem; }
-  .portal-link { background:#f8f9fa; border-radius:8px; padding:14px; text-align:center; }
+  .portal-link { background:var(--surface-subtle); border-radius:8px; padding:14px; text-align:center; }
 </style>
 </head>
-<body class="d-flex align-items-center py-5">
+<body>
+<div class="auth-shell">
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-5 col-lg-4">
 
-      <div class="card login-card">
+      <div class="card login-card overflow-hidden">
         <!-- Brand Header -->
-        <div class="login-brand">
-          <div class="school-seal">
-            <i class="bi bi-building"></i>
-          </div>
+        <div class="auth-brand">
+          <img src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="School seal" class="mb-2">
           <h5 class="mb-1 fw-bold">Tampakan Community College</h5>
-          <p class="mb-0 opacity-75 small">Registration & Records System</p>
+          <p class="mb-0 opacity-75 small">Registration &amp; Records System</p>
         </div>
 
         <!-- Login Form -->
@@ -152,7 +146,7 @@ if (isPost()) {
               <label for="password"><i class="bi bi-lock me-1"></i>Password</label>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-login w-100 text-white rounded-3 mt-2">
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-3 mt-2">
               <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
             </button>
           </form>
@@ -168,11 +162,12 @@ if (isPost()) {
         </div>
       </div>
 
-      <p class="text-center text-white-50 small mt-3">
+      <p class="text-center text-muted small mt-3">
         &copy; <?= date('Y') ?> Tampakan Community College. All rights reserved.
       </p>
     </div>
   </div>
+</div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

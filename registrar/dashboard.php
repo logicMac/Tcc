@@ -44,103 +44,42 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 
 <?= renderFlash() ?>
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4>Registrar Dashboard</h4>
-    <p>System overview &mdash; <?= date('F d, Y') ?></p>
-  </div>
-  <div class="d-flex gap-2">
-    <a href="<?= BASE_URL ?>/registrar/staff.php" class="btn btn-primary btn-sm">
-      <i class="bi bi-people me-1"></i>Manage Staff
-    </a>
-  </div>
-</div>
+<?= ui_page_header(
+    'Registrar Dashboard',
+    'System overview — ' . date('F d, Y'),
+    'speedometer2',
+    '<a href="' . BASE_URL . '/registrar/staff.php" class="btn btn-primary btn-sm"><i class="bi bi-people me-1"></i>Manage Staff</a>'
+) ?>
 
 <!-- Stats Row 1 -->
 <div class="row g-3 mb-4">
   <div class="col-sm-6 col-md-3">
-    <div class="stat-card">
-      <div class="stat-icon blue"><i class="bi bi-people"></i></div>
-      <div class="stat-info">
-        <div class="stat-label">Active Staff</div>
-        <div class="stat-value"><?= (int)$stats['active_staff'] ?></div>
-        <div class="stat-sub"><?= (int)$stats['total_staff'] ?> total accounts</div>
-      </div>
-    </div>
+    <?= ui_stat_card('people', 'Active Staff', $stats['active_staff'], 'green', (int)$stats['total_staff'] . ' total accounts') ?>
   </div>
   <div class="col-sm-6 col-md-3">
-    <div class="stat-card">
-      <div class="stat-icon yellow"><i class="bi bi-person-plus"></i></div>
-      <div class="stat-info">
-        <div class="stat-label">Enrollments Today</div>
-        <div class="stat-value"><?= (int)$stats['today_reg'] ?></div>
-        <div class="stat-sub"><?= (int)$stats['pending_reg'] ?> pending total</div>
-      </div>
-    </div>
+    <?= ui_stat_card('person-plus', 'Enrollments Today', $stats['today_reg'], 'gold', (int)$stats['pending_reg'] . ' pending total') ?>
   </div>
   <div class="col-sm-6 col-md-3">
-    <div class="stat-card">
-      <div class="stat-icon green"><i class="bi bi-file-earmark-text"></i></div>
-      <div class="stat-info">
-        <div class="stat-label">Doc Requests Today</div>
-        <div class="stat-value"><?= (int)$stats['today_doc'] ?></div>
-        <div class="stat-sub"><?= (int)$stats['pending_doc'] ?> pending total</div>
-      </div>
-    </div>
+    <?= ui_stat_card('file-earmark-text', 'Doc Requests Today', $stats['today_doc'], 'teal', (int)$stats['pending_doc'] . ' pending total') ?>
   </div>
   <div class="col-sm-6 col-md-3">
-    <div class="stat-card">
-      <div class="stat-icon purple"><i class="bi bi-journal-text"></i></div>
-      <div class="stat-info">
-        <div class="stat-label">Activity Logs Today</div>
-        <div class="stat-value"><?= (int)$stats['logs_today'] ?></div>
-        <div class="stat-sub"><a href="<?= BASE_URL ?>/registrar/activity_logs.php" class="text-muted">View all logs</a></div>
-      </div>
-    </div>
+    <?= ui_stat_card('journal-text', 'Activity Logs Today', $stats['logs_today'], 'purple', '', BASE_URL . '/registrar/activity_logs.php') ?>
   </div>
 </div>
 
 <!-- Stats Row 2 -->
 <div class="row g-3 mb-4">
   <div class="col-sm-6 col-md-3">
-    <div class="stat-card">
-      <div class="stat-icon blue"><i class="bi bi-collection"></i></div>
-      <div class="stat-info">
-        <div class="stat-label">Total Enrollments</div>
-        <div class="stat-value"><?= (int)$stats['total_reg'] ?></div>
-        <div class="stat-sub"><?= (int)$stats['approved_reg'] ?> approved</div>
-      </div>
-    </div>
+    <?= ui_stat_card('collection', 'Total Enrollments', $stats['total_reg'], 'blue', (int)$stats['approved_reg'] . ' approved') ?>
   </div>
   <div class="col-sm-6 col-md-3">
-    <div class="stat-card">
-      <div class="stat-icon green"><i class="bi bi-collection"></i></div>
-      <div class="stat-info">
-        <div class="stat-label">Total Doc Requests</div>
-        <div class="stat-value"><?= (int)$stats['total_doc'] ?></div>
-        <div class="stat-sub"><?= (int)$stats['released_doc'] ?> released</div>
-      </div>
-    </div>
+    <?= ui_stat_card('collection', 'Total Doc Requests', $stats['total_doc'], 'green', (int)$stats['released_doc'] . ' released') ?>
   </div>
   <div class="col-sm-6 col-md-3">
-    <a href="<?= BASE_URL ?>/registrar/registrations.php?status=Pending" class="stat-card text-decoration-none">
-      <div class="stat-icon yellow"><i class="bi bi-clock"></i></div>
-      <div class="stat-info">
-        <div class="stat-label">Pending Enrollments</div>
-        <div class="stat-value"><?= (int)$stats['pending_reg'] ?></div>
-        <div class="stat-sub text-warning">Need attention</div>
-      </div>
-    </a>
+    <?= ui_stat_card('clock', 'Pending Enrollments', $stats['pending_reg'], 'yellow', 'Need attention', BASE_URL . '/registrar/registrations.php?status=Pending') ?>
   </div>
   <div class="col-sm-6 col-md-3">
-    <a href="<?= BASE_URL ?>/registrar/document_requests.php?status=Pending" class="stat-card text-decoration-none">
-      <div class="stat-icon red"><i class="bi bi-clock"></i></div>
-      <div class="stat-info">
-        <div class="stat-label">Pending Documents</div>
-        <div class="stat-value"><?= (int)$stats['pending_doc'] ?></div>
-        <div class="stat-sub text-danger">Need attention</div>
-      </div>
-    </a>
+    <?= ui_stat_card('clock', 'Pending Documents', $stats['pending_doc'], 'red', 'Need attention', BASE_URL . '/registrar/document_requests.php?status=Pending') ?>
   </div>
 </div>
 
@@ -148,59 +87,32 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 <div class="row g-3">
   <!-- Staff Overview -->
   <div class="col-lg-6">
-    <div class="content-card">
-      <div class="content-card-header">
-        <h5><i class="bi bi-people me-2"></i>Staff Overview</h5>
-        <a href="<?= BASE_URL ?>/registrar/staff.php" class="btn btn-sm btn-outline-primary">Manage</a>
-      </div>
-      <div class="table-responsive">
-        <table class="table">
-          <thead><tr><th>Name</th><th>Employee ID</th><th>Status</th><th>Last Login</th></tr></thead>
-          <tbody>
-          <?php if (empty($staffList)): ?>
-            <tr><td colspan="4" class="text-center text-muted py-3">No staff accounts.</td></tr>
-          <?php else: foreach ($staffList as $s): ?>
-          <tr>
-            <td>
-              <div class="d-flex align-items-center gap-2">
-                <div class="avatar-circle <?= $s['is_active'] ? 'bg-primary' : 'bg-secondary' ?> text-white" style="font-size:.7rem;">
-                  <?= strtoupper(substr($s['full_name'],0,1)) ?>
-                </div>
-                <div>
-                  <div class="fw-semibold small"><?= e($s['full_name']) ?></div>
-                  <div class="text-muted" style="font-size:.7rem;"><?= e($s['email']) ?></div>
-                </div>
-              </div>
-            </td>
-            <td><span class="small font-monospace"><?= e($s['employee_id']) ?></span></td>
-            <td>
-              <span class="badge <?= $s['is_active'] ? 'bg-success' : 'bg-secondary' ?>">
-                <?= $s['is_active'] ? 'Active' : 'Inactive' ?>
-              </span>
-            </td>
-            <td>
-              <span class="text-muted small">
-                <?= $s['last_login'] ? timeAgo($s['last_login']) : 'Never' ?>
-              </span>
-            </td>
-          </tr>
-          <?php endforeach; endif; ?>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <?= ui_card_open('Staff Overview', 'people', '<a href="' . BASE_URL . '/registrar/staff.php" class="btn btn-sm btn-outline-primary">Manage</a>') ?>
+    <?php
+    $rows = [];
+    foreach ($staffList as $s) {
+        $rows[] = [
+            '<div class="d-flex align-items-center gap-2">'
+                . ui_avatar($s['full_name'], 30, $s['is_active'] ? 'primary' : 'secondary')
+                . '<div><div class="row-name">' . e($s['full_name']) . '</div><div class="row-sub">' . e($s['email']) . '</div></div>'
+            . '</div>',
+            '<span class="small font-monospace">' . e($s['employee_id']) . '</span>',
+            '<span class="badge ' . ($s['is_active'] ? 'bg-success' : 'bg-secondary') . '">' . ($s['is_active'] ? 'Active' : 'Inactive') . '</span>',
+            '<span class="text-muted small">' . ($s['last_login'] ? timeAgo($s['last_login']) : 'Never') . '</span>',
+        ];
+    }
+    echo ui_table(['Name', 'Employee ID', 'Status', 'Last Login'], $rows,
+                  ['empty_msg' => 'No staff accounts.', 'empty_icon' => 'people']);
+    ?>
+    <?= ui_card_close() ?>
   </div>
 
   <!-- Recent Activity -->
   <div class="col-lg-6">
-    <div class="content-card">
-      <div class="content-card-header">
-        <h5><i class="bi bi-journal-text me-2"></i>Recent Activity</h5>
-        <a href="<?= BASE_URL ?>/registrar/activity_logs.php" class="btn btn-sm btn-outline-secondary">View All</a>
-      </div>
+    <?= ui_card_open('Recent Activity', 'journal-text', '<a href="' . BASE_URL . '/registrar/activity_logs.php" class="btn btn-sm btn-outline-secondary">View All</a>') ?>
       <div class="content-card-body p-0">
         <?php if (empty($recentLogs)): ?>
-        <div class="p-4 text-center text-muted">No activity logs yet.</div>
+        <?= ui_empty('journal-text', 'No activity logs yet') ?>
         <?php else: ?>
         <ul class="list-group list-group-flush">
           <?php foreach ($recentLogs as $log): ?>
@@ -224,7 +136,7 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
         </ul>
         <?php endif; ?>
       </div>
-    </div>
+    <?= ui_card_close() ?>
   </div>
 </div>
 

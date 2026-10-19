@@ -61,26 +61,20 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>
 <div class="page-content">
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4><i class="bi bi-patch-check me-2 text-success"></i>Verification Slip</h4>
-    <p>Attach this slip to the released document — its QR code verifies authenticity.</p>
-  </div>
-  <div class="page-header-actions">
-    <a href="<?= BASE_URL ?>/staff/view_document.php?id=<?= (int)$id ?>" class="btn-back">
-      <i class="bi bi-arrow-left"></i> Back to Request
-    </a>
-    <a href="?id=<?= (int)$id ?>&amp;print=1" target="_blank" class="btn btn-sm btn-outline-dark">
-      <i class="bi bi-printer me-1"></i>Print Slip
-    </a>
-  </div>
-</div>
+<?= ui_page_header(
+    'Verification Slip',
+    'Attach this slip to the released document — its QR code verifies authenticity.',
+    'patch-check',
+    ui_back(BASE_URL . '/staff/view_document.php?id=' . (int)$id, 'Back to Request')
+    . '<a href="?id=' . (int)$id . '&amp;print=1" target="_blank" class="btn btn-sm btn-outline-dark"><i class="bi bi-printer me-1"></i>Print Slip</a>'
+) ?>
 <?php endif; ?>
 
 <!-- ── The slip itself ── -->
-<div style="max-width:640px;margin:0 auto;">
-  <div class="card border-0 shadow" style="border-radius:14px;overflow:hidden;">
-    <div class="p-4 text-white text-center" style="background:linear-gradient(135deg,#0f2a56,#1a4a8a);">
+<div class="verify-slip">
+  <div class="card border-0 shadow overflow-hidden">
+    <div class="verify-slip-head">
+      <img src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="School seal" class="verify-slip-seal">
       <div class="fw-bold" style="font-size:1.1rem;"><?= e($schoolName) ?></div>
       <div class="small opacity-75">Office of the Registrar — Document Verification</div>
     </div>

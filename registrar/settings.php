@@ -48,12 +48,7 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 <div class="page-content">
 <?= renderFlash() ?>
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4>System Settings</h4>
-    <p>Configure school information and notification settings.</p>
-  </div>
-</div>
+<?= ui_page_header('System Settings', 'Configure school information and notification settings.', 'gear') ?>
 
 <form method="POST" data-validate>
   <?= csrfField() ?>
@@ -61,10 +56,7 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 
     <!-- School Information -->
     <div class="col-lg-6">
-      <div class="content-card mb-3">
-        <div class="content-card-header">
-          <h5><i class="bi bi-building me-2"></i>School Information</h5>
-        </div>
+      <?= ui_card_open('School Information', 'building', '', 'mb-3') ?>
         <div class="content-card-body">
           <div class="row g-3">
             <div class="col-12">
@@ -99,15 +91,12 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
             </div>
           </div>
         </div>
-      </div>
+      <?= ui_card_close() ?>
     </div>
 
     <!-- Academic Settings -->
     <div class="col-lg-6">
-      <div class="content-card mb-3">
-        <div class="content-card-header">
-          <h5><i class="bi bi-mortarboard me-2"></i>Academic Settings</h5>
-        </div>
+      <?= ui_card_open('Academic Settings', 'mortarboard', '', 'mb-3') ?>
         <div class="content-card-body">
           <div class="row g-3">
             <div class="col-md-6">
@@ -136,13 +125,10 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
             </div>
           </div>
         </div>
-      </div>
+      <?= ui_card_close() ?>
 
       <!-- SMTP Settings -->
-      <div class="content-card">
-        <div class="content-card-header">
-          <h5><i class="bi bi-envelope-at me-2"></i>Email / SMTP Settings</h5>
-        </div>
+      <?= ui_card_open('Email / SMTP Settings', 'envelope-at') ?>
         <div class="content-card-body">
           <div class="alert alert-info py-2 small">
             Configure SMTP settings to enable reliable email notifications via Gmail or other providers.
@@ -184,7 +170,7 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
             </div>
           </div>
         </div>
-      </div>
+      <?= ui_card_close() ?>
     </div>
   </div>
 

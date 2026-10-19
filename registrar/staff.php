@@ -62,110 +62,66 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 <div class="page-content">
 <?= renderFlash() ?>
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4>Staff Accounts</h4>
-    <p>Create, activate, and manage staff members.</p>
-  </div>
-  <a href="<?= BASE_URL ?>/registrar/create_staff.php" class="btn btn-primary btn-sm">
-    <i class="bi bi-plus-lg me-1"></i>Add New Staff
-  </a>
-</div>
+<?= ui_page_header(
+    'Staff Accounts', 'Create, activate, and manage staff members.', 'people',
+    '<a href="' . BASE_URL . '/registrar/create_staff.php" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add New Staff</a>'
+) ?>
 
-<!-- Filter -->
-<div class="filter-bar">
-  <form method="GET" class="row g-2 align-items-end">
-    <div class="col-sm-5 col-md-4">
-      <label class="form-label small text-muted mb-1">Search</label>
-      <input type="text" name="search" class="form-control form-control-sm"
-             value="<?= e($search) ?>" placeholder="Name, email, employee ID...">
-    </div>
-    <div class="col-sm-3 col-md-2">
-      <label class="form-label small text-muted mb-1">Status</label>
-      <select name="filter" class="form-select form-select-sm">
-        <option value="">All</option>
-        <option value="active"   <?= $filter === 'active'   ? 'selected' : '' ?>>Active</option>
-        <option value="inactive" <?= $filter === 'inactive' ? 'selected' : '' ?>>Inactive</option>
-      </select>
-    </div>
-    <div class="col-auto">
-      <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search me-1"></i>Search</button>
-      <a href="<?= BASE_URL ?>/registrar/staff.php" class="btn btn-outline-secondary btn-sm ms-1">Reset</a>
-    </div>
-  </form>
-</div>
+<?php
+echo ui_filter_bar(
+    BASE_URL . '/registrar/staff.php',
+    [
+        ['type' => 'search', 'name' => 'search', 'label' => 'Search', 'value' => $search,
+         'placeholder' => 'Name, email, employee ID…', 'col' => 'col-md-4'],
+        ['type' => 'select', 'name' => 'filter', 'label' => 'Status', 'value' => $filter,
+         'options' => ['' => 'All', 'active' => 'Active', 'inactive' => 'Inactive'], 'col' => 'col-md-2'],
+    ],
+    [],
+    BASE_URL . '/registrar/staff.php',
+    'Search'
+);
 
-<div class="content-card">
-  <div class="content-card-header">
-    <h5>Staff Members <span class="badge bg-light text-dark ms-1"><?= number_format($result['total']) ?></span></h5>
-  </div>
-  <div class="table-responsive">
-    <table class="table">
-      <thead><tr>
-        <th>Name</th><th>Employee ID</th><th>Email</th>
-        <th>Status</th><th>Last Login</th><th>Created</th><th>Actions</th>
-      </tr></thead>
-      <tbody>
-      <?php if (empty($result['data'])): ?>
-        <tr><td colspan="7"><div class="empty-state"><i class="bi bi-people"></i><p>No staff accounts found.</p></div></td></tr>
-      <?php else: foreach ($result['data'] as $s): ?>
-      <tr>
-        <td>
-          <div class="d-flex align-items-center gap-2">
-            <div class="avatar-circle <?= $s['is_active'] ? 'bg-primary' : 'bg-secondary' ?> text-white" style="font-size:.75rem;width:36px;height:36px;">
-              <?= strtoupper(substr($s['full_name'],0,2)) ?>
-            </div>
-            <div>
-              <div class="fw-semibold small"><?= e($s['full_name']) ?></div>
-              <?php if ($s['phone']): ?>
-              <div class="text-muted" style="font-size:.7rem;"><?= e($s['phone']) ?></div>
-              <?php endif; ?>
-            </div>
-          </div>
-        </td>
-        <td><span class="font-monospace small"><?= e($s['employee_id']) ?></span></td>
-        <td><span class="small"><?= e($s['email']) ?></span></td>
-        <td>
-          <span class="badge <?= $s['is_active'] ? 'bg-success' : 'bg-secondary' ?>">
-            <?= $s['is_active'] ? 'Active' : 'Inactive' ?>
-          </span>
-        </td>
-        <td><span class="text-muted small"><?= $s['last_login'] ? formatDateTime($s['last_login']) : 'Never' ?></span></td>
-        <td><span class="text-muted small"><?= formatDate($s['created_at']) ?></span></td>
-        <td>
-          <div class="d-flex gap-1">
-            <a href="<?= BASE_URL ?>/registrar/edit_staff.php?id=<?= (int)$s['id'] ?>"
-               class="btn btn-sm btn-outline-primary py-0 px-2">
-              <i class="bi bi-pencil"></i>
-            </a>
-            <form method="POST" style="display:inline;">
-              <?= csrfField() ?>
-              <input type="hidden" name="user_id" value="<?= (int)$s['id'] ?>">
-              <?php if ($s['is_active']): ?>
-              <input type="hidden" name="action" value="deactivate">
-              <button type="submit" class="btn btn-sm btn-outline-warning py-0 px-2"
-                      data-confirm="Deactivate <?= e($s['full_name']) ?>?">
-                <i class="bi bi-pause-circle"></i>
-              </button>
-              <?php else: ?>
-              <input type="hidden" name="action" value="activate">
-              <button type="submit" class="btn btn-sm btn-outline-success py-0 px-2">
-                <i class="bi bi-play-circle"></i>
-              </button>
-              <?php endif; ?>
-            </form>
-          </div>
-        </td>
-      </tr>
-      <?php endforeach; endif; ?>
-      </tbody>
-    </table>
-  </div>
-  <?php if ($result['pages'] > 1): ?>
-  <div class="px-3 py-2 border-top d-flex justify-content-end">
-    <?= paginationLinks($page, $result['pages'], $baseUrl) ?>
-  </div>
-  <?php endif; ?>
-</div>
+$rows = [];
+foreach ($result['data'] as $s) {
+    $toggleForm = '<form method="POST" style="display:inline;">' . csrfField()
+        . '<input type="hidden" name="user_id" value="' . (int)$s['id'] . '">';
+    if ($s['is_active']) {
+        $toggleForm .= '<input type="hidden" name="action" value="deactivate">'
+            . '<button type="submit" class="btn btn-sm btn-outline-warning py-0 px-2" data-confirm="Deactivate ' . e($s['full_name']) . '?">'
+            . '<i class="bi bi-pause-circle"></i></button>';
+    } else {
+        $toggleForm .= '<input type="hidden" name="action" value="activate">'
+            . '<button type="submit" class="btn btn-sm btn-outline-success py-0 px-2">'
+            . '<i class="bi bi-play-circle"></i></button>';
+    }
+    $toggleForm .= '</form>';
+
+    $rows[] = [
+        '<div class="d-flex align-items-center gap-2">'
+            . ui_avatar($s['full_name'], 36, $s['is_active'] ? 'primary' : 'secondary')
+            . '<div><div class="row-name">' . e($s['full_name']) . '</div>'
+            . ($s['phone'] ? '<div class="row-sub">' . e($s['phone']) . '</div>' : '')
+            . '</div></div>',
+        '<span class="font-monospace small">' . e($s['employee_id']) . '</span>',
+        '<span class="small">' . e($s['email']) . '</span>',
+        '<span class="badge ' . ($s['is_active'] ? 'bg-success' : 'bg-secondary') . '">' . ($s['is_active'] ? 'Active' : 'Inactive') . '</span>',
+        '<span class="text-muted small">' . ($s['last_login'] ? formatDateTime($s['last_login']) : 'Never') . '</span>',
+        '<span class="text-muted small">' . formatDate($s['created_at']) . '</span>',
+        '<div class="d-flex gap-1">'
+            . '<a href="' . BASE_URL . '/registrar/edit_staff.php?id=' . (int)$s['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2"><i class="bi bi-pencil"></i></a>'
+            . $toggleForm
+        . '</div>',
+    ];
+}
+
+echo ui_card_open(
+    'Staff Members <span class="badge bg-light text-dark ms-1 fw-normal">' . number_format($result['total']) . '</span>',
+    'people'
+);
+echo ui_table(['Name', 'Employee ID', 'Email', 'Status', 'Last Login', 'Created', 'Actions'],
+              $rows, ['empty_icon' => 'people', 'empty_msg' => 'No staff accounts found.']);
+echo ui_list_footer($page, $result['pages'], $result['total'], $perPage, $baseUrl);
+echo ui_card_close();
+?>
 </div>
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>

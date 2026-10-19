@@ -17,8 +17,11 @@ http_response_code(403);
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
 </head>
-<body class="d-flex align-items-center" style="min-height:100vh;background:var(--bg-app);">
+<body>
+<div class="auth-shell">
 <div class="container text-center py-5">
+  <img src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="School seal"
+       class="brand-logo mb-3" style="width:64px;height:64px;">
   <div class="display-1 text-danger fw-bold mb-3">403</div>
   <h2 class="mb-3">Access Denied</h2>
   <p class="text-muted mb-4">You do not have permission to access this page.</p>
@@ -36,6 +39,7 @@ http_response_code(403);
     </a>
     <?php endif; ?>
   </div>
+</div>
 </div>
 </body>
 </html>

@@ -79,27 +79,14 @@ if ($result === 'registration') {
 }
 
 $trackingUrl = $code ? trackingUrl($code) : '';
+$pageTitle   = 'Track Status';
+include __DIR__ . '/../includes/partials/portal_head.php';
+include __DIR__ . '/../includes/partials/portal_nav.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Track Status – <?= e($schoolName) ?></title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
-</head>
-<body style="background:var(--bg-app);">
-
-<?php include __DIR__ . '/../includes/partials/portal_nav.php'; ?>
 
 <!-- breadcrumb bar -->
-<div style="background:#fff;border-bottom:1px solid #e2e8f0;">
-  <div class="container py-2 d-flex align-items-center gap-2" style="font-size:.8rem;color:#64748b;">
+<div class="portal-crumbs">
+  <div class="container py-2 d-flex align-items-center gap-2">
     <a href="<?= BASE_URL ?>/student/index.php" class="text-muted text-decoration-none">
       <i class="bi bi-house me-1"></i>Home
     </a>
@@ -122,10 +109,9 @@ $trackingUrl = $code ? trackingUrl($code) : '';
       <p class="text-muted mb-4">Enter your tracking code to view the current status of your submission.</p>
       <form action="<?= BASE_URL ?>/student/track.php" method="GET" id="track-form">
         <div class="d-flex gap-2">
-          <input type="text" name="code" id="trackInput" class="form-control form-control-lg"
+          <input type="text" name="code" id="trackInput" class="form-control form-control-lg track-input"
                  value="<?= e($code) ?>"
                  placeholder="e.g. TCC-REG-2026-000001 or TCC-DOC-2026-000001"
-                 style="border-radius:10px;border:2px solid #c7d7f0;text-transform:uppercase;"
                  autocomplete="off">
           <button type="submit" class="btn btn-primary btn-lg px-4" style="border-radius:10px;white-space:nowrap;">
             <i class="bi bi-search me-1"></i> Track
@@ -178,12 +164,12 @@ $trackingUrl = $code ? trackingUrl($code) : '';
 
       <!-- Status Header Card -->
       <?php
-      $headerBg = '#1a4a8a';
-      if ($status === 'Approved' || $status === 'Released') $headerBg = '#065f46';
-      if ($isNeg) $headerBg = ($status === 'Declined' ? '#7f1d1d' : '#78350f');
+      $banner = 'info';
+      if ($status === 'Approved' || $status === 'Released') $banner = 'good';
+      if ($isNeg) $banner = 'bad';
       ?>
       <div class="card border-0 shadow mb-4" style="border-radius:16px;overflow:hidden;">
-        <div class="p-4 text-white" style="background:<?= $headerBg ?>;">
+        <div class="verify-banner <?= $banner ?> p-4">
           <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
             <div>
               <div class="small opacity-75 mb-1">
@@ -200,12 +186,11 @@ $trackingUrl = $code ? trackingUrl($code) : '';
             <div class="text-end">
               <?php if ($isNeg): ?>
                 <div class="mb-1" style="font-size:2rem;">
-                  <?= $status === 'Declined' ? '✗' : '⚠' ?>
+                  <i class="bi bi-<?= $status === 'Declined' ? 'x-circle-fill' : 'exclamation-triangle-fill' ?>"></i>
                 </div>
               <?php else: ?>
-                <div style="font-size:.8rem;opacity:.75;margin-bottom:4px;">Current Status</div>
-                <div class="badge fs-6 px-3 py-2 rounded-pill"
-                     style="background:rgba(255,255,255,.25);color:#fff;">
+                <div class="verify-banner-code mb-1">Current Status</div>
+                <div class="badge fs-6 px-3 py-2 rounded-pill">
                   <?= e($status) ?>
                 </div>
               <?php endif; ?>
@@ -468,7 +453,7 @@ $trackingUrl = $code ? trackingUrl($code) : '';
             <i class="bi bi-file-earmark-text text-success fs-4 mb-2 d-block"></i>
             <h6 class="fw-bold">Need a document?</h6>
             <p class="text-muted small mb-3">Request a TOR, COE, Good Moral, or other registrar documents online.</p>
-            <a href="<?= BASE_URL ?>/student/document_request.php" class="btn btn-success btn-sm">
+            <a href="<?= BASE_URL ?>/student/document_request.php" class="btn btn-primary btn-sm">
               Request Document
             </a>
           </div>
@@ -480,11 +465,7 @@ $trackingUrl = $code ? trackingUrl($code) : '';
 
 </div><!-- /container -->
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<!-- html5-qrcode for camera scanning -->
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<script src="<?= BASE_URL ?>/assets/js/main.js"></script>
 <script>
 <?php if ($result && $record): ?>
 document.addEventListener('DOMContentLoaded', function() {
@@ -536,5 +517,4 @@ function stopScanner() {
   document.getElementById('scanner-section').classList.add('d-none');
 }
 </script>
-</body>
-</html>
+<?php include __DIR__ . '/../includes/partials/portal_foot.php'; ?>

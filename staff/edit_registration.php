@@ -23,41 +23,30 @@ $breadcrumbs = [
 $programs = getActivePrograms();
 $errors   = [];
 
+$textFields = [
+    'first_name','middle_name','last_name','suffix','date_of_birth','gender','civil_status',
+    'religion','email','contact_number','telephone_number','birth_place',
+    'citizenship','citizenship_specify',
+    'house_no_street','barangay','municipality_city','province','district','region','zip_code',
+    'mail_house_no_street','mail_barangay','mail_municipality_city','mail_province',
+    'mail_district','mail_region',
+    'father_name','father_status','father_contact',
+    'mother_name','mother_status','mother_contact',
+    'guardian_name','guardian_relation','guardian_contact','guardian_status','spouse_name',
+    'elementary_school','elementary_year_graduated','jhs_school','jhs_year_completed',
+    'shs_school','shs_year_graduated','college_school','college_year_attended',
+    'program_other','year_level','enrollment_type','school_year','semester',
+    'previous_school','previous_program','last_year_attended','lrn','edit_note',
+];
+
 if (isPost()) {
     abortCsrf();
 
-    $data = [
-        'first_name'        => post('first_name'),
-        'middle_name'       => post('middle_name'),
-        'last_name'         => post('last_name'),
-        'suffix'            => post('suffix'),
-        'date_of_birth'     => post('date_of_birth'),
-        'gender'            => post('gender'),
-        'civil_status'      => post('civil_status'),
-        'nationality'       => post('nationality') ?: 'Filipino',
-        'religion'          => post('religion'),
-        'email'             => post('email'),
-        'contact_number'    => post('contact_number'),
-        'house_no_street'   => post('house_no_street'),
-        'barangay'          => post('barangay'),
-        'municipality_city' => post('municipality_city'),
-        'province'          => post('province'),
-        'zip_code'          => post('zip_code'),
-        'program_id'        => postInt('program_id') ?: null,
-        'program_other'     => post('program_other'),
-        'year_level'        => post('year_level'),
-        'enrollment_type'   => post('enrollment_type'),
-        'school_year'       => post('school_year'),
-        'semester'          => post('semester'),
-        'previous_school'   => post('previous_school'),
-        'previous_program'  => post('previous_program'),
-        'last_year_attended'=> post('last_year_attended'),
-        'lrn'               => post('lrn'),
-        'guardian_name'     => post('guardian_name'),
-        'guardian_relation' => post('guardian_relation'),
-        'guardian_contact'  => post('guardian_contact'),
-        'edit_note'         => post('edit_note'),
-    ];
+    $data = [];
+    foreach ($textFields as $k) { $data[$k] = post($k); }
+    $data['nationality']           = post('nationality') ?: 'Filipino';
+    $data['program_id']            = postInt('program_id') ?: null;
+    $data['mail_same_as_permanent']= post('mail_same_as_permanent') ? 1 : 0;
 
     if (empty($data['first_name']))        $errors[] = 'First name is required.';
     if (empty($data['last_name']))         $errors[] = 'Last name is required.';
@@ -74,27 +63,22 @@ if (isPost()) {
     }
 
     if (empty($errors)) {
+        $set   = [];
+        $binds = [];
+        foreach ($textFields as $k) {
+            if ($k === 'edit_note') continue;
+            $set[]   = "$k = ?";
+            $binds[] = $data[$k] === '' ? null : $data[$k];
+        }
+        $set[]   = 'nationality = ?';           $binds[] = $data['nationality'];
+        $set[]   = 'program_id = ?';            $binds[] = $data['program_id'];
+        $set[]   = 'mail_same_as_permanent = ?';$binds[] = $data['mail_same_as_permanent'];
+        $set[]   = 'updated_at = NOW()';
+        $binds[] = $id;
+
         db()->execute(
-            "UPDATE pre_registrations SET
-                first_name=?, middle_name=?, last_name=?, suffix=?,
-                date_of_birth=?, gender=?, civil_status=?, nationality=?, religion=?,
-                email=?, contact_number=?,
-                house_no_street=?, barangay=?, municipality_city=?, province=?, zip_code=?,
-                program_id=?, program_other=?, year_level=?, enrollment_type=?,
-                school_year=?, semester=?, previous_school=?, previous_program=?,
-                last_year_attended=?, lrn=?,
-                guardian_name=?, guardian_relation=?, guardian_contact=?,
-                updated_at=NOW()
-             WHERE id=?",
-            [$data['first_name'],$data['middle_name'],$data['last_name'],$data['suffix'],
-             $data['date_of_birth'],$data['gender'],$data['civil_status'],$data['nationality'],$data['religion'],
-             $data['email'],$data['contact_number'],
-             $data['house_no_street'],$data['barangay'],$data['municipality_city'],$data['province'],$data['zip_code'],
-             $data['program_id'],$data['program_other'],$data['year_level'],$data['enrollment_type'],
-             $data['school_year'],$data['semester'],$data['previous_school'],$data['previous_program'],
-             $data['last_year_attended'],$data['lrn'],
-             $data['guardian_name'],$data['guardian_relation'],$data['guardian_contact'],
-             $id]
+            "UPDATE pre_registrations SET " . implode(', ', $set) . " WHERE id = ?",
+            $binds
         );
 
         addStatusHistory('registration', $id, $reg['tracking_code'], $reg['status'], $reg['status'],
@@ -105,13 +89,15 @@ if (isPost()) {
         flash('success', 'Record updated successfully.');
         redirect(BASE_URL . '/staff/view_registration.php?id=' . $id);
     }
-    // Re-render with posted values on error
     $reg = array_merge($reg, $data);
 }
 
-function f(string $key, array $reg): string {
-    return e($_POST[$key] ?? $reg[$key] ?? '');
+function fv(string $key, array $reg) {
+    return $_POST[$key] ?? $reg[$key] ?? '';
 }
+
+$opts = static fn(array $list, string $first = '') =>
+    ($first !== '' ? ['' => $first] : []) + array_combine($list, $list);
 
 include __DIR__ . '/../includes/partials/head.php';
 include __DIR__ . '/../includes/partials/staff_sidebar.php';
@@ -121,15 +107,12 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 <div class="page-content">
 <?= renderFlash() ?>
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4><i class="bi bi-pencil-square me-2 text-primary"></i>Edit Record – <?= e($reg['tracking_code']) ?></h4>
-    <p>Update the student's submitted information. Changes are logged.</p>
-  </div>
-  <a href="<?= BASE_URL ?>/staff/view_registration.php?id=<?= (int)$id ?>" class="btn-back">
-    <i class="bi bi-arrow-left"></i> Cancel &amp; Back
-  </a>
-</div>
+<?= ui_page_header(
+    'Edit Record — ' . e($reg['tracking_code']),
+    "Update the student's submitted information. Changes are logged.",
+    'pencil-square',
+    ui_back(BASE_URL . '/staff/view_registration.php?id=' . (int)$id, 'Cancel & Back')
+) ?>
 
 <?php if (!empty($errors)): ?>
 <div class="alert alert-danger">
@@ -141,125 +124,137 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
   <?= csrfField() ?>
 
   <!-- Personal -->
-  <div class="content-card mb-3">
-    <div class="content-card-header"><h5><i class="bi bi-person me-2"></i>Personal Information</h5></div>
+  <?= ui_card_open('Personal Information', 'person', '', 'mb-3') ?>
     <div class="content-card-body">
       <div class="row g-3">
-        <div class="col-md-3"><label class="form-label">First Name <span class="required-mark">*</span></label>
-          <input type="text" name="first_name" class="form-control" value="<?= f('first_name',$reg) ?>" required></div>
-        <div class="col-md-3"><label class="form-label">Middle Name</label>
-          <input type="text" name="middle_name" class="form-control" value="<?= f('middle_name',$reg) ?>"></div>
-        <div class="col-md-3"><label class="form-label">Last Name <span class="required-mark">*</span></label>
-          <input type="text" name="last_name" class="form-control" value="<?= f('last_name',$reg) ?>" required></div>
-        <div class="col-md-1"><label class="form-label">Suffix</label>
-          <input type="text" name="suffix" class="form-control" value="<?= f('suffix',$reg) ?>"></div>
-        <div class="col-md-2"><label class="form-label">LRN</label>
-          <input type="text" name="lrn" class="form-control" value="<?= f('lrn',$reg) ?>"></div>
+        <?= ui_field(['name'=>'first_name','label'=>'First Name','value'=>fv('first_name',$reg),'required'=>true,'col'=>'col-md-3']) ?>
+        <?= ui_field(['name'=>'middle_name','label'=>'Middle Name','value'=>fv('middle_name',$reg),'col'=>'col-md-3']) ?>
+        <?= ui_field(['name'=>'last_name','label'=>'Last Name','value'=>fv('last_name',$reg),'required'=>true,'col'=>'col-md-3']) ?>
+        <?= ui_field(['name'=>'suffix','label'=>'Suffix','value'=>fv('suffix',$reg),'col'=>'col-md-1']) ?>
+        <?= ui_field(['name'=>'lrn','label'=>'LRN','value'=>fv('lrn',$reg),'col'=>'col-md-2']) ?>
 
-        <div class="col-md-3"><label class="form-label">Date of Birth <span class="required-mark">*</span></label>
-          <input type="date" name="date_of_birth" class="form-control" value="<?= f('date_of_birth',$reg) ?>" required></div>
-        <div class="col-md-3"><label class="form-label">Gender <span class="required-mark">*</span></label>
-          <select name="gender" class="form-select" required>
-            <?php foreach (['Male','Female','Other'] as $g): ?>
-            <option value="<?= e($g) ?>" <?= f('gender',$reg)===$g?'selected':'' ?>><?= e($g) ?></option>
-            <?php endforeach; ?>
-          </select></div>
-        <div class="col-md-3"><label class="form-label">Civil Status</label>
-          <select name="civil_status" class="form-select">
-            <?php foreach (['Single','Married','Widowed','Separated'] as $cs): ?>
-            <option value="<?= e($cs) ?>" <?= f('civil_status',$reg)===$cs?'selected':'' ?>><?= e($cs) ?></option>
-            <?php endforeach; ?>
-          </select></div>
-        <div class="col-md-3"><label class="form-label">Nationality</label>
-          <input type="text" name="nationality" class="form-control" value="<?= f('nationality',$reg) ?>"></div>
-        <div class="col-md-3"><label class="form-label">Religion</label>
-          <input type="text" name="religion" class="form-control" value="<?= f('religion',$reg) ?>"></div>
+        <?= ui_field(['type'=>'date','name'=>'date_of_birth','label'=>'Date of Birth','value'=>fv('date_of_birth',$reg),'required'=>true,'col'=>'col-md-3']) ?>
+        <?= ui_field(['name'=>'birth_place','label'=>'Birth Place','value'=>fv('birth_place',$reg),'col'=>'col-md-3']) ?>
+        <?= ui_field(['type'=>'select','name'=>'gender','label'=>'Sex','value'=>fv('gender',$reg),'required'=>true,'col'=>'col-md-3','options'=>$opts(['Male','Female','Other'])]) ?>
+        <?= ui_field(['type'=>'select','name'=>'civil_status','label'=>'Civil Status','value'=>fv('civil_status',$reg),'col'=>'col-md-3','options'=>$opts(['Single','Married','Widowed','Separated','Legal Separated','Solo Parent'])]) ?>
+
+        <?= ui_field(['type'=>'select','name'=>'citizenship','label'=>'Citizenship','value'=>fv('citizenship',$reg) ?: 'Filipino','col'=>'col-md-3','options'=>$opts(['Filipino','Dual','Others'])]) ?>
+        <?= ui_field(['name'=>'citizenship_specify','label'=>'Citizenship (specify)','value'=>fv('citizenship_specify',$reg),'col'=>'col-md-3','placeholder'=>'If Dual / Others']) ?>
+        <?= ui_field(['name'=>'nationality','label'=>'Nationality','value'=>fv('nationality',$reg),'col'=>'col-md-3']) ?>
+        <?= ui_field(['name'=>'religion','label'=>'Religion','value'=>fv('religion',$reg),'col'=>'col-md-3']) ?>
       </div>
     </div>
-  </div>
+  <?= ui_card_close() ?>
 
-  <!-- Contact & Address -->
-  <div class="content-card mb-3">
-    <div class="content-card-header"><h5><i class="bi bi-geo-alt me-2"></i>Contact &amp; Address</h5></div>
+  <!-- Contact & Permanent Address -->
+  <?= ui_card_open('Contact &amp; Permanent Address', 'geo-alt', '', 'mb-3') ?>
     <div class="content-card-body">
       <div class="row g-3">
-        <div class="col-md-6"><label class="form-label">Email <span class="required-mark">*</span></label>
-          <input type="email" name="email" class="form-control" value="<?= f('email',$reg) ?>" required></div>
-        <div class="col-md-6"><label class="form-label">Contact Number <span class="required-mark">*</span></label>
-          <input type="text" name="contact_number" class="form-control" value="<?= f('contact_number',$reg) ?>" required></div>
-        <div class="col-md-6"><label class="form-label">House No. / Street <span class="required-mark">*</span></label>
-          <input type="text" name="house_no_street" class="form-control" value="<?= f('house_no_street',$reg) ?>" required></div>
-        <div class="col-md-6"><label class="form-label">Barangay <span class="required-mark">*</span></label>
-          <input type="text" name="barangay" class="form-control" value="<?= f('barangay',$reg) ?>" required></div>
-        <div class="col-md-4"><label class="form-label">Municipality / City <span class="required-mark">*</span></label>
-          <input type="text" name="municipality_city" class="form-control" value="<?= f('municipality_city',$reg) ?>" required></div>
-        <div class="col-md-4"><label class="form-label">Province <span class="required-mark">*</span></label>
-          <input type="text" name="province" class="form-control" value="<?= f('province',$reg) ?>" required></div>
-        <div class="col-md-4"><label class="form-label">ZIP Code</label>
-          <input type="text" name="zip_code" class="form-control" value="<?= f('zip_code',$reg) ?>"></div>
-        <div class="col-md-4"><label class="form-label">Guardian Name</label>
-          <input type="text" name="guardian_name" class="form-control" value="<?= f('guardian_name',$reg) ?>"></div>
-        <div class="col-md-4"><label class="form-label">Guardian Relation</label>
-          <input type="text" name="guardian_relation" class="form-control" value="<?= f('guardian_relation',$reg) ?>"></div>
-        <div class="col-md-4"><label class="form-label">Guardian Contact</label>
-          <input type="text" name="guardian_contact" class="form-control" value="<?= f('guardian_contact',$reg) ?>"></div>
+        <?= ui_field(['type'=>'email','name'=>'email','label'=>'Email','value'=>fv('email',$reg),'required'=>true,'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'contact_number','label'=>'Mobile Number','value'=>fv('contact_number',$reg),'required'=>true,'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'telephone_number','label'=>'Telephone Number','value'=>fv('telephone_number',$reg),'col'=>'col-md-4']) ?>
+
+        <?= ui_field(['name'=>'house_no_street','label'=>'House No. / Street','value'=>fv('house_no_street',$reg),'required'=>true,'col'=>'col-md-6']) ?>
+        <?= ui_field(['name'=>'barangay','label'=>'Barangay','value'=>fv('barangay',$reg),'required'=>true,'col'=>'col-md-6']) ?>
+        <?= ui_field(['name'=>'municipality_city','label'=>'Municipality / City','value'=>fv('municipality_city',$reg),'required'=>true,'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'province','label'=>'Province','value'=>fv('province',$reg),'required'=>true,'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'zip_code','label'=>'ZIP Code','value'=>fv('zip_code',$reg),'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'district','label'=>'District','value'=>fv('district',$reg),'col'=>'col-md-6']) ?>
+        <?= ui_field(['name'=>'region','label'=>'Region','value'=>fv('region',$reg),'col'=>'col-md-6']) ?>
       </div>
     </div>
-  </div>
+  <?= ui_card_close() ?>
+
+  <!-- Mailing Address -->
+  <?= ui_card_open('Mailing Address', 'mailbox', '', 'mb-3') ?>
+    <div class="content-card-body">
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" name="mail_same_as_permanent" id="f-mail_same_as_permanent" value="1"
+               <?= fv('mail_same_as_permanent',$reg) ? 'checked' : '' ?>>
+        <label class="form-check-label" for="f-mail_same_as_permanent">Same as permanent address</label>
+      </div>
+      <div class="row g-3">
+        <?= ui_field(['name'=>'mail_house_no_street','label'=>'House No. / Street','value'=>fv('mail_house_no_street',$reg),'col'=>'col-md-6']) ?>
+        <?= ui_field(['name'=>'mail_barangay','label'=>'Barangay','value'=>fv('mail_barangay',$reg),'col'=>'col-md-6']) ?>
+        <?= ui_field(['name'=>'mail_municipality_city','label'=>'Municipality / City','value'=>fv('mail_municipality_city',$reg),'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'mail_province','label'=>'Province','value'=>fv('mail_province',$reg),'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'mail_district','label'=>'District','value'=>fv('mail_district',$reg),'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'mail_region','label'=>'Region','value'=>fv('mail_region',$reg),'col'=>'col-md-6']) ?>
+      </div>
+    </div>
+  <?= ui_card_close() ?>
+
+  <!-- Family -->
+  <?= ui_card_open('Family Information', 'people', '', 'mb-3') ?>
+    <div class="content-card-body">
+      <div class="row g-3">
+        <?= ui_field(['name'=>'father_name','label'=>"Father's Name",'value'=>fv('father_name',$reg),'col'=>'col-md-5']) ?>
+        <?= ui_field(['type'=>'select','name'=>'father_status','label'=>'Status','value'=>fv('father_status',$reg),'col'=>'col-md-3','options'=>$opts(['Living','Deceased'],'— Select —')]) ?>
+        <?= ui_field(['name'=>'father_contact','label'=>'Contact','value'=>fv('father_contact',$reg),'col'=>'col-md-4']) ?>
+
+        <?= ui_field(['name'=>'mother_name','label'=>"Mother's Name",'value'=>fv('mother_name',$reg),'col'=>'col-md-5']) ?>
+        <?= ui_field(['type'=>'select','name'=>'mother_status','label'=>'Status','value'=>fv('mother_status',$reg),'col'=>'col-md-3','options'=>$opts(['Living','Deceased'],'— Select —')]) ?>
+        <?= ui_field(['name'=>'mother_contact','label'=>'Contact','value'=>fv('mother_contact',$reg),'col'=>'col-md-4']) ?>
+
+        <?= ui_field(['name'=>'guardian_name','label'=>'Guardian Name','value'=>fv('guardian_name',$reg),'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'guardian_relation','label'=>'Relation','value'=>fv('guardian_relation',$reg),'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'guardian_contact','label'=>'Guardian Contact','value'=>fv('guardian_contact',$reg),'col'=>'col-md-4']) ?>
+        <?= ui_field(['type'=>'select','name'=>'guardian_status','label'=>'Guardian Status','value'=>fv('guardian_status',$reg),'col'=>'col-md-4','options'=>$opts(['Living','Deceased'],'— Select —')]) ?>
+        <?= ui_field(['name'=>'spouse_name','label'=>'Spouse (if married)','value'=>fv('spouse_name',$reg),'col'=>'col-md-8']) ?>
+      </div>
+    </div>
+  <?= ui_card_close() ?>
+
+  <!-- Schools Attended -->
+  <?= ui_card_open('Schools Attended', 'building', '', 'mb-3') ?>
+    <div class="content-card-body">
+      <div class="row g-3">
+        <?= ui_field(['name'=>'elementary_school','label'=>'Elementary School','value'=>fv('elementary_school',$reg),'col'=>'col-md-8']) ?>
+        <?= ui_field(['name'=>'elementary_year_graduated','label'=>'Year Graduated','value'=>fv('elementary_year_graduated',$reg),'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'jhs_school','label'=>'Junior High School','value'=>fv('jhs_school',$reg),'col'=>'col-md-8']) ?>
+        <?= ui_field(['name'=>'jhs_year_completed','label'=>'Year Completed','value'=>fv('jhs_year_completed',$reg),'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'shs_school','label'=>'Senior High School','value'=>fv('shs_school',$reg),'col'=>'col-md-8']) ?>
+        <?= ui_field(['name'=>'shs_year_graduated','label'=>'Year Graduated','value'=>fv('shs_year_graduated',$reg),'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'college_school','label'=>'College (last attended)','value'=>fv('college_school',$reg),'col'=>'col-md-8']) ?>
+        <?= ui_field(['name'=>'college_year_attended','label'=>'Year Attended','value'=>fv('college_year_attended',$reg),'col'=>'col-md-4']) ?>
+      </div>
+    </div>
+  <?= ui_card_close() ?>
 
   <!-- Academic -->
-  <div class="content-card mb-3">
-    <div class="content-card-header"><h5><i class="bi bi-mortarboard me-2"></i>Academic Information</h5></div>
+  <?= ui_card_open('Academic Information', 'mortarboard', '', 'mb-3') ?>
     <div class="content-card-body">
       <div class="row g-3">
-        <div class="col-md-6"><label class="form-label">Program <span class="required-mark">*</span></label>
-          <select name="program_id" class="form-select">
+        <div class="col-md-6">
+          <label class="form-label" for="f-program_id">Program <span class="required-mark">*</span></label>
+          <select name="program_id" id="f-program_id" class="form-select">
             <option value="">— Select program —</option>
             <?php foreach ($programs as $p): ?>
-            <option value="<?= (int)$p['id'] ?>" <?= (int)f('program_id',$reg)===(int)$p['id']?'selected':'' ?>>
+            <option value="<?= (int)$p['id'] ?>" <?= (int)fv('program_id',$reg)===(int)$p['id']?'selected':'' ?>>
               <?= e($p['code'] . ' – ' . $p['name']) ?>
             </option>
             <?php endforeach; ?>
-          </select></div>
-        <div class="col-md-6"><label class="form-label">Other Program <small class="text-muted">(if not listed)</small></label>
-          <input type="text" name="program_other" class="form-control" value="<?= f('program_other',$reg) ?>"></div>
-        <div class="col-md-3"><label class="form-label">Year Level <span class="required-mark">*</span></label>
-          <select name="year_level" class="form-select" required>
-            <?php foreach (['1st Year','2nd Year','3rd Year','4th Year','5th Year'] as $yl): ?>
-            <option value="<?= e($yl) ?>" <?= f('year_level',$reg)===$yl?'selected':'' ?>><?= e($yl) ?></option>
-            <?php endforeach; ?>
-          </select></div>
-        <div class="col-md-3"><label class="form-label">Enrollment Type <span class="required-mark">*</span></label>
-          <select name="enrollment_type" class="form-select" required>
-            <?php foreach (['New Student','Transferee','Returnee','Cross-Enrollee'] as $et): ?>
-            <option value="<?= e($et) ?>" <?= f('enrollment_type',$reg)===$et?'selected':'' ?>><?= e($et) ?></option>
-            <?php endforeach; ?>
-          </select></div>
-        <div class="col-md-3"><label class="form-label">School Year <span class="required-mark">*</span></label>
-          <input type="text" name="school_year" class="form-control" value="<?= f('school_year',$reg) ?>" required></div>
-        <div class="col-md-3"><label class="form-label">Semester <span class="required-mark">*</span></label>
-          <select name="semester" class="form-select" required>
-            <?php foreach (['1st Semester','2nd Semester','Summer'] as $sm): ?>
-            <option value="<?= e($sm) ?>" <?= f('semester',$reg)===$sm?'selected':'' ?>><?= e($sm) ?></option>
-            <?php endforeach; ?>
-          </select></div>
-        <div class="col-md-4"><label class="form-label">Previous School</label>
-          <input type="text" name="previous_school" class="form-control" value="<?= f('previous_school',$reg) ?>"></div>
-        <div class="col-md-4"><label class="form-label">Previous Program</label>
-          <input type="text" name="previous_program" class="form-control" value="<?= f('previous_program',$reg) ?>"></div>
-        <div class="col-md-4"><label class="form-label">Last Year Attended</label>
-          <input type="text" name="last_year_attended" class="form-control" value="<?= f('last_year_attended',$reg) ?>"></div>
+          </select>
+        </div>
+        <?= ui_field(['name'=>'program_other','label'=>'Other Program (if not listed)','value'=>fv('program_other',$reg),'col'=>'col-md-6']) ?>
+        <?= ui_field(['type'=>'select','name'=>'year_level','label'=>'Year Level','value'=>fv('year_level',$reg),'required'=>true,'col'=>'col-md-3','options'=>$opts(['1st Year','2nd Year','3rd Year','4th Year','5th Year'])]) ?>
+        <?= ui_field(['type'=>'select','name'=>'enrollment_type','label'=>'Enrollment Type','value'=>fv('enrollment_type',$reg),'required'=>true,'col'=>'col-md-3','options'=>$opts(ENROLLMENT_TYPES)]) ?>
+        <?= ui_field(['name'=>'school_year','label'=>'School Year','value'=>fv('school_year',$reg),'required'=>true,'col'=>'col-md-3']) ?>
+        <?= ui_field(['type'=>'select','name'=>'semester','label'=>'Semester','value'=>fv('semester',$reg),'required'=>true,'col'=>'col-md-3','options'=>$opts(['1st Semester','2nd Semester','Summer'])]) ?>
+        <?= ui_field(['name'=>'previous_school','label'=>'Previous School','value'=>fv('previous_school',$reg),'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'previous_program','label'=>'Previous Program','value'=>fv('previous_program',$reg),'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'last_year_attended','label'=>'Last Year Attended','value'=>fv('last_year_attended',$reg),'col'=>'col-md-4']) ?>
       </div>
     </div>
-  </div>
+  <?= ui_card_close() ?>
 
   <!-- Edit note + submit -->
-  <div class="content-card mb-3">
+  <?= ui_card_open('', '', '', 'mb-3') ?>
     <div class="content-card-body">
       <div class="row g-3 align-items-end">
         <div class="col-md-8">
-          <label class="form-label">Edit Note <small class="text-muted">(optional — shown in record history)</small></label>
-          <input type="text" name="edit_note" class="form-control"
+          <label class="form-label" for="f-edit_note">Edit Note <small class="text-muted">(optional — shown in record history)</small></label>
+          <input type="text" name="edit_note" id="f-edit_note" class="form-control"
                  placeholder="e.g. Corrected spelling per student request">
         </div>
         <div class="col-md-4 d-flex gap-2">
@@ -272,7 +267,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
         </div>
       </div>
     </div>
-  </div>
+  <?= ui_card_close() ?>
 </form>
 
 </div>

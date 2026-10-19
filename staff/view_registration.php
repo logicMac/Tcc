@@ -105,33 +105,22 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 <div class="page-content">
 <?= renderFlash() ?>
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4><?= e($reg['tracking_code']) ?></h4>
-    <p>Pre-Registration Detail &mdash; Submitted <?= formatDateTime($reg['submitted_at']) ?></p>
-  </div>
-  <div class="page-header-actions">
-    <a href="<?= e($backUrl) ?>" class="btn-back">
-      <i class="bi bi-arrow-left"></i> Back to List
-    </a>
-    <a href="<?= BASE_URL ?>/staff/edit_registration.php?id=<?= (int)$id ?>" class="btn btn-sm btn-primary">
-      <i class="bi bi-pencil me-1"></i>Edit Record
-    </a>
-    <a href="<?= e($trackingUrl) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
-      <i class="bi bi-eye me-1"></i>Student View
-    </a>
-    <button onclick="window.print()" class="btn btn-sm btn-outline-secondary">
-      <i class="bi bi-printer me-1"></i>Print
-    </button>
-  </div>
-</div>
+<?= ui_page_header(
+    e($reg['tracking_code']),
+    'Pre-Registration Detail — Submitted ' . formatDateTime($reg['submitted_at']),
+    '',
+    ui_back($backUrl)
+    . '<a href="' . BASE_URL . '/staff/edit_registration.php?id=' . (int)$id . '" class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i>Edit Record</a>'
+    . '<a href="' . e($trackingUrl) . '" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye me-1"></i>Student View</a>'
+    . '<button onclick="window.print()" class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer me-1"></i>Print</button>'
+) ?>
 
 <div class="row g-3">
   <!-- ── Left: Details ── -->
   <div class="col-lg-8">
 
     <!-- Status Banner -->
-    <div class="content-card mb-3">
+    <?= ui_card_open('', '', '', 'mb-3') ?>
       <div class="content-card-body py-3">
         <?php if ($reg['is_archived']): ?>
         <div class="alert alert-secondary d-flex align-items-center gap-2 py-2 mb-3">
@@ -170,79 +159,83 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
         </div>
         <?php endif; ?>
       </div>
-    </div>
+    <?= ui_card_close() ?>
 
     <!-- Personal Info -->
-    <div class="content-card mb-3">
-      <div class="content-card-header">
-        <h5><i class="bi bi-person me-2"></i>Personal Information</h5>
-      </div>
-      <div class="content-card-body">
-        <div class="detail-row">
-          <div class="detail-item"><div class="detail-label">Full Name</div><div class="detail-value"><?= e(fullName($reg)) ?></div></div>
-          <div class="detail-item"><div class="detail-label">Date of Birth</div><div class="detail-value"><?= formatDate($reg['date_of_birth']) ?></div></div>
-          <div class="detail-item"><div class="detail-label">Gender</div><div class="detail-value"><?= e($reg['gender']) ?></div></div>
-          <div class="detail-item"><div class="detail-label">Civil Status</div><div class="detail-value"><?= e($reg['civil_status']) ?></div></div>
-          <div class="detail-item"><div class="detail-label">Nationality</div><div class="detail-value"><?= e($reg['nationality']) ?></div></div>
-          <div class="detail-item"><div class="detail-label">Religion</div><div class="detail-value"><?= e($reg['religion'] ?: '—') ?></div></div>
-          <?php if ($reg['lrn']): ?>
-          <div class="detail-item"><div class="detail-label">LRN</div><div class="detail-value"><?= e($reg['lrn']) ?></div></div>
-          <?php endif; ?>
-        </div>
-      </div>
+    <?= ui_card_open('Personal Information', 'person', '', 'mb-3') ?>
+    <div class="content-card-body">
+      <?php
+      $cit = $reg['citizenship'] ?? '';
+      if ($cit === 'Others') $cit .= ' – ' . ($reg['citizenship_specify'] ?? '');
+      echo ui_details([
+          ['label' => 'Full Name',      'value' => e(fullName($reg))],
+          ['label' => 'Date of Birth',  'value' => formatDate($reg['date_of_birth'])],
+          ['label' => 'Place of Birth', 'value' => e($reg['birth_place'] ?? '')],
+          ['label' => 'Gender',         'value' => e($reg['gender'])],
+          ['label' => 'Civil Status',   'value' => e($reg['civil_status'])],
+          ['label' => 'Citizenship',    'value' => e($cit ?: ($reg['nationality'] ?? ''))],
+          ['label' => 'Religion',       'value' => e($reg['religion'])],
+          ['label' => 'LRN',            'value' => e($reg['lrn'])],
+          ['label' => 'Spouse',         'value' => e($reg['spouse_name'] ?? '')],
+      ]);
+      ?>
     </div>
+    <?= ui_card_close() ?>
 
     <!-- Contact & Address -->
-    <div class="content-card mb-3">
-      <div class="content-card-header">
-        <h5><i class="bi bi-geo-alt me-2"></i>Contact &amp; Address</h5>
-      </div>
-      <div class="content-card-body">
-        <div class="detail-row">
-          <div class="detail-item"><div class="detail-label">Email</div><div class="detail-value"><?= e($reg['email']) ?></div></div>
-          <div class="detail-item"><div class="detail-label">Contact Number</div><div class="detail-value"><?= e($reg['contact_number']) ?></div></div>
-          <div class="detail-item full">
-            <div class="detail-label">Address</div>
-            <div class="detail-value">
-              <?= e($reg['house_no_street']) ?>, <?= e($reg['barangay']) ?>,
-              <?= e($reg['municipality_city']) ?>, <?= e($reg['province']) ?>
-              <?= $reg['zip_code'] ? ' ' . e($reg['zip_code']) : '' ?>
-            </div>
-          </div>
-          <?php if ($reg['guardian_name']): ?>
-          <div class="detail-item"><div class="detail-label">Guardian</div><div class="detail-value"><?= e($reg['guardian_name']) ?> (<?= e($reg['guardian_relation'] ?: '—') ?>)</div></div>
-          <div class="detail-item"><div class="detail-label">Guardian Contact</div><div class="detail-value"><?= e($reg['guardian_contact'] ?: '—') ?></div></div>
-          <?php endif; ?>
-        </div>
-      </div>
+    <?= ui_card_open('Contact &amp; Address', 'geo-alt', '', 'mb-3') ?>
+    <div class="content-card-body">
+      <?php
+      $permAddr = e($reg['house_no_street']) . ', ' . e($reg['barangay']) . ', '
+                . e($reg['municipality_city']) . ', ' . e($reg['province'])
+                . ($reg['zip_code'] ? ' ' . e($reg['zip_code']) : '')
+                . ($reg['district'] ?? '' ? ', District ' . e($reg['district']) : '')
+                . ($reg['region'] ?? '' ? ', ' . e($reg['region']) : '');
+      $mailAddr = !empty($reg['mail_same_as_permanent'])
+          ? '<span class="text-muted small">Same as permanent address</span>'
+          : e($reg['mail_house_no_street'] ?? '') . ', ' . e($reg['mail_barangay'] ?? '') . ', '
+          . e($reg['mail_municipality_city'] ?? '') . ', ' . e($reg['mail_province'] ?? '')
+          . (($reg['mail_district'] ?? '') ? ', District ' . e($reg['mail_district']) : '')
+          . (($reg['mail_region'] ?? '') ? ', ' . e($reg['mail_region']) : '');
+      echo ui_details([
+          ['label' => 'Email',            'value' => e($reg['email'])],
+          ['label' => 'Mobile',           'value' => e($reg['contact_number'])],
+          ['label' => 'Telephone',        'value' => e($reg['telephone_number'] ?? '')],
+          ['label' => 'Permanent Address','value' => $permAddr, 'full' => true],
+          ['label' => 'Mailing Address',  'value' => $mailAddr, 'full' => true],
+          ['label' => 'Father',           'value' => e($reg['father_name'] ?? '') . (($reg['father_status'] ?? '') ? ' <span class="text-muted small">(' . e($reg['father_status']) . ')</span>' : '')],
+          ['label' => 'Father Contact',   'value' => e($reg['father_contact'] ?? '')],
+          ['label' => 'Mother',           'value' => e($reg['mother_name'] ?? '') . (($reg['mother_status'] ?? '') ? ' <span class="text-muted small">(' . e($reg['mother_status']) . ')</span>' : '')],
+          ['label' => 'Mother Contact',   'value' => e($reg['mother_contact'] ?? '')],
+          ['label' => 'Guardian',         'value' => e($reg['guardian_name']) . ' <span class="text-muted small">(' . e($reg['guardian_relation'] ?: '—') . ')</span>'],
+          ['label' => 'Guardian Contact', 'value' => e($reg['guardian_contact'])],
+      ]);
+      ?>
     </div>
+    <?= ui_card_close() ?>
 
     <!-- Academic Info -->
-    <div class="content-card mb-3">
-      <div class="content-card-header">
-        <h5><i class="bi bi-mortarboard me-2"></i>Academic Information</h5>
-      </div>
-      <div class="content-card-body">
-        <div class="detail-row">
-          <div class="detail-item full">
-            <div class="detail-label">Program</div>
-            <div class="detail-value"><?= e($reg['program_other'] ?: ($reg['prog_name'] ?? '—')) ?>
-              <?php if ($reg['prog_code']): ?><span class="badge bg-light text-dark ms-1"><?= e($reg['prog_code']) ?></span><?php endif; ?>
-            </div>
-          </div>
-          <div class="detail-item"><div class="detail-label">Year Level</div><div class="detail-value"><?= e($reg['year_level']) ?></div></div>
-          <div class="detail-item"><div class="detail-label">Enrollment Type</div><div class="detail-value"><?= e($reg['enrollment_type']) ?></div></div>
-          <div class="detail-item"><div class="detail-label">School Year</div><div class="detail-value"><?= e($reg['school_year']) ?></div></div>
-          <div class="detail-item"><div class="detail-label">Semester</div><div class="detail-value"><?= e($reg['semester']) ?></div></div>
-          <?php if ($reg['previous_school']): ?>
-          <div class="detail-item full"><div class="detail-label">Previous School</div><div class="detail-value"><?= e($reg['previous_school']) ?> <?= $reg['previous_program'] ? '(' . e($reg['previous_program']) . ')' : '' ?></div></div>
-          <?php endif; ?>
-          <?php if ($reg['last_year_attended']): ?>
-          <div class="detail-item"><div class="detail-label">Last Year Attended</div><div class="detail-value"><?= e($reg['last_year_attended']) ?></div></div>
-          <?php endif; ?>
-        </div>
-      </div>
+    <?= ui_card_open('Academic Information', 'mortarboard', '', 'mb-3') ?>
+    <div class="content-card-body">
+      <?php
+      echo ui_details([
+          ['label' => 'Program', 'full' => true,
+           'value' => e($reg['program_other'] ?: ($reg['prog_name'] ?? ''))
+                    . ($reg['prog_code'] ? ' <span class="badge bg-light text-dark ms-1">' . e($reg['prog_code']) . '</span>' : '')],
+          ['label' => 'Year Level',      'value' => e($reg['year_level'])],
+          ['label' => 'Enrollment Type', 'value' => e($reg['enrollment_type'])],
+          ['label' => 'School Year',     'value' => e($reg['school_year'])],
+          ['label' => 'Semester',        'value' => e($reg['semester'])],
+          ['label' => 'Elementary School',  'value' => e($reg['elementary_school'] ?? '') . (($reg['elementary_year_graduated'] ?? '') ? ' <span class="text-muted small">(' . e($reg['elementary_year_graduated']) . ')</span>' : '')],
+          ['label' => 'Junior High School', 'value' => e($reg['jhs_school'] ?? '') . (($reg['jhs_year_completed'] ?? '') ? ' <span class="text-muted small">(' . e($reg['jhs_year_completed']) . ')</span>' : '')],
+          ['label' => 'Senior High School', 'value' => e($reg['shs_school'] ?? '') . (($reg['shs_year_graduated'] ?? '') ? ' <span class="text-muted small">(' . e($reg['shs_year_graduated']) . ')</span>' : '')],
+          ['label' => 'College / Previous School', 'value' => e($reg['college_school'] ?? $reg['previous_school'] ?? '')],
+          ['label' => 'Previous Program',  'value' => e($reg['previous_program'])],
+          ['label' => 'Last Year Attended','value' => e($reg['last_year_attended'])],
+      ]);
+      ?>
     </div>
+    <?= ui_card_close() ?>
 
   </div><!-- /col-lg-8 -->
 
@@ -250,10 +243,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
   <div class="col-lg-4">
 
     <!-- Update Status -->
-    <div class="content-card mb-3">
-      <div class="content-card-header">
-        <h5><i class="bi bi-arrow-repeat me-2"></i>Update Status</h5>
-      </div>
+    <?= ui_card_open('Update Status', 'arrow-repeat', '', 'mb-3') ?>
       <div class="content-card-body">
         <form method="POST" action="">
           <?= csrfField() ?>
@@ -278,11 +268,10 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
           </button>
         </form>
       </div>
-    </div>
+    <?= ui_card_close() ?>
 
     <!-- QR Code -->
-    <div class="content-card mb-3">
-      <div class="content-card-header"><h5><i class="bi bi-qr-code me-2"></i>QR Code</h5></div>
+    <?= ui_card_open('QR Code', 'qr-code', '', 'mb-3') ?>
       <div class="content-card-body text-center">
         <div class="qr-container d-inline-block mb-2" id="qr-section">
           <div id="qrcode-staff"></div>
@@ -297,18 +286,17 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
           </button>
         </div>
       </div>
-    </div>
+    <?= ui_card_close() ?>
 
     <!-- Timeline -->
-    <div class="content-card">
-      <div class="content-card-header"><h5><i class="bi bi-clock-history me-2"></i>Status History</h5></div>
+    <?= ui_card_open('Status History', 'clock-history') ?>
       <div class="content-card-body">
         <?= statusTimeline($history) ?>
       </div>
-    </div>
+    <?= ui_card_close() ?>
 
     <!-- Archive / Restore -->
-    <div class="content-card mt-3">
+    <?= ui_card_open('', '', '', 'mt-3') ?>
       <div class="content-card-body">
         <form method="POST" onsubmit="return confirm('<?= $reg['is_archived'] ? 'Restore this record from the archive?' : 'Archive this record? It will be hidden from default lists.' ?>')">
           <?= csrfField() ?>
@@ -325,7 +313,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
           <?php endif; ?>
         </form>
       </div>
-    </div>
+    <?= ui_card_close() ?>
 
   </div><!-- /col-lg-4 -->
 </div><!-- /row -->

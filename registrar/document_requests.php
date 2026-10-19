@@ -34,6 +34,14 @@ $result  = db()->paginate($sql, $params, $page, $perPage);
 $qBase   = array_filter([$filterStatus?'status='.urlencode($filterStatus):'', $filterSearch?'search='.urlencode($filterSearch):'', $showArchived?'archived=1':'']);
 $baseUrl = BASE_URL.'/registrar/document_requests.php?'.implode('&',$qBase);
 
+$statusCounts = [];
+foreach (array_keys(DOC_STATUSES) as $s) {
+    $statusCounts[$s] = (int) db()->fetchValue(
+        "SELECT COUNT(*) FROM document_requests WHERE status = ? AND is_archived = 0", [$s]
+    );
+}
+$archivedCount = (int) db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE is_archived = 1");
+
 include __DIR__ . '/../includes/partials/head.php';
 include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 ?>
@@ -41,93 +49,66 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>
 <div class="page-content">
 <?= renderFlash() ?>
-<div class="page-header">
-  <div class="page-header-info">
-    <h4>Monitor Document Requests</h4>
-    <p>Overview of all student document request submissions.</p>
-  </div>
-</div>
 
-<!-- Status tiles -->
-<div class="row g-2 mb-4">
-  <?php foreach (DOC_STATUSES as $s => $info): ?>
-  <?php $cnt = db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status=? AND is_archived=0",[$s]); ?>
-  <div class="col-6 col-sm-4 col-md-2">
-    <a href="<?= BASE_URL ?>/registrar/document_requests.php?status=<?= urlencode($s) ?>"
-       class="stat-card text-decoration-none py-2 px-3 <?= $filterStatus===$s?'border border-success':'' ?>">
-      <div class="stat-info">
-        <div class="stat-label" style="font-size:.65rem;"><?= e($s) ?></div>
-        <div class="stat-value" style="font-size:1.4rem;"><?= (int)$cnt ?></div>
-      </div>
-    </a>
-  </div>
-  <?php endforeach; ?>
-</div>
+<?= ui_page_header('Monitor Document Requests', 'Overview of all student document request submissions.', 'file-earmark-text') ?>
 
-<div class="filter-bar">
-  <form method="GET" class="row g-2 align-items-end">
-    <?php if ($showArchived): ?><input type="hidden" name="archived" value="1"><?php endif; ?>
-    <div class="col-sm-5"><input type="text" name="search" class="form-control form-control-sm" value="<?= e($filterSearch) ?>" placeholder="Name, code, student ID..."></div>
-    <div class="col-sm-3">
-      <select name="status" class="form-select form-select-sm">
-        <option value="">All Statuses</option>
-        <?php foreach (array_keys(DOC_STATUSES) as $s): ?>
-        <option value="<?= e($s) ?>" <?= $filterStatus===$s?'selected':'' ?>><?= e($s) ?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <div class="col-auto">
-      <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search me-1"></i>Filter</button>
-      <a href="<?= BASE_URL ?>/registrar/document_requests.php" class="btn btn-outline-secondary btn-sm ms-1">Reset</a>
-    </div>
-    <div class="col-auto ms-auto">
-      <a href="<?= BASE_URL ?>/registrar/document_requests.php?archived=1"
-         class="btn btn-sm <?= $showArchived ? 'btn-dark' : 'btn-outline-secondary' ?>">
-        <i class="bi bi-archive me-1"></i><?= $showArchived ? 'Viewing Archived' : 'Archived' ?>
-      </a>
-    </div>
-  </form>
-</div>
+<?php
+$tabs = [[
+    'label' => 'All', 'url' => BASE_URL . '/registrar/document_requests.php',
+    'count' => array_sum($statusCounts), 'active' => !$filterStatus && !$showArchived, 'variant' => 'primary',
+]];
+foreach (DOC_STATUSES as $s => $info) {
+    $tabs[] = [
+        'label'   => $s,
+        'url'     => BASE_URL . '/registrar/document_requests.php?status=' . urlencode($s) . ($filterSearch ? '&search=' . urlencode($filterSearch) : ''),
+        'count'   => $statusCounts[$s] ?: null,
+        'active'  => $filterStatus === $s && !$showArchived,
+        'variant' => $info['color'],
+    ];
+}
+$tabs[] = ['spacer' => true];
+$tabs[] = [
+    'label' => 'Archived', 'url' => BASE_URL . '/registrar/document_requests.php?archived=1',
+    'count' => $archivedCount ?: null, 'active' => $showArchived,
+    'variant' => 'dark', 'icon' => 'archive',
+];
+echo ui_status_tabs($tabs);
 
-<div class="content-card">
-  <div class="content-card-header">
-    <h5>Document Requests <span class="badge bg-light text-dark ms-1"><?= number_format($result['total']) ?></span></h5>
-  </div>
-  <div class="table-responsive">
-    <table class="table">
-      <thead><tr>
-        <th>Tracking Code</th><th>Name</th><th>Student ID</th><th>Document</th>
-        <th>Status</th><th>Assigned To</th><th>Submitted</th><th></th>
-      </tr></thead>
-      <tbody>
-      <?php if (empty($result['data'])): ?>
-        <tr><td colspan="8"><div class="empty-state"><i class="bi bi-inbox"></i><p>No records.</p></div></td></tr>
-      <?php else: foreach ($result['data'] as $d): ?>
-      <tr>
-        <td><span class="font-monospace small"><?= e($d['tracking_code']) ?></span></td>
-        <td>
-          <div class="fw-semibold small"><?= e(fullName($d,true)) ?></div>
-          <div class="text-muted" style="font-size:.7rem;"><?= e($d['email']) ?></div>
-        </td>
-        <td><span class="small"><?= e($d['student_id'] ?: '—') ?></span></td>
-        <td><span class="badge bg-light text-dark small"><?= e($d['doc_code'] ?? '—') ?></span></td>
-        <td><?= statusBadge($d['status'],'document_request') ?></td>
-        <td><span class="text-muted small"><?= e($d['assigned_name'] ?? 'Unassigned') ?></span></td>
-        <td><span class="text-muted small"><?= formatDate($d['submitted_at']) ?></span></td>
-        <td>
-          <a href="<?= BASE_URL ?>/staff/view_document.php?id=<?= (int)$d['id'] ?>"
-             class="btn btn-sm btn-outline-success py-0 px-2">View</a>
-        </td>
-      </tr>
-      <?php endforeach; endif; ?>
-      </tbody>
-    </table>
-  </div>
-  <?php if ($result['pages'] > 1): ?>
-  <div class="px-3 py-2 border-top d-flex justify-content-end">
-    <?= paginationLinks($page, $result['pages'], $baseUrl) ?>
-  </div>
-  <?php endif; ?>
-</div>
+echo ui_filter_bar(
+    BASE_URL . '/registrar/document_requests.php',
+    [
+        ['type' => 'search', 'name' => 'search', 'label' => 'Search', 'value' => $filterSearch,
+         'placeholder' => 'Name, code, student ID…', 'col' => 'col-sm-5'],
+        ['type' => 'select', 'name' => 'status', 'label' => 'Status', 'value' => $filterStatus,
+         'options' => ['' => 'All Statuses'] + array_combine(array_keys(DOC_STATUSES), array_keys(DOC_STATUSES)), 'col' => 'col-sm-3'],
+    ],
+    ['archived' => $showArchived ? '1' : null],
+    BASE_URL . '/registrar/document_requests.php'
+);
+
+$rows = [];
+foreach ($result['data'] as $d) {
+    $rows[] = [
+        ui_code($d['tracking_code']),
+        '<div class="row-name">' . e(fullName($d, true)) . '</div><div class="row-sub">' . e($d['email']) . '</div>',
+        '<span class="small">' . e($d['student_id'] ?: '—') . '</span>',
+        '<span class="badge bg-light text-dark small">' . e($d['doc_code'] ?? '—') . '</span>',
+        statusBadge($d['status'], 'document_request'),
+        '<span class="text-muted small">' . e($d['assigned_name'] ?? 'Unassigned') . '</span>',
+        '<span class="text-muted small">' . formatDate($d['submitted_at']) . '</span>',
+        '<a href="' . BASE_URL . '/staff/view_document.php?id=' . (int)$d['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2">View</a>',
+    ];
+}
+
+$cardTitle = $filterStatus ? statusBadge($filterStatus, 'document_request') : 'Document Requests';
+echo ui_card_open(
+    $cardTitle . ' <span class="badge bg-light text-dark ms-1 fw-normal">' . number_format($result['total']) . '</span>',
+    $filterStatus ? '' : 'file-earmark-text'
+);
+echo ui_table(['Tracking Code', 'Name', 'Student ID', 'Document', 'Status', 'Assigned To', 'Submitted', ['label' => '', 'style' => 'width:70px']],
+              $rows, ['empty_msg' => 'No records.', 'empty_icon' => 'inbox']);
+echo ui_list_footer($page, $result['pages'], $result['total'], $perPage, $baseUrl);
+echo ui_card_close();
+?>
 </div>
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>

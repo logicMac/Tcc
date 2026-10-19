@@ -93,40 +93,20 @@ if (isPost()) {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
 <style>
-  body {
-    background: linear-gradient(135deg, #0f2a56 0%, #1a4a8a 60%, #2563eb 100%);
-    min-height: 100vh;
-  }
   .change-card {
     border: none;
     border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    box-shadow: 0 20px 60px rgba(4,28,19,.3);
     overflow: hidden;
   }
-  .change-header {
-    background: linear-gradient(135deg, #0f2a56, #1a4a8a);
-    padding: 28px 32px;
-    text-align: center;
-    color: #fff;
-  }
-  .change-header .icon-wrap {
-    width: 72px; height: 72px;
-    background: rgba(255,255,255,.15);
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 12px;
-  }
   .change-body { padding: 32px; }
-  .strength-bar { height: 6px; border-radius: 3px; transition: all .3s; }
+  .strength-bar { height: 6px; border-radius: 3px; transition: width .3s, background .3s; }
   .requirement { font-size: .78rem; }
   .requirement .bi { font-size: .75rem; }
-  .req-ok   { color: #15803d; }
-  .req-fail { color: #94a3b8; }
 </style>
 </head>
-<body class="d-flex align-items-center py-5">
+<body>
+<div class="auth-shell">
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
@@ -134,12 +114,12 @@ if (isPost()) {
       <div class="change-card card">
 
         <!-- Header -->
-        <div class="change-header">
-          <div class="icon-wrap">
+        <div class="auth-brand">
+          <div class="auth-brand-icon">
             <?php if ($force): ?>
               <i class="bi bi-shield-lock-fill fs-2 text-warning"></i>
             <?php else: ?>
-              <i class="bi bi-key-fill fs-2" style="color: #c9a84c;"></i>
+              <i class="bi bi-key-fill fs-2 text-gold"></i>
             <?php endif; ?>
           </div>
           <h5 class="fw-bold mb-1">
@@ -180,10 +160,8 @@ if (isPost()) {
           <?php endif; ?>
 
           <!-- User info strip -->
-          <div class="d-flex align-items-center gap-3 p-3 rounded-3 mb-4" style="background:#f0f4fb;">
-            <div class="avatar-circle bg-primary text-white fw-bold" style="width:40px;height:40px;font-size:.9rem;">
-              <?= strtoupper(substr($user['full_name'], 0, 1)) ?>
-            </div>
+          <div class="d-flex align-items-center gap-3 p-3 rounded-3 mb-4" style="background:var(--tcc-green-50);">
+            <?= ui_avatar($user['full_name'], 40) ?>
             <div>
               <div class="fw-semibold small"><?= e($user['full_name']) ?></div>
               <div class="text-muted" style="font-size:.72rem;"><?= e($user['email']) ?> &middot; <span class="text-capitalize"><?= e(currentRole()) ?></span></div>
@@ -273,12 +251,13 @@ if (isPost()) {
         </div><!-- /change-body -->
       </div><!-- /card -->
 
-      <p class="text-center text-white-50 small mt-3">
+      <p class="text-center text-muted small mt-3">
         &copy; <?= date('Y') ?> Tampakan Community College
       </p>
 
     </div>
   </div>
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -328,7 +307,7 @@ function checkStrength(val) {
     { pct: 0,   color: '',          text: '' },
     { pct: 20,  color: '#dc2626',   text: 'Very Weak' },
     { pct: 40,  color: '#f59e0b',   text: 'Weak' },
-    { pct: 60,  color: '#3b82f6',   text: 'Fair' },
+    { pct: 60,  color: '#a07d1a',   text: 'Fair' },
     { pct: 80,  color: '#10b981',   text: 'Strong' },
     { pct: 100, color: '#15803d',   text: 'Very Strong' },
   ];

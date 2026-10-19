@@ -85,8 +85,8 @@ if (isPost()) {
     $req = array_merge($req, $data);
 }
 
-function f(string $key, array $req): string {
-    return e($_POST[$key] ?? $req[$key] ?? '');
+function fv(string $key, array $req) {
+    return $_POST[$key] ?? $req[$key] ?? '';
 }
 
 include __DIR__ . '/../includes/partials/head.php';
@@ -97,15 +97,12 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 <div class="page-content">
 <?= renderFlash() ?>
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4><i class="bi bi-pencil-square me-2 text-success"></i>Edit Request – <?= e($req['tracking_code']) ?></h4>
-    <p>Update the request details. Changes are logged.</p>
-  </div>
-  <a href="<?= BASE_URL ?>/staff/view_document.php?id=<?= (int)$id ?>" class="btn-back">
-    <i class="bi bi-arrow-left"></i> Cancel &amp; Back
-  </a>
-</div>
+<?= ui_page_header(
+    'Edit Request — ' . e($req['tracking_code']),
+    'Update the request details. Changes are logged.',
+    'pencil-square',
+    ui_back(BASE_URL . '/staff/view_document.php?id=' . (int)$id, 'Cancel & Back')
+) ?>
 
 <?php if (!empty($errors)): ?>
 <div class="alert alert-danger">
@@ -117,81 +114,60 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
   <?= csrfField() ?>
 
   <!-- Student info -->
-  <div class="content-card mb-3">
-    <div class="content-card-header"><h5><i class="bi bi-person me-2"></i>Student Information</h5></div>
+  <?= ui_card_open('Student Information', 'person', '', 'mb-3') ?>
     <div class="content-card-body">
       <div class="row g-3">
-        <div class="col-md-3"><label class="form-label">First Name <span class="required-mark">*</span></label>
-          <input type="text" name="first_name" class="form-control" value="<?= f('first_name',$req) ?>" required></div>
-        <div class="col-md-3"><label class="form-label">Middle Name</label>
-          <input type="text" name="middle_name" class="form-control" value="<?= f('middle_name',$req) ?>"></div>
-        <div class="col-md-3"><label class="form-label">Last Name <span class="required-mark">*</span></label>
-          <input type="text" name="last_name" class="form-control" value="<?= f('last_name',$req) ?>" required></div>
-        <div class="col-md-1"><label class="form-label">Suffix</label>
-          <input type="text" name="suffix" class="form-control" value="<?= f('suffix',$req) ?>"></div>
-        <div class="col-md-2"><label class="form-label">Student ID</label>
-          <input type="text" name="student_id" class="form-control" value="<?= f('student_id',$req) ?>"></div>
-        <div class="col-md-6"><label class="form-label">Email <span class="required-mark">*</span></label>
-          <input type="email" name="email" class="form-control" value="<?= f('email',$req) ?>" required></div>
-        <div class="col-md-6"><label class="form-label">Contact Number <span class="required-mark">*</span></label>
-          <input type="text" name="contact_number" class="form-control" value="<?= f('contact_number',$req) ?>" required></div>
-        <div class="col-12"><label class="form-label">Address</label>
-          <textarea name="address" class="form-control" rows="2"><?= f('address',$req) ?></textarea></div>
-        <div class="col-md-4"><label class="form-label">Program</label>
-          <input type="text" name="program" class="form-control" value="<?= f('program',$req) ?>"></div>
-        <div class="col-md-4"><label class="form-label">Year Graduated</label>
-          <input type="text" name="year_graduated" class="form-control" value="<?= f('year_graduated',$req) ?>"></div>
-        <div class="col-md-4"><label class="form-label">Last Year Attended</label>
-          <input type="text" name="last_year_attended" class="form-control" value="<?= f('last_year_attended',$req) ?>"></div>
+        <?= ui_field(['name'=>'first_name','label'=>'First Name','value'=>fv('first_name',$req),'required'=>true,'col'=>'col-md-3']) ?>
+        <?= ui_field(['name'=>'middle_name','label'=>'Middle Name','value'=>fv('middle_name',$req),'col'=>'col-md-3']) ?>
+        <?= ui_field(['name'=>'last_name','label'=>'Last Name','value'=>fv('last_name',$req),'required'=>true,'col'=>'col-md-3']) ?>
+        <?= ui_field(['name'=>'suffix','label'=>'Suffix','value'=>fv('suffix',$req),'col'=>'col-md-1']) ?>
+        <?= ui_field(['name'=>'student_id','label'=>'Student ID','value'=>fv('student_id',$req),'col'=>'col-md-2']) ?>
+        <?= ui_field(['type'=>'email','name'=>'email','label'=>'Email','value'=>fv('email',$req),'required'=>true,'col'=>'col-md-6']) ?>
+        <?= ui_field(['name'=>'contact_number','label'=>'Contact Number','value'=>fv('contact_number',$req),'required'=>true,'col'=>'col-md-6']) ?>
+        <?= ui_field(['type'=>'textarea','name'=>'address','label'=>'Address','value'=>fv('address',$req),'rows'=>2,'col'=>'col-12']) ?>
+        <?= ui_field(['name'=>'program','label'=>'Program','value'=>fv('program',$req),'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'year_graduated','label'=>'Year Graduated','value'=>fv('year_graduated',$req),'col'=>'col-md-4']) ?>
+        <?= ui_field(['name'=>'last_year_attended','label'=>'Last Year Attended','value'=>fv('last_year_attended',$req),'col'=>'col-md-4']) ?>
       </div>
     </div>
-  </div>
+  <?= ui_card_close() ?>
 
   <!-- Document details -->
-  <div class="content-card mb-3">
-    <div class="content-card-header"><h5><i class="bi bi-file-earmark-text me-2"></i>Document Details</h5></div>
+  <?= ui_card_open('Document Details', 'file-earmark-text', '', 'mb-3') ?>
     <div class="content-card-body">
       <div class="row g-3">
-        <div class="col-md-6"><label class="form-label">Document Type <span class="required-mark">*</span></label>
-          <select name="document_type_id" class="form-select">
+        <div class="col-md-6">
+          <label class="form-label" for="f-document_type_id">Document Type <span class="required-mark">*</span></label>
+          <select name="document_type_id" id="f-document_type_id" class="form-select">
             <option value="">— Select document —</option>
             <?php foreach ($docTypes as $dt): ?>
-            <option value="<?= (int)$dt['id'] ?>" <?= (int)f('document_type_id',$req)===(int)$dt['id']?'selected':'' ?>>
+            <option value="<?= (int)$dt['id'] ?>" <?= (int)fv('document_type_id',$req)===(int)$dt['id']?'selected':'' ?>>
               <?= e($dt['name']) ?> (<?= formatCurrency((float)$dt['fee']) ?>)
             </option>
             <?php endforeach; ?>
-          </select></div>
-        <div class="col-md-6"><label class="form-label">Other Document <small class="text-muted">(if not listed)</small></label>
-          <input type="text" name="document_type_other" class="form-control" value="<?= f('document_type_other',$req) ?>"></div>
-        <div class="col-md-2"><label class="form-label">Copies</label>
-          <input type="number" name="copies" class="form-control" min="1" max="10" value="<?= f('copies',$req) ?>"></div>
-        <div class="col-md-4"><label class="form-label">Purpose <span class="required-mark">*</span></label>
-          <input type="text" name="purpose" class="form-control" value="<?= f('purpose',$req) ?>" required></div>
-        <div class="col-md-3"><label class="form-label">Date Needed</label>
-          <input type="date" name="date_needed" class="form-control" value="<?= f('date_needed',$req) ?>"></div>
-        <div class="col-md-3"><label class="form-label">Delivery Method</label>
-          <select name="delivery_method" class="form-select">
-            <?php foreach (['Pick-up','Email'] as $dm): ?>
-            <option value="<?= e($dm) ?>" <?= f('delivery_method',$req)===$dm?'selected':'' ?>><?= e($dm) ?></option>
-            <?php endforeach; ?>
-          </select></div>
-        <div class="col-12"><label class="form-label">Additional Info</label>
-          <textarea name="additional_info" class="form-control" rows="2"><?= f('additional_info',$req) ?></textarea></div>
+          </select>
+        </div>
+        <?= ui_field(['name'=>'document_type_other','label'=>'Other Document (if not listed)','value'=>fv('document_type_other',$req),'col'=>'col-md-6']) ?>
+        <?= ui_field(['type'=>'number','name'=>'copies','label'=>'Copies','value'=>fv('copies',$req),'col'=>'col-md-2','attrs'=>'min="1" max="10"']) ?>
+        <?= ui_field(['name'=>'purpose','label'=>'Purpose','value'=>fv('purpose',$req),'required'=>true,'col'=>'col-md-4']) ?>
+        <?= ui_field(['type'=>'date','name'=>'date_needed','label'=>'Date Needed','value'=>fv('date_needed',$req),'col'=>'col-md-3']) ?>
+        <?= ui_field(['type'=>'select','name'=>'delivery_method','label'=>'Delivery Method','value'=>fv('delivery_method',$req),'col'=>'col-md-3','options'=>array_combine(['Pick-up','Email'],['Pick-up','Email'])]) ?>
+        <?= ui_field(['type'=>'textarea','name'=>'additional_info','label'=>'Additional Info','value'=>fv('additional_info',$req),'rows'=>2,'col'=>'col-12']) ?>
       </div>
     </div>
-  </div>
+  <?= ui_card_close() ?>
 
   <!-- Edit note + submit -->
-  <div class="content-card mb-3">
+  <?= ui_card_open('', '', '', 'mb-3') ?>
     <div class="content-card-body">
       <div class="row g-3 align-items-end">
         <div class="col-md-8">
-          <label class="form-label">Edit Note <small class="text-muted">(optional — shown in record history)</small></label>
-          <input type="text" name="edit_note" class="form-control"
+          <label class="form-label" for="f-edit_note">Edit Note <small class="text-muted">(optional — shown in record history)</small></label>
+          <input type="text" name="edit_note" id="f-edit_note" class="form-control"
                  placeholder="e.g. Updated per student request via phone call">
         </div>
         <div class="col-md-4 d-flex gap-2">
-          <button type="submit" class="btn btn-success flex-fill">
+          <button type="submit" class="btn btn-primary flex-fill">
             <i class="bi bi-check-lg me-1"></i>Save Changes
           </button>
           <a href="<?= BASE_URL ?>/staff/view_document.php?id=<?= (int)$id ?>" class="btn btn-outline-secondary">
@@ -200,7 +176,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
         </div>
       </div>
     </div>
-  </div>
+  <?= ui_card_close() ?>
 </form>
 
 </div>

@@ -77,105 +77,52 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>
 <div class="page-content">
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4>Activity Logs</h4>
-    <p>Monitor all system activity performed by staff and registrar accounts.</p>
-  </div>
-</div>
+<?= ui_page_header('Activity Logs', 'Monitor all system activity performed by staff and registrar accounts.', 'journal-text') ?>
 
-<!-- Filter -->
-<div class="filter-bar">
-  <form method="GET" class="row g-2 align-items-end">
-    <div class="col-sm-4 col-md-3">
-      <label class="form-label small text-muted mb-1">Search</label>
-      <input type="text" name="search" class="form-control form-control-sm"
-             value="<?= e($filterSearch) ?>" placeholder="Action, description...">
-    </div>
-    <div class="col-sm-3 col-md-2">
-      <label class="form-label small text-muted mb-1">User</label>
-      <select name="user_id" class="form-select form-select-sm">
-        <option value="">All Users</option>
-        <?php foreach ($users as $u): ?>
-        <option value="<?= (int)$u['id'] ?>" <?= $filterUser === (int)$u['id'] ? 'selected' : '' ?>>
-          <?= e($u['full_name']) ?>
-        </option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <div class="col-sm-3 col-md-2">
-      <label class="form-label small text-muted mb-1">Module</label>
-      <select name="module" class="form-select form-select-sm">
-        <option value="">All Modules</option>
-        <?php foreach ($modules as $m): ?>
-        <option value="<?= e($m['module']) ?>" <?= $filterModule === $m['module'] ? 'selected' : '' ?>>
-          <?= e($m['module']) ?>
-        </option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <div class="col-sm-3 col-md-2">
-      <label class="form-label small text-muted mb-1">Date</label>
-      <input type="date" name="date" class="form-control form-control-sm"
-             value="<?= e($filterDate) ?>">
-    </div>
-    <div class="col-auto">
-      <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search me-1"></i>Filter</button>
-      <a href="<?= BASE_URL ?>/registrar/activity_logs.php" class="btn btn-outline-secondary btn-sm ms-1">Reset</a>
-    </div>
-  </form>
-</div>
+<?php
+echo ui_filter_bar(
+    BASE_URL . '/registrar/activity_logs.php',
+    [
+        ['type' => 'search', 'name' => 'search', 'label' => 'Search', 'value' => $filterSearch,
+         'placeholder' => 'Action, description…', 'col' => 'col-md-3'],
+        ['type' => 'select', 'name' => 'user_id', 'label' => 'User', 'value' => $filterUser,
+         'options' => ['' => 'All Users'] + array_column($users, 'full_name', 'id'), 'col' => 'col-md-2'],
+        ['type' => 'select', 'name' => 'module', 'label' => 'Module', 'value' => $filterModule,
+         'options' => ['' => 'All Modules'] + array_column($modules, 'module', 'module'), 'col' => 'col-md-2'],
+        ['type' => 'date', 'name' => 'date', 'label' => 'Date', 'value' => $filterDate, 'col' => 'col-md-2', 'icon' => ''],
+    ],
+    [],
+    BASE_URL . '/registrar/activity_logs.php'
+);
 
-<div class="content-card">
-  <div class="content-card-header">
-    <h5>Activity Logs <span class="badge bg-light text-dark ms-1"><?= number_format($result['total']) ?></span></h5>
-    <span class="text-muted small">
-      <?= number_format(($page-1)*$perPage+1) ?>–<?= number_format(min($page*$perPage,$result['total'])) ?>
-      of <?= number_format($result['total']) ?>
-    </span>
-  </div>
-  <div class="table-responsive">
-    <table class="table">
-      <thead><tr>
-        <th>Date & Time</th><th>User</th><th>Role</th>
-        <th>Action</th><th>Module</th><th>Description</th><th>Reference</th><th>IP</th>
-      </tr></thead>
-      <tbody>
-      <?php if (empty($result['data'])): ?>
-        <tr><td colspan="8"><div class="empty-state"><i class="bi bi-journal-x"></i><p>No logs found.</p></div></td></tr>
-      <?php else: foreach ($result['data'] as $log): ?>
-      <tr>
-        <td><span class="text-muted small text-nowrap"><?= formatDateTime($log['created_at']) ?></span></td>
-        <td>
-          <div class="fw-semibold small"><?= e($log['user_name'] ?? 'System') ?></div>
-        </td>
-        <td>
-          <span class="badge <?= $log['user_role'] === 'registrar' ? 'bg-primary' : 'bg-info text-dark' ?>">
-            <?= e(ucfirst($log['user_role'] ?? 'system')) ?>
-          </span>
-        </td>
-        <td>
-          <?php $ac = $actionColors[$log['action']] ?? 'secondary'; ?>
-          <span class="badge bg-<?= $ac ?>"><?= e($log['action']) ?></span>
-        </td>
-        <td><span class="badge bg-light text-dark small"><?= e($log['module']) ?></span></td>
-        <td><span class="text-muted small"><?= e(substr($log['description'] ?? '',0,80)) ?></span></td>
-        <td>
-          <?php if ($log['reference']): ?>
-          <span class="font-monospace" style="font-size:.7rem;"><?= e($log['reference']) ?></span>
-          <?php endif; ?>
-        </td>
-        <td><span class="text-muted" style="font-size:.7rem;"><?= e($log['ip_address'] ?? '') ?></span></td>
-      </tr>
-      <?php endforeach; endif; ?>
-      </tbody>
-    </table>
-  </div>
-  <?php if ($result['pages'] > 1): ?>
-  <div class="px-3 py-2 border-top d-flex justify-content-end">
-    <?= paginationLinks($page, $result['pages'], $baseUrl) ?>
-  </div>
-  <?php endif; ?>
-</div>
+$rows = [];
+foreach ($result['data'] as $log) {
+    $ac = $actionColors[$log['action']] ?? 'secondary';
+    $rows[] = [
+        '<span class="text-muted small text-nowrap">' . formatDateTime($log['created_at']) . '</span>',
+        '<span class="fw-semibold small">' . e($log['user_name'] ?? 'System') . '</span>',
+        '<span class="badge ' . ($log['user_role'] === 'registrar' ? 'bg-primary' : 'bg-info text-dark') . '">'
+            . e(ucfirst($log['user_role'] ?? 'system')) . '</span>',
+        '<span class="badge bg-' . $ac . '">' . e($log['action']) . '</span>',
+        '<span class="badge bg-light text-dark small">' . e($log['module']) . '</span>',
+        '<span class="text-muted small">' . e(substr($log['description'] ?? '', 0, 80)) . '</span>',
+        $log['reference'] ? '<span class="font-monospace" style="font-size:.7rem;">' . e($log['reference']) . '</span>' : '',
+        '<span class="text-muted" style="font-size:.7rem;">' . e($log['ip_address'] ?? '') . '</span>',
+    ];
+}
+
+echo ui_card_open(
+    'Activity Logs <span class="badge bg-light text-dark ms-1 fw-normal">' . number_format($result['total']) . '</span>',
+    'journal-text',
+    '<span class="text-muted small">'
+        . number_format($result['total'] > 0 ? ($page - 1) * $perPage + 1 : 0) . '–'
+        . number_format(min($page * $perPage, $result['total']))
+        . ' of ' . number_format($result['total']) . '</span>'
+);
+echo ui_table(['Date & Time', 'User', 'Role', 'Action', 'Module', 'Description', 'Reference', 'IP'],
+              $rows, ['empty_icon' => 'journal-x', 'empty_msg' => 'No logs found.']);
+echo ui_list_footer($page, $result['pages'], $result['total'], $perPage, $baseUrl);
+echo ui_card_close();
+?>
 </div>
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>

@@ -44,18 +44,12 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>
 <div class="page-content">
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4>QR Code Verification</h4>
-    <p>Scan a student's QR code or enter their tracking code to verify their submission.</p>
-  </div>
-</div>
+<?= ui_page_header('QR Code Verification', "Scan a student's QR code or enter their tracking code to verify their submission.", 'qr-code-scan') ?>
 
 <div class="row g-3">
   <!-- Scan / Input -->
   <div class="col-lg-5">
-    <div class="content-card mb-3">
-      <div class="content-card-header"><h5><i class="bi bi-qr-code-scan me-2"></i>Scan or Enter Code</h5></div>
+    <?= ui_card_open('Scan or Enter Code', 'qr-code-scan', '', 'mb-3') ?>
       <div class="content-card-body">
         <form method="GET" class="mb-3">
           <label class="form-label small fw-semibold">Tracking Code</label>
@@ -83,11 +77,10 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
         <div id="qr-reader" class="rounded overflow-hidden" style="display:none;"></div>
         <p id="scan-status" class="text-muted small text-center mt-2"></p>
       </div>
-    </div>
+    <?= ui_card_close() ?>
 
     <!-- Instructions -->
-    <div class="content-card">
-      <div class="content-card-header"><h5><i class="bi bi-info-circle me-2"></i>Instructions</h5></div>
+    <?= ui_card_open('Instructions', 'info-circle') ?>
       <div class="content-card-body">
         <ol class="small text-muted mb-0">
           <li class="mb-1">Ask the student to present their QR code from their submission receipt or email.</li>
@@ -97,7 +90,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
           <li>Use this to verify identity before releasing documents.</li>
         </ol>
       </div>
-    </div>
+    <?= ui_card_close() ?>
   </div>
 
   <!-- Result -->
@@ -111,42 +104,24 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 
     <!-- Issued document verification result -->
     <div class="content-card mb-3 overflow-hidden">
-      <div class="p-3 text-white" style="background:#065f46;">
+      <div class="verify-banner good">
         <div class="d-flex align-items-center gap-3">
           <i class="bi bi-patch-check-fill fs-2"></i>
           <div>
-            <div class="fw-bold fs-5">AUTHENTIC ISSUED DOCUMENT ✓</div>
-            <div class="opacity-75 small"><?= e($code) ?></div>
+            <div class="verify-banner-title">AUTHENTIC ISSUED DOCUMENT</div>
+            <div class="verify-banner-code"><?= e($code) ?></div>
           </div>
         </div>
       </div>
       <div class="content-card-body">
-        <div class="row g-3">
-          <div class="col-sm-6">
-            <div class="detail-label">Document Type</div>
-            <div class="detail-value fw-bold"><?= e($record['document_type']) ?></div>
-          </div>
-          <div class="col-sm-6">
-            <div class="detail-label">Issued To</div>
-            <div class="detail-value"><?= e($record['issued_to']) ?></div>
-          </div>
-          <div class="col-sm-6">
-            <div class="detail-label">Student ID</div>
-            <div class="detail-value"><?= e($record['student_id'] ?: '—') ?></div>
-          </div>
-          <div class="col-sm-6">
-            <div class="detail-label">Request Reference</div>
-            <div class="detail-value font-monospace"><?= e($record['tracking_code']) ?></div>
-          </div>
-          <div class="col-sm-6">
-            <div class="detail-label">Issued By</div>
-            <div class="detail-value"><?= e($record['issued_by_name'] ?? '—') ?></div>
-          </div>
-          <div class="col-sm-6">
-            <div class="detail-label">Issued On</div>
-            <div class="detail-value"><?= formatDateTime($record['issued_at']) ?></div>
-          </div>
-        </div>
+        <?= ui_details([
+            ['label' => 'Document Type',     'value' => '<span class="fw-bold">' . e($record['document_type']) . '</span>'],
+            ['label' => 'Issued To',         'value' => e($record['issued_to'])],
+            ['label' => 'Student ID',        'value' => e($record['student_id'])],
+            ['label' => 'Request Reference', 'value' => '<span class="font-monospace">' . e($record['tracking_code']) . '</span>'],
+            ['label' => 'Issued By',         'value' => e($record['issued_by_name'] ?? '—')],
+            ['label' => 'Issued On',         'value' => formatDateTime($record['issued_at'])],
+        ]) ?>
         <div class="mt-3 pt-3 border-top d-flex gap-2">
           <a href="<?= BASE_URL ?>/staff/view_document.php?id=<?= (int)$record['document_request_id'] ?>"
              class="btn btn-primary btn-sm">
@@ -166,11 +141,11 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     $status = $record['status'];
     $isGood = in_array($status, ['Approved','Ready for Release','Released']);
     $isWarn = in_array($status, ['Needs Correction','Declined']);
-    $headerBg = $isGood ? '#065f46' : ($isWarn ? '#7f1d1d' : '#1a4a8a');
+    $banner = $isGood ? 'good' : ($isWarn ? 'bad' : 'info');
     ?>
 
     <div class="content-card mb-3 overflow-hidden">
-      <div class="p-3 text-white" style="background:<?= $headerBg ?>;">
+      <div class="verify-banner <?= $banner ?>">
         <div class="d-flex align-items-center gap-3">
           <div>
             <?php if ($isGood): ?>
@@ -182,59 +157,35 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
             <?php endif; ?>
           </div>
           <div>
-            <div class="fw-bold fs-5"><?= $isGood ? 'VERIFIED ✓' : ($isWarn ? 'NOT CLEARED' : 'FOUND – ' . strtoupper($status)) ?></div>
-            <div class="opacity-75 small"><?= e($code) ?></div>
+            <div class="verify-banner-title"><?= $isGood ? 'VERIFIED' : ($isWarn ? 'NOT CLEARED' : 'FOUND – ' . strtoupper($status)) ?></div>
+            <div class="verify-banner-code"><?= e($code) ?></div>
           </div>
           <div class="ms-auto">
-            <span class="badge fs-6 px-3 py-2" style="background:rgba(255,255,255,.25);">
-              <?= e($status) ?>
-            </span>
+            <span class="badge fs-6 px-3 py-2"><?= e($status) ?></span>
           </div>
         </div>
       </div>
       <div class="content-card-body">
-        <div class="row g-3">
-          <div class="col-sm-6">
-            <div class="detail-label">Full Name</div>
-            <div class="detail-value fw-bold"><?= e(fullName($record)) ?></div>
-          </div>
-          <?php if (!$isReg): ?>
-          <div class="col-sm-6">
-            <div class="detail-label">Student ID</div>
-            <div class="detail-value"><?= e($record['student_id'] ?: '—') ?></div>
-          </div>
-          <?php endif; ?>
-          <div class="col-sm-6">
-            <div class="detail-label">Type</div>
-            <div class="detail-value"><?= $isReg ? 'Pre-Registration' : 'Document Request' ?></div>
-          </div>
-          <div class="col-sm-6">
-            <div class="detail-label"><?= $isReg ? 'Program' : 'Document' ?></div>
-            <div class="detail-value">
-              <?= $isReg
-                  ? e($record['program_other'] ?: ($record['prog_name'] ?? '—'))
-                  : e($record['document_type_other'] ?: ($record['doc_name'] ?? '—')) ?>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="detail-label">Email</div>
-            <div class="detail-value"><?= e($record['email']) ?></div>
-          </div>
-          <div class="col-sm-6">
-            <div class="detail-label">Contact</div>
-            <div class="detail-value"><?= e($record['contact_number']) ?></div>
-          </div>
-          <div class="col-sm-6">
-            <div class="detail-label">Submitted</div>
-            <div class="detail-value"><?= formatDateTime($record['submitted_at']) ?></div>
-          </div>
-          <?php if (!$isReg && $record['released_at']): ?>
-          <div class="col-sm-6">
-            <div class="detail-label">Released</div>
-            <div class="detail-value"><?= formatDateTime($record['released_at']) ?></div>
-          </div>
-          <?php endif; ?>
-        </div>
+        <?php
+        $dets = [
+            ['label' => 'Full Name', 'value' => '<span class="fw-bold">' . e(fullName($record)) . '</span>'],
+        ];
+        if (!$isReg) {
+            $dets[] = ['label' => 'Student ID', 'value' => e($record['student_id'])];
+        }
+        $dets[] = ['label' => 'Type', 'value' => $isReg ? 'Pre-Registration' : 'Document Request'];
+        $dets[] = ['label' => $isReg ? 'Program' : 'Document',
+                   'value' => $isReg
+                       ? e($record['program_other'] ?: ($record['prog_name'] ?? '—'))
+                       : e($record['document_type_other'] ?: ($record['doc_name'] ?? '—'))];
+        $dets[] = ['label' => 'Email',     'value' => e($record['email'])];
+        $dets[] = ['label' => 'Contact',   'value' => e($record['contact_number'])];
+        $dets[] = ['label' => 'Submitted', 'value' => formatDateTime($record['submitted_at'])];
+        if (!$isReg && $record['released_at']) {
+            $dets[] = ['label' => 'Released', 'value' => formatDateTime($record['released_at'])];
+        }
+        echo ui_details($dets);
+        ?>
 
         <?php if (!empty($record['remarks'])): ?>
         <div class="alert alert-warning mt-3 py-2 small">
@@ -260,10 +211,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     <?php else: ?>
     <div class="content-card">
       <div class="content-card-body">
-        <div class="empty-state">
-          <i class="bi bi-qr-code text-muted"></i>
-          <p class="mt-3 text-muted">Scan or enter a tracking code to verify a student's submission.</p>
-        </div>
+        <?= ui_empty('qr-code', 'No code entered', "Scan or enter a tracking code to verify a student's submission.") ?>
       </div>
     </div>
     <?php endif; ?>

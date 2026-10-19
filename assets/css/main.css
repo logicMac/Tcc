@@ -670,6 +670,24 @@ code, kbd, .font-monospace, .tracking-code-display .code {
 .form-check-input:checked { background-color: var(--tcc-green-700); border-color: var(--tcc-green-700); }
 .form-check-input:focus   { box-shadow: var(--ring); border-color: var(--tcc-green-600); }
 
+/* Selectable doc-type cards (document request form) */
+.doc-type-card { transition: all .18s; font-size: .82rem; }
+.doc-type-card:hover { border-color: var(--tcc-green-400) !important; }
+.doc-type-card.selected {
+  background: var(--tcc-green-50) !important;
+  border-color: var(--tcc-green-600) !important;
+  color: var(--tcc-green-800);
+  box-shadow: 0 0 0 1px var(--tcc-green-600);
+}
+
+/* Numbered section badge (multi-part forms) */
+.section-num {
+  width: 26px; height: 26px; flex-shrink: 0;
+  background: var(--tcc-green-700); color: #fff;
+  border-radius: 50%; font-size: .8rem; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+
 /* ── Filter Bar ── */
 .filter-bar {
   background: var(--surface);
@@ -700,6 +718,29 @@ code, kbd, .font-monospace, .tracking-code-display .code {
   font-weight: 650;
 }
 .detail-value { font-size: .875rem; color: var(--text); font-weight: 500; line-height: 1.45; }
+
+/* ── Issued-document verification slip (print) ── */
+.verify-slip { max-width: 640px; margin: 0 auto; }
+.verify-slip .card { border-radius: var(--radius-xl); }
+.verify-slip-head {
+  padding: 26px 24px 22px; text-align: center; color: #fff;
+  background: linear-gradient(135deg, var(--tcc-green-950), var(--tcc-green-800));
+  border-bottom: 3px solid var(--tcc-gold-500);
+}
+.verify-slip-seal {
+  width: 62px; height: 62px; border-radius: 50%; object-fit: cover;
+  border: 2px solid rgba(255,255,255,.55); margin-bottom: 10px;
+  background: #fff;
+}
+
+/* ── Verification banner (QR verify / public verify results) ── */
+.verify-banner { padding: 18px 20px; color: #fff; }
+.verify-banner.good { background: var(--tcc-green-700); }
+.verify-banner.bad  { background: #7f1d1d; }
+.verify-banner.info { background: var(--tcc-green-800); }
+.verify-banner-title { font-weight: 700; font-size: 1.1rem; letter-spacing: .01em; }
+.verify-banner-code  { opacity: .78; font-size: .8rem; font-family: var(--font-mono); }
+.verify-banner .badge { background: rgba(255,255,255,.22); }
 
 /* ── Pagination ── */
 .pagination { gap: 3px; }
@@ -904,6 +945,60 @@ code, kbd, .font-monospace, .tracking-code-display .code {
   flex-shrink: 0;
 }
 
+/* How-it-works step circles (portal landing) */
+.hiw-num {
+  width: 60px; height: 60px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+.hiw-pill {
+  display: inline-block; border-radius: 20px; padding: 3px 14px;
+  font-size: .7rem; font-weight: 700; color: #fff; opacity: .75;
+}
+.hiw-1 .hiw-num, .hiw-1 .hiw-pill { background: var(--tcc-green-800); }
+.hiw-2 .hiw-num, .hiw-2 .hiw-pill { background: var(--tcc-green-600); }
+.hiw-3 .hiw-num, .hiw-3 .hiw-pill { background: var(--tcc-gold-600); }
+.hiw-4 .hiw-num, .hiw-4 .hiw-pill { background: var(--tcc-gold-500); }
+
+/* Quick-track CTA band */
+.portal-cta { background: linear-gradient(135deg, var(--tcc-green-50), var(--tcc-gold-50)); }
+.portal-cta-icon {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--tcc-green-100); color: var(--tcc-green-700);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1.25rem;
+}
+
+/* Student profile banner (account page) */
+.profile-banner {
+  background: linear-gradient(135deg, var(--tcc-green-950), var(--tcc-green-800));
+  color: #fff;
+  border-bottom: 3px solid var(--tcc-gold-500);
+}
+.profile-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: #fff; color: var(--tcc-green-800);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 1.4rem; flex-shrink: 0;
+  border: 2px solid var(--tcc-gold-300);
+}
+.profile-pill { background: rgba(255,255,255,.16); color: #fff; font-weight: 500; }
+
+/* Portal breadcrumb strip */
+.portal-crumbs {
+  background: #fff; border-bottom: 1px solid var(--border);
+  font-size: .8rem; color: var(--text-muted);
+}
+
+/* Large tracking-code search input */
+.track-input {
+  border-radius: 10px !important;
+  border: 2px solid var(--tcc-green-200) !important;
+  text-transform: uppercase;
+}
+.track-input:focus { border-color: var(--tcc-green-600) !important; }
+
 /* Tracking */
 .tracking-code-display {
   background: linear-gradient(135deg, var(--tcc-green-800), var(--tcc-green-600));
@@ -950,6 +1045,14 @@ code, kbd, .font-monospace, .tracking-code-display .code {
   background: var(--bg-app);
   display: flex; flex-direction: column;
 }
+.auth-shell {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 40px 0;
+  background:
+    radial-gradient(ellipse 60% 45% at 85% 0%, rgba(201,162,39,.14), transparent),
+    linear-gradient(150deg, var(--tcc-green-50) 0%, var(--bg-app) 55%, var(--tcc-gold-50) 100%);
+}
 .auth-card {
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -969,6 +1072,11 @@ code, kbd, .font-monospace, .tracking-code-display .code {
   object-fit: cover; background: #fff;
   border: 3px solid rgba(232, 207, 122, .55);
   box-shadow: 0 0 0 3px rgba(255,255,255,.12);
+}
+.auth-brand-icon {
+  width: 72px; height: 72px; margin-bottom: 12px;
+  background: rgba(255,255,255,.14); border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
 }
 
 /* ════════════════════════════════════════════════════════════

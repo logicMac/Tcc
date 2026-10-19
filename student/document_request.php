@@ -108,27 +108,14 @@ $docTypeName = '';
 if ($submitted) {
     $docTypeName = $reqData['document_type_other'] ?: ($reqData['doc_type_name'] ?? 'Document');
 }
+$pageTitle = 'Document Request';
+include __DIR__ . '/../includes/partials/portal_head.php';
+include __DIR__ . '/../includes/partials/portal_nav.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Document Request – <?= e($schoolName) ?></title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
-</head>
-<body style="background:var(--bg-app);">
-
-<?php include __DIR__ . '/../includes/partials/portal_nav.php'; ?>
 
 <!-- breadcrumb bar -->
-<div style="background:#fff;border-bottom:1px solid #e2e8f0;">
-  <div class="container py-2 d-flex align-items-center gap-2" style="font-size:.8rem;color:#64748b;">
+<div class="portal-crumbs">
+  <div class="container py-2 d-flex align-items-center gap-2">
     <a href="<?= BASE_URL ?>/student/index.php" class="text-muted text-decoration-none">
       <i class="bi bi-house me-1"></i>Home
     </a>
@@ -144,8 +131,7 @@ if ($submitted) {
 <?php if ($submitted): ?>
 <!-- ════ SUCCESS ════ -->
 <div class="card border-0 shadow" style="border-radius:16px;overflow:hidden;">
-  <div class="text-center p-4 text-white"
-       style="background:linear-gradient(135deg,#065f46,#059669);">
+  <div class="verify-banner good text-center p-4">
     <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white mb-3"
          style="width:72px;height:72px;">
       <i class="bi bi-check-lg text-success fs-1"></i>
@@ -169,10 +155,10 @@ if ($submitted) {
                   onclick="copyToClipboard('<?= e($trackingCode) ?>',this)">
             <i class="bi bi-clipboard me-1"></i>Copy Code
           </button>
-          <a href="<?= e($trackingUrl) ?>" class="btn btn-sm btn-outline-success">
+          <a href="<?= e($trackingUrl) ?>" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-eye me-1"></i>View Status
           </a>
-          <button class="btn btn-sm btn-outline-info"
+          <button class="btn btn-sm btn-outline-primary"
                   onclick="downloadQr('qr-success','<?= e($trackingCode) ?>.png')">
             <i class="bi bi-download me-1"></i>Download QR
           </button>
@@ -217,7 +203,7 @@ if ($submitted) {
       <a href="<?= BASE_URL ?>/student/document_request.php" class="btn btn-outline-secondary">
         <i class="bi bi-plus me-1"></i>New Request
       </a>
-      <a href="<?= BASE_URL ?>/student/index.php" class="btn btn-success">
+      <a href="<?= BASE_URL ?>/student/index.php" class="btn btn-primary">
         <i class="bi bi-house me-1"></i>Back to Portal
       </a>
     </div>
@@ -232,9 +218,8 @@ if ($submitted) {
 
 <!-- ════ FORM ════ -->
 <div class="d-flex align-items-center gap-3 mb-4">
-  <div class="d-inline-flex align-items-center justify-content-center rounded-3"
-       style="width:48px;height:48px;background:#dcfce7;flex-shrink:0;">
-    <i class="bi bi-file-earmark-text-fill text-success fs-5"></i>
+  <div class="portal-card-icon" style="width:48px;height:48px;flex-shrink:0;">
+    <i class="bi bi-file-earmark-text-fill fs-5"></i>
   </div>
   <div>
     <h3 class="fw-bold mb-0">Request a Registrar Document</h3>
@@ -264,8 +249,7 @@ if ($submitted) {
   <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
     <div class="card-header border-0 bg-white pt-4 px-4 pb-0">
       <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
-        <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white fw-bold"
-              style="width:26px;height:26px;font-size:.8rem;background:#059669;flex-shrink:0;">1</span>
+        <span class="section-num">1</span>
         Student Information
       </h5>
       <hr class="mt-3 mb-0">
@@ -338,8 +322,7 @@ if ($submitted) {
   <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
     <div class="card-header border-0 bg-white pt-4 px-4 pb-0">
       <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
-        <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white fw-bold"
-              style="width:26px;height:26px;font-size:.8rem;background:#059669;flex-shrink:0;">2</span>
+        <span class="section-num">2</span>
         Document Details
       </h5>
       <hr class="mt-3 mb-0">
@@ -354,8 +337,7 @@ if ($submitted) {
                    class="doc-type-radio visually-hidden"
                    data-code="<?= e($dt['code']) ?>"
                    <?= postInt('document_type_id')===(int)$dt['id']?'checked':'' ?>>
-            <div class="doc-type-card h-100 border rounded-3 p-3 text-center"
-                 style="transition:all .2s;font-size:.82rem;">
+            <div class="doc-type-card h-100 border rounded-3 p-3 text-center">
               <div class="fw-semibold mb-1"><?= e($dt['name']) ?></div>
               <div class="text-muted" style="font-size:.7rem;">
                 Fee: <?= formatCurrency((float)$dt['fee']) ?> &middot; ~<?= (int)$dt['processing_days'] ?>d
@@ -435,7 +417,7 @@ if ($submitted) {
         <a href="<?= BASE_URL ?>/student/index.php" class="btn-back">
           <i class="bi bi-arrow-left"></i> Back to Portal
         </a>
-        <button type="submit" class="btn btn-success btn-lg px-5" id="submitBtn">
+        <button type="submit" class="btn btn-primary btn-lg px-5" id="submitBtn">
           <i class="bi bi-send me-2"></i>Submit Document Request
         </button>
       </div>
@@ -447,26 +429,19 @@ if ($submitted) {
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="<?= BASE_URL ?>/assets/js/main.js"></script>
 <script>
 // Document type card highlight
 document.querySelectorAll('.doc-type-radio').forEach(function(radio){
   radio.addEventListener('change',function(){
-    document.querySelectorAll('.doc-type-card').forEach(c=>{
-      c.style.background='';c.style.borderColor='';c.style.color='';
-    });
+    document.querySelectorAll('.doc-type-card').forEach(c=>c.classList.remove('selected'));
     if(this.checked){
-      const card=this.nextElementSibling;
-      card.style.background='#dcfce7';card.style.borderColor='#059669';card.style.color='#065f46';
+      this.nextElementSibling.classList.add('selected');
       document.getElementById('other-doc-wrap').style.display=
         this.dataset.code==='OTHER'?'block':'none';
     }
   });
   if(radio.checked){
-    radio.nextElementSibling.style.background='#dcfce7';
-    radio.nextElementSibling.style.borderColor='#059669';
-    radio.nextElementSibling.style.color='#065f46';
+    radio.nextElementSibling.classList.add('selected');
     if(radio.dataset.code==='OTHER') document.getElementById('other-doc-wrap').style.display='block';
   }
 });
@@ -483,5 +458,4 @@ document.getElementById('doc-form').addEventListener('submit',function(e){
   btn.innerHTML='<span class="spinner-border spinner-border-sm me-2"></span>Submitting…';
 });
 </script>
-</body>
-</html>
+<?php include __DIR__ . '/../includes/partials/portal_foot.php'; ?>

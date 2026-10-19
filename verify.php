@@ -13,30 +13,10 @@ $schoolName = getSetting('school_name', 'Tampakan Community College');
 $code       = strtoupper(preg_replace('/[^A-Z0-9\-]/', '', trim(get('code'))));
 $issued     = $code ? getIssuedDocument($code) : null;
 $searched   = $code !== '';
+$pageTitle  = 'Verify Document';
+include __DIR__ . '/includes/partials/portal_head.php';
+include __DIR__ . '/includes/partials/portal_nav.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Verify Document – <?= e($schoolName) ?></title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
-</head>
-<body style="background:var(--bg-app);min-height:100vh;">
-
-<nav class="navbar" style="background:linear-gradient(135deg,#0f2a56,#1a4a8a);">
-  <div class="container py-2">
-    <a class="navbar-brand text-white fw-bold d-flex align-items-center gap-2" href="<?= BASE_URL ?>/student/index.php">
-      <i class="bi bi-building"></i>
-      <span style="font-size:.9rem;"><?= e($schoolName) ?></span>
-    </a>
-  </div>
-</nav>
 
 <div class="container py-5">
   <div class="row justify-content-center">
@@ -62,7 +42,7 @@ $searched   = $code !== '';
       <?php if ($searched && $issued): ?>
       <!-- ── AUTHENTIC ── -->
       <div class="card border-0 shadow" style="border-radius:16px;overflow:hidden;">
-        <div class="p-4 text-white text-center" style="background:#065f46;">
+        <div class="verify-banner good text-center p-4">
           <i class="bi bi-patch-check-fill" style="font-size:3rem;"></i>
           <h4 class="fw-bold mt-2 mb-0">AUTHENTIC DOCUMENT</h4>
           <div class="small opacity-75">This document was officially issued by <?= e($schoolName) ?></div>
@@ -93,7 +73,7 @@ $searched   = $code !== '';
       <?php elseif ($searched): ?>
       <!-- ── NOT FOUND ── -->
       <div class="card border-0 shadow" style="border-radius:16px;overflow:hidden;">
-        <div class="p-4 text-white text-center" style="background:#7f1d1d;">
+        <div class="verify-banner bad text-center p-4">
           <i class="bi bi-x-octagon-fill" style="font-size:3rem;"></i>
           <h4 class="fw-bold mt-2 mb-0">NOT VERIFIED</h4>
           <div class="small opacity-75">No issued document matches this verification code</div>
@@ -121,6 +101,4 @@ $searched   = $code !== '';
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php include __DIR__ . '/includes/partials/portal_foot.php'; ?>

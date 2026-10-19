@@ -67,34 +67,19 @@ $counts = [
     'pending'       => count(array_filter($registrations, fn($r) => $r['status'] === 'Pending'))
                      + count(array_filter($docRequests, fn($d) => $d['status'] === 'Pending')),
 ];
+
+$pageTitle = 'My Account';
+include __DIR__ . '/../includes/partials/portal_head.php';
+include __DIR__ . '/../includes/partials/portal_nav.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Account – <?= e($schoolName) ?></title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
-</head>
-<body style="background:var(--bg-app);">
-
-<?php include __DIR__ . '/../includes/partials/portal_nav.php'; ?>
-
 <div class="container py-4">
 
   <?= renderFlash() ?>
 
   <!-- ── Profile header ── -->
-  <div class="card border-0 shadow-sm mb-4" style="border-radius:16px;overflow:hidden;">
-    <div class="d-flex flex-wrap align-items-center gap-3 p-4 text-white"
-         style="background:linear-gradient(135deg,#0f2a56,#1a4a8a);">
-      <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white fw-bold flex-shrink-0"
-           style="width:64px;height:64px;font-size:1.4rem;color:#0f2a56;">
+  <div class="card border-0 shadow-sm mb-4 overflow-hidden" style="border-radius:16px;">
+    <div class="profile-banner d-flex flex-wrap align-items-center gap-3 p-4">
+      <div class="profile-avatar">
         <?= e(strtoupper($student['first_name'][0] . $student['last_name'][0])) ?>
       </div>
       <div class="flex-grow-1">
@@ -105,10 +90,10 @@ $counts = [
         </div>
       </div>
       <div class="d-flex gap-2">
-        <span class="badge rounded-pill px-3 py-2" style="background:rgba(255,255,255,.18);">
+        <span class="badge rounded-pill px-3 py-2 profile-pill">
           <?= $counts['registrations'] ?> registration<?= $counts['registrations'] === 1 ? '' : 's' ?>
         </span>
-        <span class="badge rounded-pill px-3 py-2" style="background:rgba(255,255,255,.18);">
+        <span class="badge rounded-pill px-3 py-2 profile-pill">
           <?= $counts['documents'] ?> document<?= $counts['documents'] === 1 ? '' : 's' ?>
         </span>
       </div>
@@ -167,7 +152,7 @@ $counts = [
   <div class="card border-0 shadow-sm" style="border-radius:14px;">
     <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
       <h5 class="fw-bold mb-0">My Document Requests</h5>
-      <a href="<?= BASE_URL ?>/student/document_request.php" class="btn btn-success btn-sm">
+      <a href="<?= BASE_URL ?>/student/document_request.php" class="btn btn-primary btn-sm">
         <i class="bi bi-plus-lg me-1"></i>New Request
       </a>
     </div>
@@ -177,7 +162,7 @@ $counts = [
         <i class="bi bi-file-earmark-x"></i>
         <h6>No document requests yet</h6>
         <p class="text-muted small">Requests you submit while signed in (or made with this email) appear here.</p>
-        <a href="<?= BASE_URL ?>/student/document_request.php" class="btn btn-success btn-sm">Request a Document</a>
+        <a href="<?= BASE_URL ?>/student/document_request.php" class="btn btn-primary btn-sm">Request a Document</a>
       </div>
       <?php else: ?>
       <div class="table-responsive">
@@ -276,6 +261,4 @@ $counts = [
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php include __DIR__ . '/../includes/partials/portal_foot.php'; ?>

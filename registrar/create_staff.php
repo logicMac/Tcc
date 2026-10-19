@@ -57,15 +57,10 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 <div class="page-content">
 <?= renderFlash() ?>
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4>Create Staff Account</h4>
-    <p>Add a new staff member to the system.</p>
-  </div>
-  <a href="<?= BASE_URL ?>/registrar/staff.php" class="btn btn-outline-secondary btn-sm">
-    <i class="bi bi-arrow-left me-1"></i>Back
-  </a>
-</div>
+<?= ui_page_header(
+    'Create Staff Account', 'Add a new staff member to the system.', 'person-plus',
+    ui_back(BASE_URL . '/registrar/staff.php', 'Back')
+) ?>
 
 <?php if (!empty($errors)): ?>
 <div class="alert alert-danger d-flex gap-2">
@@ -80,10 +75,7 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 
 <div class="row justify-content-center">
   <div class="col-lg-7">
-    <div class="content-card">
-      <div class="content-card-header">
-        <h5><i class="bi bi-person-plus me-2"></i>Staff Account Details</h5>
-      </div>
+    <?= ui_card_open('Staff Account Details', 'person-plus') ?>
       <div class="content-card-body">
         <form method="POST" data-validate>
           <?= csrfField() ?>
@@ -153,7 +145,7 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
           </div>
         </form>
       </div>
-    </div>
+    <?= ui_card_close() ?>
   </div>
 </div>
 </div>

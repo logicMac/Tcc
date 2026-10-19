@@ -8,23 +8,10 @@ require_once __DIR__ . '/../includes/helpers.php';
 startSession();
 $schoolName = getSetting('school_name', 'Tampakan Community College');
 $activePage = 'home';
+$pageTitle  = 'Student Portal';
+include __DIR__ . '/../includes/partials/portal_head.php';
+include __DIR__ . '/../includes/partials/portal_nav.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Student Portal – <?= e($schoolName) ?></title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
-</head>
-<body style="background:var(--bg-app);">
-
-<?php include __DIR__ . '/../includes/partials/portal_nav.php'; ?>
 
 <!-- ── Hero ──────────────────────────────────────────────── -->
 <section class="portal-hero">
@@ -65,7 +52,7 @@ $activePage = 'home';
 
       <div class="col-md-4">
         <div class="portal-card card h-100 text-center p-4">
-          <div class="portal-card-icon blue"><i class="bi bi-person-plus-fill"></i></div>
+          <div class="portal-card-icon green"><i class="bi bi-person-plus-fill"></i></div>
           <h5 class="fw-bold mb-2">Pre-Registration for Enrollment</h5>
           <p class="text-muted small mb-4">
             Submit your enrollment application online and receive a unique
@@ -87,7 +74,7 @@ $activePage = 'home';
             and other official registrar documents.
           </p>
           <a href="<?= BASE_URL ?>/student/document_request.php"
-             class="btn btn-success mt-auto w-100">
+             class="btn btn-primary mt-auto w-100">
             <i class="bi bi-arrow-right-circle me-1"></i> Request Document
           </a>
         </div>
@@ -122,26 +109,20 @@ $activePage = 'home';
     <div class="row g-4 justify-content-center">
       <?php
       $steps = [
-        ['num'=>'1','color'=>'#1a4a8a','icon'=>'bi-pencil-square','title'=>'Fill Out the Form',
+        ['num'=>'1','icon'=>'bi-pencil-square','title'=>'Fill Out the Form',
          'text'=>'Complete your personal and academic information in the online form.'],
-        ['num'=>'2','color'=>'#15803d','icon'=>'bi-send-check',   'title'=>'Submit &amp; Get Your Code',
+        ['num'=>'2','icon'=>'bi-send-check',   'title'=>'Submit & Get Your Code',
          'text'=>'Receive a unique Tracking Code and QR Code immediately after submission.'],
-        ['num'=>'3','color'=>'#6d28d9','icon'=>'bi-gear-wide-connected','title'=>'Staff Processes It',
+        ['num'=>'3','icon'=>'bi-gear-wide-connected','title'=>'Staff Processes It',
          'text'=>'The Registrar\'s Office reviews and processes your submission.'],
-        ['num'=>'4','color'=>'#c9a84c','icon'=>'bi-bell-fill',   'title'=>'Track &amp; Get Notified',
+        ['num'=>'4','icon'=>'bi-bell-fill',   'title'=>'Track & Get Notified',
          'text'=>'Use your tracking code or QR to monitor progress and receive email updates.'],
       ];
       foreach ($steps as $s):
       ?>
-      <div class="col-sm-6 col-md-3 text-center">
-        <div class="rounded-circle text-white d-inline-flex align-items-center justify-content-center mb-3 shadow-sm"
-             style="width:60px;height:60px;font-size:1.4rem;background:<?= $s['color'] ?>;">
-          <i class="bi <?= $s['icon'] ?>"></i>
-        </div>
-        <div class="rounded-pill text-white fw-bold d-inline-block mb-2 px-3 py-1"
-             style="font-size:.7rem;background:<?= $s['color'] ?>;opacity:.7;">
-          Step <?= $s['num'] ?>
-        </div>
+      <div class="col-sm-6 col-md-3 text-center hiw-<?= $s['num'] ?>">
+        <div class="hiw-num mb-3"><i class="bi <?= $s['icon'] ?>"></i></div>
+        <div><span class="hiw-pill mb-2">Step <?= $s['num'] ?></span></div>
         <h6 class="fw-bold"><?= $s['title'] ?></h6>
         <p class="text-muted small mb-0"><?= $s['text'] ?></p>
       </div>
@@ -151,13 +132,12 @@ $activePage = 'home';
 </section>
 
 <!-- ── Quick Track ────────────────────────────────────────── -->
-<section class="py-5" style="background:linear-gradient(135deg,#eef2fb,#e8f0fe);">
+<section class="py-5 portal-cta">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-6 text-center">
-        <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
-             style="width:56px;height:56px;background:#dbeafe;">
-          <i class="bi bi-search text-primary fs-5"></i>
+        <div class="portal-cta-icon mb-3">
+          <i class="bi bi-search"></i>
         </div>
         <h3 class="fw-bold mb-2">Already have a Tracking Code?</h3>
         <p class="text-muted mb-4">Enter it below to instantly check the status of your submission.</p>
@@ -205,9 +185,8 @@ $activePage = 'home';
       <?php if ($doc['code'] === 'OTHER') continue; ?>
       <div class="col-sm-6 col-md-4 col-lg-3">
         <div class="doc-item d-flex align-items-center gap-3 p-3 border rounded-3 h-100 bg-white">
-          <div style="width:38px;height:38px;background:#dbeafe;border-radius:8px;
-                      display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="bi bi-file-earmark-check text-primary"></i>
+          <div class="doc-icon">
+            <i class="bi bi-file-earmark-check"></i>
           </div>
           <div>
             <div class="fw-semibold" style="font-size:.83rem;line-height:1.2;"><?= e($doc['name']) ?></div>
@@ -230,34 +209,4 @@ $activePage = 'home';
   </div>
 </section>
 
-<!-- ── Footer ─────────────────────────────────────────────── -->
-<footer style="background:var(--tcc-blue);color:rgba(255,255,255,.7);">
-  <div class="container py-4">
-    <div class="row align-items-center g-3">
-      <div class="col-md-6 text-center text-md-start">
-        <div class="fw-bold text-white mb-1"><?= e($schoolName) ?></div>
-        <div class="small"><?= e(getSetting('school_address','Tampakan, South Cotabato, Philippines')) ?></div>
-        <div class="small"><?= e(getSetting('school_phone','')) ?></div>
-      </div>
-      <div class="col-md-6 text-center text-md-end">
-        <div class="d-flex gap-2 justify-content-center justify-content-md-end mb-2">
-          <a href="<?= BASE_URL ?>/student/pre_registration.php"
-             class="btn btn-sm btn-outline-light">Pre-Register</a>
-          <a href="<?= BASE_URL ?>/student/document_request.php"
-             class="btn btn-sm btn-outline-light">Documents</a>
-          <a href="<?= BASE_URL ?>/student/track.php"
-             class="btn btn-sm btn-outline-light">Track</a>
-          <a href="<?= BASE_URL ?>/verify.php"
-             class="btn btn-sm btn-outline-light">Verify Doc</a>
-          <a href="<?= BASE_URL ?>/student/login.php"
-             class="btn btn-sm btn-outline-light">My Account</a>
-        </div>
-        <div class="small">&copy; <?= date('Y') ?> <?= e($schoolName) ?>. All rights reserved.</div>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php include __DIR__ . '/../includes/partials/portal_foot.php'; ?>

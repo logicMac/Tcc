@@ -50,123 +50,114 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>
 <div class="page-content">
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4>Reports &amp; Analytics</h4>
-    <p>System-wide statistics for <?= e($sy) ?></p>
-  </div>
-  <button onclick="window.print()" class="btn btn-outline-dark btn-sm">
-    <i class="bi bi-printer me-1"></i>Print
-  </button>
-</div>
+<?= ui_page_header(
+    'Reports &amp; Analytics', 'System-wide statistics for ' . e($sy), 'bar-chart-line',
+    '<button onclick="window.print()" class="btn btn-outline-dark btn-sm"><i class="bi bi-printer me-1"></i>Print</button>'
+) ?>
 
 <!-- KPIs -->
 <div class="row g-3 mb-4">
   <div class="col-sm-6 col-md-3">
-    <div class="stat-card"><div class="stat-icon blue"><i class="bi bi-person-plus"></i></div>
-      <div class="stat-info"><div class="stat-label">Total Enrollments</div><div class="stat-value"><?= (int)$totalReg ?></div><div class="stat-sub"><?= (int)$approvedReg ?> approved</div></div></div>
+    <?= ui_stat_card('person-plus', 'Total Enrollments', $totalReg, 'green', (int)$approvedReg . ' approved') ?>
   </div>
   <div class="col-sm-6 col-md-3">
-    <div class="stat-card"><div class="stat-icon green"><i class="bi bi-file-earmark-text"></i></div>
-      <div class="stat-info"><div class="stat-label">Total Doc Requests</div><div class="stat-value"><?= (int)$totalDoc ?></div><div class="stat-sub"><?= (int)$releasedDoc ?> released</div></div></div>
+    <?= ui_stat_card('file-earmark-text', 'Total Doc Requests', $totalDoc, 'teal', (int)$releasedDoc . ' released') ?>
   </div>
   <div class="col-sm-6 col-md-3">
-    <div class="stat-card"><div class="stat-icon yellow"><i class="bi bi-percent"></i></div>
-      <div class="stat-info"><div class="stat-label">Enrollment Approval Rate</div><div class="stat-value"><?= $totalReg>0?round($approvedReg/$totalReg*100):0 ?>%</div></div></div>
+    <?= ui_stat_card('percent', 'Enrollment Approval Rate', ($totalReg > 0 ? round($approvedReg / $totalReg * 100) : 0) . '%', 'gold') ?>
   </div>
   <div class="col-sm-6 col-md-3">
-    <div class="stat-card"><div class="stat-icon teal"><i class="bi bi-graph-up"></i></div>
-      <div class="stat-info"><div class="stat-label">Doc Release Rate</div><div class="stat-value"><?= $totalDoc>0?round($releasedDoc/$totalDoc*100):0 ?>%</div></div></div>
+    <?= ui_stat_card('graph-up', 'Doc Release Rate', ($totalDoc > 0 ? round($releasedDoc / $totalDoc * 100) : 0) . '%', 'blue') ?>
   </div>
 </div>
 
 <div class="row g-3 mb-4">
   <div class="col-md-6">
-    <div class="content-card h-100">
-      <div class="content-card-header"><h5>Enrollments by Status</h5></div>
-      <div class="content-card-body">
-        <table class="table table-sm">
-          <thead><tr><th>Status</th><th class="text-end">Count</th><th class="text-end">%</th></tr></thead>
-          <tbody><?php foreach ($regByStatus as $r): ?>
-          <tr><td><?= statusBadge($r['status']) ?></td>
-            <td class="text-end fw-bold"><?= (int)$r['total'] ?></td>
-            <td class="text-end text-muted small"><?= $totalReg>0?round($r['total']/$totalReg*100):0 ?>%</td></tr>
-          <?php endforeach; ?></tbody>
-        </table>
-      </div>
+    <?= ui_card_open('Enrollments by Status', 'person-plus', '', 'h-100') ?>
+    <div class="content-card-body">
+      <?php
+      $rows = [];
+      foreach ($regByStatus as $r) {
+          $rows[] = [
+              statusBadge($r['status']),
+              ['html' => '<span class="fw-bold">' . (int)$r['total'] . '</span>', 'class' => 'text-end'],
+              ['html' => '<span class="text-muted small">' . ($totalReg > 0 ? round($r['total'] / $totalReg * 100) : 0) . '%</span>', 'class' => 'text-end'],
+          ];
+      }
+      echo ui_table(['Status', ['label' => 'Count', 'class' => 'text-end'], ['label' => '%', 'class' => 'text-end']],
+                    $rows, ['class' => 'table-sm', 'empty_msg' => 'No data yet.']);
+      ?>
     </div>
+    <?= ui_card_close() ?>
   </div>
   <div class="col-md-6">
-    <div class="content-card h-100">
-      <div class="content-card-header"><h5>Document Requests by Status</h5></div>
-      <div class="content-card-body">
-        <table class="table table-sm">
-          <thead><tr><th>Status</th><th class="text-end">Count</th><th class="text-end">%</th></tr></thead>
-          <tbody><?php foreach ($docByStatus as $d): ?>
-          <tr><td><?= statusBadge($d['status'],'document_request') ?></td>
-            <td class="text-end fw-bold"><?= (int)$d['total'] ?></td>
-            <td class="text-end text-muted small"><?= $totalDoc>0?round($d['total']/$totalDoc*100):0 ?>%</td></tr>
-          <?php endforeach; ?></tbody>
-        </table>
-      </div>
+    <?= ui_card_open('Document Requests by Status', 'file-earmark-text', '', 'h-100') ?>
+    <div class="content-card-body">
+      <?php
+      $rows = [];
+      foreach ($docByStatus as $d) {
+          $rows[] = [
+              statusBadge($d['status'], 'document_request'),
+              ['html' => '<span class="fw-bold">' . (int)$d['total'] . '</span>', 'class' => 'text-end'],
+              ['html' => '<span class="text-muted small">' . ($totalDoc > 0 ? round($d['total'] / $totalDoc * 100) : 0) . '%</span>', 'class' => 'text-end'],
+          ];
+      }
+      echo ui_table(['Status', ['label' => 'Count', 'class' => 'text-end'], ['label' => '%', 'class' => 'text-end']],
+                    $rows, ['class' => 'table-sm', 'empty_msg' => 'No data yet.']);
+      ?>
     </div>
+    <?= ui_card_close() ?>
   </div>
 </div>
 
 <!-- Staff Activity -->
 <div class="row g-3 mb-4">
   <div class="col-12">
-    <div class="content-card">
-      <div class="content-card-header"><h5>Staff Activity Summary</h5></div>
-      <div class="table-responsive">
-        <table class="table table-sm">
-          <thead><tr><th>Staff Member</th><th class="text-end">Total Actions</th><th>Last Activity</th></tr></thead>
-          <tbody>
-          <?php foreach ($staffActivity as $sa): ?>
-          <tr>
-            <td class="fw-semibold small"><?= e($sa['full_name']) ?></td>
-            <td class="text-end"><?= (int)$sa['log_count'] ?></td>
-            <td class="text-muted small"><?= $sa['last_activity'] ? formatDateTime($sa['last_activity']) : 'No activity' ?></td>
-          </tr>
-          <?php endforeach; ?>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <?= ui_card_open('Staff Activity Summary', 'activity') ?>
+    <?php
+    $rows = [];
+    foreach ($staffActivity as $sa) {
+        $rows[] = [
+            '<span class="fw-semibold small">' . e($sa['full_name']) . '</span>',
+            ['html' => (string)(int)$sa['log_count'], 'class' => 'text-end'],
+            '<span class="text-muted small">' . ($sa['last_activity'] ? formatDateTime($sa['last_activity']) : 'No activity') . '</span>',
+        ];
+    }
+    echo ui_table(['Staff Member', ['label' => 'Total Actions', 'class' => 'text-end'], 'Last Activity'],
+                  $rows, ['class' => 'table-sm', 'empty_msg' => 'No staff accounts.']);
+    ?>
+    <?= ui_card_close() ?>
   </div>
 </div>
 
 <!-- Monthly trend -->
 <div class="row g-3">
   <div class="col-12">
-    <div class="content-card">
-      <div class="content-card-header"><h5>Monthly Submissions (Last 12 Months)</h5></div>
-      <div class="content-card-body">
-        <div class="table-responsive">
-          <table class="table table-sm">
-            <thead><tr><th>Month</th><th class="text-end">Enrollments</th><th class="text-end">Doc Requests</th><th class="text-end">Total</th></tr></thead>
-            <tbody>
-            <?php
-            $regMap = array_column($regByMonth,'total','month');
-            $docMap = array_column($docByMonth,'total','month');
-            $months = array_unique(array_merge(array_column($regByMonth,'month'),array_column($docByMonth,'month')));
-            rsort($months);
-            $lbls = array_column($regByMonth,'label','month') + array_column($docByMonth,'label','month');
-            foreach ($months as $m):
-              $r=(int)($regMap[$m]??0); $d=(int)($docMap[$m]??0);
-            ?>
-            <tr>
-              <td><?= e($lbls[$m]??$m) ?></td>
-              <td class="text-end"><?= $r ?></td>
-              <td class="text-end"><?= $d ?></td>
-              <td class="text-end fw-semibold"><?= $r+$d ?></td>
-            </tr>
-            <?php endforeach; ?>
-            </tbody>
-          </table>
-        </div>
-      </div>
+    <?= ui_card_open('Monthly Submissions (Last 12 Months)', 'calendar3') ?>
+    <div class="content-card-body">
+      <?php
+      $regMap = array_column($regByMonth, 'total', 'month');
+      $docMap = array_column($docByMonth, 'total', 'month');
+      $months = array_unique(array_merge(array_column($regByMonth, 'month'), array_column($docByMonth, 'month')));
+      rsort($months);
+      $lbls = array_column($regByMonth, 'label', 'month') + array_column($docByMonth, 'label', 'month');
+      $mRows = [];
+      foreach ($months as $m) {
+          $r = (int)($regMap[$m] ?? 0);
+          $d = (int)($docMap[$m] ?? 0);
+          $mRows[] = [
+              e($lbls[$m] ?? $m),
+              ['html' => (string)$r, 'class' => 'text-end'],
+              ['html' => (string)$d, 'class' => 'text-end'],
+              ['html' => '<span class="fw-semibold">' . ($r + $d) . '</span>', 'class' => 'text-end'],
+          ];
+      }
+      echo ui_table(['Month', ['label' => 'Enrollments', 'class' => 'text-end'],
+                     ['label' => 'Doc Requests', 'class' => 'text-end'], ['label' => 'Total', 'class' => 'text-end']],
+                    $mRows, ['class' => 'table-sm', 'empty_msg' => 'No submissions in the last 12 months.']);
+      ?>
     </div>
+    <?= ui_card_close() ?>
   </div>
 </div>
 

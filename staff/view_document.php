@@ -124,33 +124,22 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 <div class="page-content">
 <?= renderFlash() ?>
 
-<div class="page-header">
-  <div class="page-header-info">
-    <h4><?= e($req['tracking_code']) ?></h4>
-    <p>Document Request – Submitted <?= formatDateTime($req['submitted_at']) ?></p>
-  </div>
-  <div class="page-header-actions">
-    <a href="<?= e($backUrl) ?>" class="btn-back">
-      <i class="bi bi-arrow-left"></i> Back to List
-    </a>
-    <a href="<?= BASE_URL ?>/staff/edit_document.php?id=<?= (int)$id ?>" class="btn btn-sm btn-primary">
-      <i class="bi bi-pencil me-1"></i>Edit Record
-    </a>
-    <a href="<?= e($trackingUrl) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
-      <i class="bi bi-eye me-1"></i>Student View
-    </a>
-    <button onclick="window.print()" class="btn btn-sm btn-outline-secondary">
-      <i class="bi bi-printer me-1"></i>Print
-    </button>
-  </div>
-</div>
+<?= ui_page_header(
+    e($req['tracking_code']),
+    'Document Request — Submitted ' . formatDateTime($req['submitted_at']),
+    '',
+    ui_back($backUrl)
+    . '<a href="' . BASE_URL . '/staff/edit_document.php?id=' . (int)$id . '" class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i>Edit Record</a>'
+    . '<a href="' . e($trackingUrl) . '" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye me-1"></i>Student View</a>'
+    . '<button onclick="window.print()" class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer me-1"></i>Print</button>'
+) ?>
 
 <div class="row g-3">
   <!-- ── Left ── -->
   <div class="col-lg-8">
 
     <!-- Status Banner -->
-    <div class="content-card mb-3">
+    <?= ui_card_open('', '', '', 'mb-3') ?>
       <div class="content-card-body py-3">
         <?php if ($req['is_archived']): ?>
         <div class="alert alert-secondary d-flex align-items-center gap-2 py-2 mb-3">
@@ -178,7 +167,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
             </div>
             <?php endif; ?>
           </div>
-          <span class="font-monospace text-muted small"><?= e($req['tracking_code']) ?></span>
+          <?= ui_code($req['tracking_code']) ?>
         </div>
         <?php if (!empty($req['remarks'])): ?>
         <div class="mt-2 p-2 rounded bg-light border-start border-warning border-3 small">
@@ -186,56 +175,39 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
         </div>
         <?php endif; ?>
       </div>
-    </div>
+    <?= ui_card_close() ?>
 
     <!-- Student Info -->
-    <div class="content-card mb-3">
-      <div class="content-card-header"><h5><i class="bi bi-person me-2"></i>Student Information</h5></div>
+    <?= ui_card_open('Student Information', 'person', '', 'mb-3') ?>
       <div class="content-card-body">
-        <div class="detail-row">
-          <div class="detail-item"><div class="detail-label">Full Name</div><div class="detail-value"><?= e(fullName($req)) ?></div></div>
-          <div class="detail-item"><div class="detail-label">Student ID</div><div class="detail-value"><?= e($req['student_id'] ?: '—') ?></div></div>
-          <div class="detail-item"><div class="detail-label">Email</div><div class="detail-value"><?= e($req['email']) ?></div></div>
-          <div class="detail-item"><div class="detail-label">Contact Number</div><div class="detail-value"><?= e($req['contact_number']) ?></div></div>
-          <?php if ($req['address']): ?>
-          <div class="detail-item full"><div class="detail-label">Address</div><div class="detail-value"><?= e($req['address']) ?></div></div>
-          <?php endif; ?>
-          <?php if ($req['program']): ?>
-          <div class="detail-item"><div class="detail-label">Program</div><div class="detail-value"><?= e($req['program']) ?></div></div>
-          <?php endif; ?>
-          <?php if ($req['year_graduated']): ?>
-          <div class="detail-item"><div class="detail-label">Year Graduated</div><div class="detail-value"><?= e($req['year_graduated']) ?></div></div>
-          <?php endif; ?>
-        </div>
+        <?= ui_details([
+            ['label' => 'Full Name',      'value' => e(fullName($req))],
+            ['label' => 'Student ID',     'value' => e($req['student_id'])],
+            ['label' => 'Email',          'value' => e($req['email'])],
+            ['label' => 'Contact Number', 'value' => e($req['contact_number'])],
+            ['label' => 'Address',        'value' => e($req['address']), 'full' => true],
+            ['label' => 'Program',        'value' => e($req['program'])],
+            ['label' => 'Year Graduated', 'value' => e($req['year_graduated'])],
+        ]) ?>
       </div>
-    </div>
+    <?= ui_card_close() ?>
 
     <!-- Document Info -->
-    <div class="content-card mb-3">
-      <div class="content-card-header"><h5><i class="bi bi-file-earmark-text me-2"></i>Document Details</h5></div>
+    <?= ui_card_open('Document Details', 'file-earmark-text', '', 'mb-3') ?>
       <div class="content-card-body">
-        <div class="detail-row">
-          <div class="detail-item full">
-            <div class="detail-label">Document Type</div>
-            <div class="detail-value fw-bold"><?= e($docTypeName) ?>
-              <?php if ($req['doc_code']): ?>
-                <span class="badge bg-success ms-1"><?= e($req['doc_code']) ?></span>
-              <?php endif; ?>
-            </div>
-          </div>
-          <div class="detail-item"><div class="detail-label">Copies</div><div class="detail-value"><?= (int)$req['copies'] ?></div></div>
-          <div class="detail-item"><div class="detail-label">Fee</div><div class="detail-value"><?= formatCurrency((float)($req['doc_fee']??0)) ?></div></div>
-          <div class="detail-item full"><div class="detail-label">Purpose</div><div class="detail-value"><?= e($req['purpose']) ?></div></div>
-          <div class="detail-item"><div class="detail-label">Delivery Method</div><div class="detail-value"><?= e($req['delivery_method']) ?></div></div>
-          <?php if ($req['date_needed']): ?>
-          <div class="detail-item"><div class="detail-label">Date Needed</div><div class="detail-value"><?= formatDate($req['date_needed']) ?></div></div>
-          <?php endif; ?>
-          <?php if ($req['additional_info']): ?>
-          <div class="detail-item full"><div class="detail-label">Additional Info</div><div class="detail-value"><?= e($req['additional_info']) ?></div></div>
-          <?php endif; ?>
-        </div>
+        <?= ui_details([
+            ['label' => 'Document Type', 'full' => true,
+             'value' => '<span class="fw-bold">' . e($docTypeName) . '</span>'
+                      . ($req['doc_code'] ? ' <span class="badge bg-success ms-1">' . e($req['doc_code']) . '</span>' : '')],
+            ['label' => 'Copies',          'value' => (int)$req['copies']],
+            ['label' => 'Fee',             'value' => formatCurrency((float)($req['doc_fee'] ?? 0))],
+            ['label' => 'Purpose',         'value' => e($req['purpose']), 'full' => true],
+            ['label' => 'Delivery Method', 'value' => e($req['delivery_method'])],
+            ['label' => 'Date Needed',     'value' => $req['date_needed'] ? formatDate($req['date_needed']) : ''],
+            ['label' => 'Additional Info', 'value' => e($req['additional_info']), 'full' => true],
+        ]) ?>
       </div>
-    </div>
+    <?= ui_card_close() ?>
 
   </div><!-- /col -->
 
@@ -243,8 +215,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
   <div class="col-lg-4">
 
     <!-- Update Status -->
-    <div class="content-card mb-3">
-      <div class="content-card-header"><h5><i class="bi bi-arrow-repeat me-2"></i>Update Status</h5></div>
+    <?= ui_card_open('Update Status', 'arrow-repeat', '', 'mb-3') ?>
       <div class="content-card-body">
         <form method="POST">
           <?= csrfField() ?>
@@ -267,11 +238,10 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
           </button>
         </form>
       </div>
-    </div>
+    <?= ui_card_close() ?>
 
     <!-- QR Code -->
-    <div class="content-card mb-3">
-      <div class="content-card-header"><h5><i class="bi bi-qr-code me-2"></i>QR Code</h5></div>
+    <?= ui_card_open('QR Code', 'qr-code', '', 'mb-3') ?>
       <div class="content-card-body text-center">
         <div class="qr-container d-inline-block mb-2" id="qr-section">
           <div id="qrcode-doc"></div>
@@ -286,15 +256,14 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
           </button>
         </div>
       </div>
-    </div>
+    <?= ui_card_close() ?>
 
     <!-- Timeline -->
-    <div class="content-card">
-      <div class="content-card-header"><h5><i class="bi bi-clock-history me-2"></i>Status History</h5></div>
+    <?= ui_card_open('Status History', 'clock-history') ?>
       <div class="content-card-body">
         <?= statusTimeline($history, 'document_request') ?>
       </div>
-    </div>
+    <?= ui_card_close() ?>
 
     <!-- Issue verified document -->
     <?php
@@ -302,14 +271,13 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     $canIssue = !$issued && in_array($req['status'], ['Approved','Ready for Release','Released'], true);
     ?>
     <?php if ($issued || $canIssue): ?>
-    <div class="content-card mt-3">
-      <div class="content-card-header"><h5><i class="bi bi-patch-check me-2"></i>Document Verification</h5></div>
+    <?= ui_card_open('Document Verification', 'patch-check', '', 'mt-3') ?>
       <div class="content-card-body">
         <?php if ($issued): ?>
         <div class="small mb-2">
           <span class="badge bg-success"><i class="bi bi-patch-check-fill me-1"></i>Verified Document Issued</span>
         </div>
-        <div class="font-monospace small mb-1"><?= e($issued['verification_code']) ?></div>
+        <div class="mb-1"><?= ui_code($issued['verification_code']) ?></div>
         <div class="text-muted small mb-3">Issued <?= formatDateTime($issued['issued_at']) ?></div>
         <a href="<?= BASE_URL ?>/staff/issue_document.php?id=<?= (int)$id ?>" class="btn btn-outline-primary btn-sm w-100">
           <i class="bi bi-qr-code me-1"></i>View Verification Slip
@@ -328,11 +296,11 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
         </form>
         <?php endif; ?>
       </div>
-    </div>
+    <?= ui_card_close() ?>
     <?php endif; ?>
 
     <!-- Archive / Restore -->
-    <div class="content-card mt-3">
+    <?= ui_card_open('', '', '', 'mt-3') ?>
       <div class="content-card-body">
         <form method="POST" onsubmit="return confirm('<?= $req['is_archived'] ? 'Restore this record from the archive?' : 'Archive this record? It will be hidden from default lists.' ?>')">
           <?= csrfField() ?>
@@ -348,7 +316,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
           <?php endif; ?>
         </form>
       </div>
-    </div>
+    <?= ui_card_close() ?>
 
   </div>
 </div>

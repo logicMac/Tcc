@@ -89,7 +89,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     <div class="content-card-body">
       <?= ui_progress_rows([
           'Pending'      => ['val' => (int)$stats['reg_pending'],    'color' => '#d97706'],
-          'Under Review' => ['val' => (int)$stats['reg_review'],     'color' => '#1768a8'],
+          'Under Review' => ['val' => (int)$stats['reg_review'],     'color' => '#0e7490'],
           'Processing'   => ['val' => (int)$stats['reg_processing'], 'color' => '#115540'],
           'Approved'     => ['val' => (int)$stats['reg_approved'],   'color' => '#177a4c'],
       ], 120) ?>
@@ -103,7 +103,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
       <?= ui_progress_rows([
           'Pending'           => ['val' => (int)$stats['doc_pending'],    'color' => '#d97706'],
           'Processing'        => ['val' => (int)$stats['doc_processing'], 'color' => '#115540'],
-          'Ready for Release' => ['val' => (int)$stats['doc_ready'],      'color' => '#1768a8'],
+          'Ready for Release' => ['val' => (int)$stats['doc_ready'],      'color' => '#0e7490'],
           'Released'          => ['val' => (int)$stats['doc_released'],   'color' => '#177a4c'],
       ], 140) ?>
     </div>
