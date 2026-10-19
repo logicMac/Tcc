@@ -52,16 +52,26 @@ step(
 );
 
 // ── 3. Required tables ────────────────────────────────────────────────────────
+// Core tables must come from database/tcc_rrs.sql.
+// v2 tables are created automatically by the migration step below when missing.
 $requiredTables = [
     'users', 'programs', 'document_types', 'pre_registrations',
     'document_requests', 'status_history', 'notifications',
     'activity_logs', 'system_settings', 'tracking_sequences',
 ];
+$v2Tables = ['students', 'issued_documents'];
 $missingTables = [];
+$existing = [];
 if ($dbOk) {
     $existing = array_map(
         'strtolower',
-        array_column(db()->fetchAll('SHOW TABLES'), 0)
+        array_column(
+            db()->fetchAll(
+                "SELECT table_name AS tbl FROM information_schema.tables WHERE table_schema = ?",
+                [DB_NAME]
+            ),
+            'tbl'
+        )
     );
     $missingTables = array_diff($requiredTables, $existing);
 }
@@ -72,6 +82,38 @@ step(
         ? 'Missing: ' . implode(', ', $missingTables) . ' — import database/tcc_rrs.sql via phpMyAdmin.'
         : count($requiredTables) . ' tables found.'
 );
+
+// ── 3b. v2 schema (student accounts, archive flags, issued documents) ────────
+// Applies database/migration_v2.sql automatically — it's fully idempotent.
+$migNote = '';
+$migOk   = true;
+if ($dbOk && empty($missingTables)) {
+    $missingV2 = array_diff($v2Tables, $existing);
+    $needsCols = !in_array(
+        'student_account_id',
+        array_column(db()->fetchAll("SHOW COLUMNS FROM pre_registrations"), 'Field'),
+        true
+    );
+
+    if ($missingV2 || $needsCols) {
+        $migFile = __DIR__ . '/database/migration_v2.sql';
+        if (is_file($migFile)) {
+            try {
+                $pdo->exec(file_get_contents($migFile));
+                $migNote = 'migration_v2.sql applied.';
+            } catch (Throwable $e) {
+                $migOk   = false;
+                $migNote = 'Migration failed: ' . $e->getMessage() . ' — run database/migration_v2.sql manually in phpMyAdmin.';
+            }
+        } else {
+            $migOk   = false;
+            $migNote = 'database/migration_v2.sql not found — import it manually.';
+        }
+    } else {
+        $migNote = 'v2 schema already present.';
+    }
+    step('v2 schema (student accounts, archiving, QR-verified documents)', $migOk, $migNote);
+}
 
 // ── 4. Default accounts & password hashes ────────────────────────────────────
 $defaultUsers = [

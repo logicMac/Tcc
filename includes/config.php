@@ -49,6 +49,7 @@ define('BCRYPT_COST', 12);
 // ── Tracking code prefixes ────────────────────────────────────────────────────
 define('TRACKING_REG_PREFIX', 'TCC-REG');
 define('TRACKING_DOC_PREFIX', 'TCC-DOC');
+define('TRACKING_VRF_PREFIX', 'TCC-VRF');   // issued-document verification codes
 
 // ── Upload paths ──────────────────────────────────────────────────────────────
 define('UPLOAD_DIR',    BASE_PATH . '/uploads');

@@ -7,8 +7,8 @@ $initials    = implode('', array_map(fn($p) => strtoupper($p[0]), array_slice(ex
 $currentFile = basename($_SERVER['PHP_SELF']);
 
 // Pending badges
-$pendingReg = (int) db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE status = 'Pending'");
-$pendingDoc = (int) db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status = 'Pending'");
+$pendingReg = (int) db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE status = 'Pending' AND is_archived = 0");
+$pendingDoc = (int) db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status = 'Pending' AND is_archived = 0");
 ?>
 <aside class="sidebar" id="sidebar">
 
@@ -32,17 +32,22 @@ $pendingDoc = (int) db()->fetchValue("SELECT COUNT(*) FROM document_requests WHE
 
     <div class="sidebar-section-label">Enrollments</div>
     <a href="<?= BASE_URL ?>/staff/registrations.php"
-       class="nav-link <?= in_array($currentFile, ['registrations.php','view_registration.php']) ? 'active' : '' ?>">
+       class="nav-link <?= in_array($currentFile, ['registrations.php','view_registration.php','edit_registration.php']) ? 'active' : '' ?>">
       <i class="bi bi-person-plus"></i>
       <span>Pre-Registrations</span>
       <?php if ($pendingReg > 0): ?>
         <span class="badge bg-warning text-dark ms-auto"><?= $pendingReg ?></span>
       <?php endif; ?>
     </a>
+    <a href="<?= BASE_URL ?>/staff/master_list.php"
+       class="nav-link <?= $currentFile === 'master_list.php' ? 'active' : '' ?>">
+      <i class="bi bi-people"></i>
+      <span>Student Master List</span>
+    </a>
 
     <div class="sidebar-section-label">Documents</div>
     <a href="<?= BASE_URL ?>/staff/document_requests.php"
-       class="nav-link <?= in_array($currentFile, ['document_requests.php','view_document.php']) ? 'active' : '' ?>">
+       class="nav-link <?= in_array($currentFile, ['document_requests.php','view_document.php','edit_document.php','issue_document.php']) ? 'active' : '' ?>">
       <i class="bi bi-file-earmark-text"></i>
       <span>Document Requests</span>
       <?php if ($pendingDoc > 0): ?>

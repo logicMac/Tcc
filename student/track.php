@@ -20,6 +20,11 @@ $searchError  = '';
 if ($code !== '') {
     $code = strtoupper(preg_replace('/[^A-Z0-9\-]/', '', $code));
 
+    // Issued-document verification codes route to the verify page
+    if (str_starts_with($code, TRACKING_VRF_PREFIX . '-')) {
+        redirect(verificationUrl($code));
+    }
+
     // Try pre_registrations first
     $reg = db()->fetchOne(
         "SELECT pr.*, p.name AS program_name
@@ -45,6 +50,11 @@ if ($code !== '') {
             $result  = 'document_request';
             $record  = $doc;
             $history = getStatusHistory($code);
+            $issued  = db()->fetchOne(
+                "SELECT verification_code, issued_at FROM issued_documents WHERE document_request_id = ?",
+                [$doc['id']]
+            );
+            if ($issued) $record['verification_code'] = $issued['verification_code'];
         } else {
             $searchError = 'No submission found for tracking code <strong>' . e($code) . '</strong>. Please check your code and try again.';
         }
@@ -315,6 +325,17 @@ $trackingUrl = $code ? trackingUrl($code) : '';
                   <tr>
                     <td>Released On</td>
                     <td><?= formatDateTime($record['released_at']) ?></td>
+                  </tr>
+                  <?php endif; ?>
+                  <?php if (!$isReg && !empty($record['verification_code'])): ?>
+                  <tr>
+                    <td>Verification Code</td>
+                    <td>
+                      <a href="<?= e(verificationUrl($record['verification_code'])) ?>"
+                         class="font-monospace text-decoration-none" target="_blank">
+                        <i class="bi bi-patch-check me-1"></i><?= e($record['verification_code']) ?>
+                      </a>
+                    </td>
                   </tr>
                   <?php endif; ?>
                   <?php if (!$isReg && !empty($record['approved_at'])): ?>

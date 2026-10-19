@@ -11,11 +11,12 @@ requireAuth(ROLE_REGISTRAR);
 $pageTitle    = 'Monitor Document Requests';
 $filterStatus = get('status');
 $filterSearch = get('search');
+$showArchived = get('archived') === '1';
 $page         = max(1, getInt('page', 1));
 $perPage      = 25;
 
-$where  = ['1=1'];
-$params = [];
+$where  = ['dr.is_archived = ?'];
+$params = [$showArchived ? 1 : 0];
 if ($filterStatus) { $where[] = 'dr.status = ?'; $params[] = $filterStatus; }
 if ($filterSearch) {
     $where[] = "(dr.tracking_code LIKE ? OR dr.first_name LIKE ? OR dr.last_name LIKE ? OR dr.email LIKE ? OR dr.student_id LIKE ?)";
@@ -30,7 +31,7 @@ $sql = "SELECT dr.*, dt.code AS doc_code, u.full_name AS assigned_name
         ORDER BY dr.submitted_at DESC";
 
 $result  = db()->paginate($sql, $params, $page, $perPage);
-$qBase   = array_filter([$filterStatus?'status='.urlencode($filterStatus):'', $filterSearch?'search='.urlencode($filterSearch):'']);
+$qBase   = array_filter([$filterStatus?'status='.urlencode($filterStatus):'', $filterSearch?'search='.urlencode($filterSearch):'', $showArchived?'archived=1':'']);
 $baseUrl = BASE_URL.'/registrar/document_requests.php?'.implode('&',$qBase);
 
 include __DIR__ . '/../includes/partials/head.php';
@@ -50,7 +51,7 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 <!-- Status tiles -->
 <div class="row g-2 mb-4">
   <?php foreach (DOC_STATUSES as $s => $info): ?>
-  <?php $cnt = db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status=?",[$s]); ?>
+  <?php $cnt = db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status=? AND is_archived=0",[$s]); ?>
   <div class="col-6 col-sm-4 col-md-2">
     <a href="<?= BASE_URL ?>/registrar/document_requests.php?status=<?= urlencode($s) ?>"
        class="stat-card text-decoration-none py-2 px-3 <?= $filterStatus===$s?'border border-success':'' ?>">
@@ -65,6 +66,7 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 
 <div class="filter-bar">
   <form method="GET" class="row g-2 align-items-end">
+    <?php if ($showArchived): ?><input type="hidden" name="archived" value="1"><?php endif; ?>
     <div class="col-sm-5"><input type="text" name="search" class="form-control form-control-sm" value="<?= e($filterSearch) ?>" placeholder="Name, code, student ID..."></div>
     <div class="col-sm-3">
       <select name="status" class="form-select form-select-sm">
@@ -77,6 +79,12 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
     <div class="col-auto">
       <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search me-1"></i>Filter</button>
       <a href="<?= BASE_URL ?>/registrar/document_requests.php" class="btn btn-outline-secondary btn-sm ms-1">Reset</a>
+    </div>
+    <div class="col-auto ms-auto">
+      <a href="<?= BASE_URL ?>/registrar/document_requests.php?archived=1"
+         class="btn btn-sm <?= $showArchived ? 'btn-dark' : 'btn-outline-secondary' ?>">
+        <i class="bi bi-archive me-1"></i><?= $showArchived ? 'Viewing Archived' : 'Archived' ?>
+      </a>
     </div>
   </form>
 </div>

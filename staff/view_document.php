@@ -33,6 +33,46 @@ $breadcrumbs = [
 
 if (isPost()) {
     abortCsrf();
+    $action = post('action', 'update_status');
+
+    // ── Archive / restore ────────────────────────────────────────────────
+    if ($action === 'archive' || $action === 'restore') {
+        $toArchive = $action === 'archive';
+        db()->execute(
+            "UPDATE document_requests SET is_archived = ?, archived_at = ?, archived_by = ? WHERE id = ?",
+            [$toArchive ? 1 : 0, $toArchive ? date('Y-m-d H:i:s') : null, $toArchive ? currentUserId() : null, $id]
+        );
+        addStatusHistory('document_request', $id, $req['tracking_code'], $req['status'], $req['status'],
+            $toArchive ? 'Record archived.' : 'Record restored from archive.');
+        logActivity($toArchive ? 'RECORD_ARCHIVE' : 'RECORD_RESTORE', 'Records Management',
+            ($toArchive ? 'Archived' : 'Restored') . " document request {$req['tracking_code']}", $req['tracking_code']);
+        flash('success', 'Record ' . ($toArchive ? 'archived' : 'restored') . '.');
+        redirect(BASE_URL . '/staff/view_document.php?id=' . $id);
+    }
+
+    // ── Issue official document (creates QR-verifiable issued record) ────
+    if ($action === 'issue') {
+        $existing = db()->fetchValue("SELECT id FROM issued_documents WHERE document_request_id = ?", [$id]);
+        if ($existing) {
+            flash('warning', 'A verification record already exists for this request.');
+            redirect(BASE_URL . '/staff/issue_document.php?id=' . $id);
+        }
+        $vCode    = generateVerificationCode();
+        $typeName = $req['document_type_other'] ?: ($req['doc_name'] ?? 'Document');
+        db()->insert(
+            "INSERT INTO issued_documents
+                (verification_code, document_request_id, tracking_code, document_type,
+                 issued_to, student_id, copies, purpose, issued_by)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [$vCode, $id, $req['tracking_code'], $typeName,
+             fullName($req), $req['student_id'] ?: null, (int)$req['copies'], $req['purpose'],
+             currentUserId()]
+        );
+        logActivity('DOC_ISSUE', 'QR Verification',
+            "Issued verified document {$vCode} for {$req['tracking_code']}", $vCode);
+        redirect(BASE_URL . '/staff/issue_document.php?id=' . $id);
+    }
+
     $newStatus = post('new_status');
     $remarks   = post('remarks');
     $allowed   = array_keys(DOC_STATUSES);
@@ -93,6 +133,9 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     <a href="<?= e($backUrl) ?>" class="btn-back">
       <i class="bi bi-arrow-left"></i> Back to List
     </a>
+    <a href="<?= BASE_URL ?>/staff/edit_document.php?id=<?= (int)$id ?>" class="btn btn-sm btn-primary">
+      <i class="bi bi-pencil me-1"></i>Edit Record
+    </a>
     <a href="<?= e($trackingUrl) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
       <i class="bi bi-eye me-1"></i>Student View
     </a>
@@ -109,6 +152,13 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     <!-- Status Banner -->
     <div class="content-card mb-3">
       <div class="content-card-body py-3">
+        <?php if ($req['is_archived']): ?>
+        <div class="alert alert-secondary d-flex align-items-center gap-2 py-2 mb-3">
+          <i class="bi bi-archive-fill"></i>
+          <div class="small">This record is <strong>archived</strong>
+            <?php if ($req['archived_at']): ?>since <?= formatDateTime($req['archived_at']) ?><?php endif; ?>.</div>
+        </div>
+        <?php endif; ?>
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
           <div class="d-flex align-items-center gap-4">
             <div>
@@ -243,6 +293,60 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
       <div class="content-card-header"><h5><i class="bi bi-clock-history me-2"></i>Status History</h5></div>
       <div class="content-card-body">
         <?= statusTimeline($history, 'document_request') ?>
+      </div>
+    </div>
+
+    <!-- Issue verified document -->
+    <?php
+    $issued = db()->fetchOne("SELECT * FROM issued_documents WHERE document_request_id = ?", [$id]);
+    $canIssue = !$issued && in_array($req['status'], ['Approved','Ready for Release','Released'], true);
+    ?>
+    <?php if ($issued || $canIssue): ?>
+    <div class="content-card mt-3">
+      <div class="content-card-header"><h5><i class="bi bi-patch-check me-2"></i>Document Verification</h5></div>
+      <div class="content-card-body">
+        <?php if ($issued): ?>
+        <div class="small mb-2">
+          <span class="badge bg-success"><i class="bi bi-patch-check-fill me-1"></i>Verified Document Issued</span>
+        </div>
+        <div class="font-monospace small mb-1"><?= e($issued['verification_code']) ?></div>
+        <div class="text-muted small mb-3">Issued <?= formatDateTime($issued['issued_at']) ?></div>
+        <a href="<?= BASE_URL ?>/staff/issue_document.php?id=<?= (int)$id ?>" class="btn btn-outline-primary btn-sm w-100">
+          <i class="bi bi-qr-code me-1"></i>View Verification Slip
+        </a>
+        <?php else: ?>
+        <p class="text-muted small mb-2">
+          Generate a QR-verifiable release slip for this document. Recipients can verify
+          authenticity at the public verification page.
+        </p>
+        <form method="POST" onsubmit="return confirm('Issue a verified document record for this request?')">
+          <?= csrfField() ?>
+          <input type="hidden" name="action" value="issue">
+          <button type="submit" class="btn btn-outline-success btn-sm w-100">
+            <i class="bi bi-patch-check me-1"></i>Issue Verified Document
+          </button>
+        </form>
+        <?php endif; ?>
+      </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Archive / Restore -->
+    <div class="content-card mt-3">
+      <div class="content-card-body">
+        <form method="POST" onsubmit="return confirm('<?= $req['is_archived'] ? 'Restore this record from the archive?' : 'Archive this record? It will be hidden from default lists.' ?>')">
+          <?= csrfField() ?>
+          <input type="hidden" name="action" value="<?= $req['is_archived'] ? 'restore' : 'archive' ?>">
+          <?php if ($req['is_archived']): ?>
+          <button type="submit" class="btn btn-outline-success w-100">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>Restore from Archive
+          </button>
+          <?php else: ?>
+          <button type="submit" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-archive me-1"></i>Archive This Record
+          </button>
+          <?php endif; ?>
+        </form>
       </div>
     </div>
 

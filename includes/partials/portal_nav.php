@@ -54,11 +54,31 @@ $activePage  = $activePage ?? '';
             <i class="bi bi-search me-1"></i>Track Status
           </a>
         </li>
+        <?php if (isStudentLoggedIn()): ?>
+        <li class="nav-item">
+          <a class="nav-link <?= $activePage === 'account' ? 'active-page' : '' ?>"
+             href="<?= BASE_URL ?>/student/account.php">
+            <i class="bi bi-person-circle me-1"></i>My Account
+          </a>
+        </li>
+        <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+          <a class="btn btn-portal btn-sm px-3" href="<?= BASE_URL ?>/student/logout.php">
+            <i class="bi bi-box-arrow-right me-1"></i>Sign Out
+          </a>
+        </li>
+        <?php else: ?>
+        <li class="nav-item">
+          <a class="nav-link <?= $activePage === 'account' ? 'active-page' : '' ?>"
+             href="<?= BASE_URL ?>/student/login.php">
+            <i class="bi bi-person-circle me-1"></i>Student Sign In
+          </a>
+        </li>
         <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
           <a class="btn btn-portal btn-sm px-3" href="<?= BASE_URL ?>/auth/login.php">
             <i class="bi bi-lock-fill me-1"></i>Staff Login
           </a>
         </li>
+        <?php endif; ?>
       </ul>
     </div>
   </div>

@@ -33,9 +33,27 @@ $breadcrumbs = [
     ['label' => e($reg['tracking_code'])],
 ];
 
-// ── Handle status update POST ──────────────────────────────────────────────
+// ── Handle POST actions ────────────────────────────────────────────────────
 if (isPost()) {
     abortCsrf();
+    $action = post('action', 'update_status');
+
+    // ── Archive / restore ────────────────────────────────────────────────
+    if ($action === 'archive' || $action === 'restore') {
+        $toArchive = $action === 'archive';
+        db()->execute(
+            "UPDATE pre_registrations SET is_archived = ?, archived_at = ?, archived_by = ? WHERE id = ?",
+            [$toArchive ? 1 : 0, $toArchive ? date('Y-m-d H:i:s') : null, $toArchive ? currentUserId() : null, $id]
+        );
+        addStatusHistory('registration', $id, $reg['tracking_code'], $reg['status'], $reg['status'],
+            $toArchive ? 'Record archived.' : 'Record restored from archive.');
+        logActivity($toArchive ? 'RECORD_ARCHIVE' : 'RECORD_RESTORE', 'Records Management',
+            ($toArchive ? 'Archived' : 'Restored') . " registration {$reg['tracking_code']}", $reg['tracking_code']);
+        flash('success', 'Record ' . ($toArchive ? 'archived' : 'restored') . '.');
+        redirect(BASE_URL . '/staff/view_registration.php?id=' . $id);
+    }
+
+    // ── Status update ────────────────────────────────────────────────────
     $newStatus = post('new_status');
     $remarks   = post('remarks');
     $allowed   = array_keys(REG_STATUSES);
@@ -96,6 +114,9 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     <a href="<?= e($backUrl) ?>" class="btn-back">
       <i class="bi bi-arrow-left"></i> Back to List
     </a>
+    <a href="<?= BASE_URL ?>/staff/edit_registration.php?id=<?= (int)$id ?>" class="btn btn-sm btn-primary">
+      <i class="bi bi-pencil me-1"></i>Edit Record
+    </a>
     <a href="<?= e($trackingUrl) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
       <i class="bi bi-eye me-1"></i>Student View
     </a>
@@ -112,6 +133,14 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     <!-- Status Banner -->
     <div class="content-card mb-3">
       <div class="content-card-body py-3">
+        <?php if ($reg['is_archived']): ?>
+        <div class="alert alert-secondary d-flex align-items-center gap-2 py-2 mb-3">
+          <i class="bi bi-archive-fill"></i>
+          <div class="small">This record is <strong>archived</strong>
+            <?php if ($reg['archived_at']): ?>since <?= formatDateTime($reg['archived_at']) ?><?php endif; ?>.
+            It is hidden from the default lists but remains fully retrievable.</div>
+        </div>
+        <?php endif; ?>
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
           <div class="d-flex align-items-center gap-3">
             <div>
@@ -275,6 +304,26 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
       <div class="content-card-header"><h5><i class="bi bi-clock-history me-2"></i>Status History</h5></div>
       <div class="content-card-body">
         <?= statusTimeline($history) ?>
+      </div>
+    </div>
+
+    <!-- Archive / Restore -->
+    <div class="content-card mt-3">
+      <div class="content-card-body">
+        <form method="POST" onsubmit="return confirm('<?= $reg['is_archived'] ? 'Restore this record from the archive?' : 'Archive this record? It will be hidden from default lists.' ?>')">
+          <?= csrfField() ?>
+          <input type="hidden" name="action" value="<?= $reg['is_archived'] ? 'restore' : 'archive' ?>">
+          <?php if ($reg['is_archived']): ?>
+          <button type="submit" class="btn btn-outline-success w-100">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>Restore from Archive
+          </button>
+          <?php else: ?>
+          <button type="submit" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-archive me-1"></i>Archive This Record
+          </button>
+          <div class="text-muted small mt-2 text-center">Archived records stay searchable and can be restored anytime.</div>
+          <?php endif; ?>
+        </form>
       </div>
     </div>
 

@@ -26,6 +26,11 @@ if ($code) {
              LEFT JOIN document_types dt ON dt.id = dr.document_type_id WHERE dr.tracking_code = ?", [$code]
         );
         if ($doc) { $record = $doc; $type = 'document_request'; }
+        else {
+            // Issued-document verification codes (TCC-VRF-*)
+            $issued = getIssuedDocument($code);
+            if ($issued) { $record = $issued; $type = 'issued_document'; }
+        }
     }
     if ($record) {
         logActivity('QR_VERIFY', 'QR Verification', "Verified QR/code: {$code}", $code);
@@ -102,6 +107,58 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
       <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
       <div>No record found for tracking code <strong><?= e($code) ?></strong>.</div>
     </div>
+    <?php elseif ($record && $type === 'issued_document'): ?>
+
+    <!-- Issued document verification result -->
+    <div class="content-card mb-3 overflow-hidden">
+      <div class="p-3 text-white" style="background:#065f46;">
+        <div class="d-flex align-items-center gap-3">
+          <i class="bi bi-patch-check-fill fs-2"></i>
+          <div>
+            <div class="fw-bold fs-5">AUTHENTIC ISSUED DOCUMENT ✓</div>
+            <div class="opacity-75 small"><?= e($code) ?></div>
+          </div>
+        </div>
+      </div>
+      <div class="content-card-body">
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <div class="detail-label">Document Type</div>
+            <div class="detail-value fw-bold"><?= e($record['document_type']) ?></div>
+          </div>
+          <div class="col-sm-6">
+            <div class="detail-label">Issued To</div>
+            <div class="detail-value"><?= e($record['issued_to']) ?></div>
+          </div>
+          <div class="col-sm-6">
+            <div class="detail-label">Student ID</div>
+            <div class="detail-value"><?= e($record['student_id'] ?: '—') ?></div>
+          </div>
+          <div class="col-sm-6">
+            <div class="detail-label">Request Reference</div>
+            <div class="detail-value font-monospace"><?= e($record['tracking_code']) ?></div>
+          </div>
+          <div class="col-sm-6">
+            <div class="detail-label">Issued By</div>
+            <div class="detail-value"><?= e($record['issued_by_name'] ?? '—') ?></div>
+          </div>
+          <div class="col-sm-6">
+            <div class="detail-label">Issued On</div>
+            <div class="detail-value"><?= formatDateTime($record['issued_at']) ?></div>
+          </div>
+        </div>
+        <div class="mt-3 pt-3 border-top d-flex gap-2">
+          <a href="<?= BASE_URL ?>/staff/view_document.php?id=<?= (int)$record['document_request_id'] ?>"
+             class="btn btn-primary btn-sm">
+            <i class="bi bi-arrow-right me-1"></i>Open Original Request
+          </a>
+          <a href="<?= BASE_URL ?>/staff/qr_verify.php" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-qr-code-scan me-1"></i>Verify Another
+          </a>
+        </div>
+      </div>
+    </div>
+
     <?php elseif ($record): ?>
 
     <?php

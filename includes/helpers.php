@@ -100,6 +100,87 @@ function redirectIfLoggedIn(): void
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// STUDENT SESSION (separate from staff — uses `student_*` session keys so a
+// browser may be signed in as both staff and student at once)
+// ══════════════════════════════════════════════════════════════════════════════
+
+function isStudentLoggedIn(): bool
+{
+    startSession();
+    return !empty($_SESSION['student_id']);
+}
+
+function currentStudent(): ?array
+{
+    if (!isStudentLoggedIn()) return null;
+    return $_SESSION['student'] ?? null;
+}
+
+function currentStudentId(): ?int
+{
+    return $_SESSION['student_id'] ?? null;
+}
+
+/**
+ * Require a signed-in student; redirects to the student login page otherwise,
+ * preserving the intended destination in ?return=.
+ */
+function requireStudentAuth(): void
+{
+    startSession();
+    if (!isStudentLoggedIn()) {
+        $return = $_SERVER['REQUEST_URI'] ?? '';
+        redirect(BASE_URL . '/student/login.php?return=' . urlencode($return));
+    }
+}
+
+/**
+ * Log a student in: populates the `student_*` session keys.
+ */
+function loginStudentSession(array $student): void
+{
+    startSession();
+    $_SESSION['student_id'] = (int) $student['id'];
+    $_SESSION['student']    = [
+        'id'             => (int) $student['id'],
+        'student_no'     => $student['student_no'],
+        'first_name'     => $student['first_name'],
+        'middle_name'    => $student['middle_name'],
+        'last_name'      => $student['last_name'],
+        'suffix'         => $student['suffix'],
+        'email'          => $student['email'],
+        'contact_number' => $student['contact_number'],
+    ];
+}
+
+/**
+ * Link a submission row to a student account (called after INSERT).
+ */
+function linkSubmissionToStudent(string $table, int $id, ?int $studentId): void
+{
+    if (!$studentId) return;
+    $allowed = ['pre_registrations', 'document_requests'];
+    if (!in_array($table, $allowed, true)) return;
+    db()->execute("UPDATE {$table} SET student_account_id = ? WHERE id = ?", [$studentId, $id]);
+}
+
+/**
+ * Link all guest submissions sharing the student's email to their account.
+ * Called at registration and login so past submissions appear in the portal.
+ */
+function claimSubmissionsForStudent(int $studentId, string $email): void
+{
+    db()->execute(
+        "UPDATE pre_registrations SET student_account_id = ? WHERE student_account_id IS NULL AND email = ?",
+        [$studentId, $email]
+    );
+    db()->execute(
+        "UPDATE document_requests SET student_account_id = ? WHERE student_account_id IS NULL AND email = ?",
+        [$studentId, $email]
+    );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // REDIRECTS & OUTPUT
 // ══════════════════════════════════════════════════════════════════════════════
 
@@ -537,6 +618,38 @@ function jsonResponse(bool $success, string $message = '', array $data = [], int
 function trackingUrl(string $trackingCode): string
 {
     return BASE_URL . '/student/track.php?code=' . urlencode($trackingCode);
+}
+
+/**
+ * Generate a unique issued-document verification code.
+ * Format: TCC-VRF-2026-000001
+ */
+function generateVerificationCode(): string
+{
+    return generateTrackingCode(TRACKING_VRF_PREFIX);
+}
+
+/**
+ * Public URL that verifies an issued document's authenticity.
+ * Embedded in the QR code printed on release slips / issued documents.
+ */
+function verificationUrl(string $verificationCode): string
+{
+    return BASE_URL . '/verify.php?code=' . urlencode($verificationCode);
+}
+
+/**
+ * Look up an issued document by its verification code.
+ */
+function getIssuedDocument(string $code): ?array
+{
+    return db()->fetchOne(
+        "SELECT i.*, u.full_name AS issued_by_name
+         FROM issued_documents i
+         LEFT JOIN users u ON u.id = i.issued_by
+         WHERE i.verification_code = ?",
+        [$code]
+    );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════

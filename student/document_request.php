@@ -15,6 +15,18 @@ $errors       = [];
 $submitted    = false;
 $trackingCode = '';
 $reqData      = [];
+$student      = currentStudent();
+
+// Prefill from the student's account when signed in
+$pre = [
+    'first_name'     => $student['first_name']     ?? '',
+    'middle_name'    => $student['middle_name']    ?? '',
+    'last_name'      => $student['last_name']      ?? '',
+    'suffix'         => $student['suffix']         ?? '',
+    'student_id'     => $student['student_no']     ?? '',
+    'email'          => $student['email']          ?? '',
+    'contact_number' => $student['contact_number'] ?? '',
+];
 
 if (isPost()) {
     abortCsrf();
@@ -77,6 +89,7 @@ if (isPost()) {
                  LEFT JOIN document_types dt ON dt.id = dr.document_type_id
                  WHERE dr.tracking_code = ?", [$trackingCode]
             );
+            linkSubmissionToStudent('document_requests', (int)$reqData['id'], currentStudentId());
             addStatusHistory('document_request',(int)$reqData['id'],$trackingCode,null,'Pending',
                 'Document request submitted by student.');
             db()->commit();
@@ -262,29 +275,29 @@ if ($submitted) {
         <div class="col-md-4">
           <label class="form-label">First Name <span class="required-mark">*</span></label>
           <input type="text" name="first_name" class="form-control"
-                 value="<?= e(post('first_name')) ?>" required maxlength="100">
+                 value="<?= e(post('first_name', $pre['first_name'])) ?>" required maxlength="100">
         </div>
         <div class="col-md-3">
           <label class="form-label">Middle Name</label>
           <input type="text" name="middle_name" class="form-control"
-                 value="<?= e(post('middle_name')) ?>" maxlength="100">
+                 value="<?= e(post('middle_name', $pre['middle_name'])) ?>" maxlength="100">
         </div>
         <div class="col-md-4">
           <label class="form-label">Last Name <span class="required-mark">*</span></label>
           <input type="text" name="last_name" class="form-control"
-                 value="<?= e(post('last_name')) ?>" required maxlength="100">
+                 value="<?= e(post('last_name', $pre['last_name'])) ?>" required maxlength="100">
         </div>
         <div class="col-md-1">
           <label class="form-label">Suffix</label>
           <input type="text" name="suffix" class="form-control"
-                 value="<?= e(post('suffix')) ?>" maxlength="20">
+                 value="<?= e(post('suffix', $pre['suffix'])) ?>" maxlength="20">
         </div>
       </div>
       <div class="row g-3 mt-1">
         <div class="col-md-4">
           <label class="form-label">Student ID Number</label>
           <input type="text" name="student_id" class="form-control"
-                 value="<?= e(post('student_id')) ?>" maxlength="50"
+                 value="<?= e(post('student_id', $pre['student_id'])) ?>" maxlength="50"
                  placeholder="Leave blank if not yet enrolled">
         </div>
         <div class="col-md-4">
@@ -292,7 +305,7 @@ if ($submitted) {
           <div class="input-group">
             <span class="input-group-text bg-light"><i class="bi bi-envelope text-muted"></i></span>
             <input type="email" name="email" class="form-control"
-                   value="<?= e(post('email')) ?>" required maxlength="150">
+                   value="<?= e(post('email', $pre['email'])) ?>" required maxlength="150">
           </div>
         </div>
         <div class="col-md-4">
@@ -300,7 +313,7 @@ if ($submitted) {
           <div class="input-group">
             <span class="input-group-text bg-light"><i class="bi bi-phone text-muted"></i></span>
             <input type="tel" name="contact_number" class="form-control"
-                   value="<?= e(post('contact_number')) ?>" required maxlength="20">
+                   value="<?= e(post('contact_number', $pre['contact_number'])) ?>" required maxlength="20">
           </div>
         </div>
         <div class="col-md-6">

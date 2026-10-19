@@ -15,11 +15,12 @@ $filterStatus  = get('status');
 $filterProgram = getInt('program_id');
 $filterType    = get('enrollment_type');
 $filterSearch  = get('search');
+$showArchived  = get('archived') === '1';
 $page          = max(1, getInt('page', 1));
 $perPage       = 20;
 
-$where  = ['1=1'];
-$params = [];
+$where  = ['pr.is_archived = ?'];
+$params = [$showArchived ? 1 : 0];
 if ($filterStatus)  { $where[] = 'pr.status = ?';          $params[] = $filterStatus; }
 if ($filterProgram) { $where[] = 'pr.program_id = ?';       $params[] = $filterProgram; }
 if ($filterType)    { $where[] = 'pr.enrollment_type = ?';  $params[] = $filterType; }
@@ -44,6 +45,7 @@ $qParts  = array_filter([
     $filterProgram ? 'program_id='      . $filterProgram            : '',
     $filterType    ? 'enrollment_type=' . urlencode($filterType)    : '',
     $filterSearch  ? 'search='          . urlencode($filterSearch)  : '',
+    $showArchived  ? 'archived=1'                                     : '',
 ]);
 $baseUrl = BASE_URL . '/staff/registrations.php?' . implode('&', $qParts);
 
@@ -51,9 +53,12 @@ $baseUrl = BASE_URL . '/staff/registrations.php?' . implode('&', $qParts);
 $statusCounts = [];
 foreach (array_keys(REG_STATUSES) as $s) {
     $statusCounts[$s] = (int) db()->fetchValue(
-        "SELECT COUNT(*) FROM pre_registrations WHERE status = ?", [$s]
+        "SELECT COUNT(*) FROM pre_registrations WHERE status = ? AND is_archived = 0", [$s]
     );
 }
+$archivedCount = (int) db()->fetchValue(
+    "SELECT COUNT(*) FROM pre_registrations WHERE is_archived = 1"
+);
 
 include __DIR__ . '/../includes/partials/head.php';
 include __DIR__ . '/../includes/partials/staff_sidebar.php';
@@ -74,23 +79,32 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 <div class="row g-2 mb-3">
   <div class="col-auto">
     <a href="<?= BASE_URL ?>/staff/registrations.php"
-       class="btn btn-sm <?= !$filterStatus ? 'btn-primary' : 'btn-outline-secondary' ?>">
+       class="btn btn-sm <?= !$filterStatus && !$showArchived ? 'btn-primary' : 'btn-outline-secondary' ?>">
       All <span class="badge bg-white text-dark ms-1"><?= number_format(array_sum($statusCounts)) ?></span>
     </a>
   </div>
   <?php foreach (REG_STATUSES as $s => $info): ?>
   <div class="col-auto">
     <a href="<?= BASE_URL ?>/staff/registrations.php?status=<?= urlencode($s) ?><?= $filterSearch ? '&search='.urlencode($filterSearch) : '' ?>"
-       class="btn btn-sm <?= $filterStatus === $s ? 'btn-'.$info['color'].' text-white' : 'btn-outline-secondary' ?>">
+       class="btn btn-sm <?= $filterStatus === $s && !$showArchived ? 'btn-'.$info['color'].' text-white' : 'btn-outline-secondary' ?>">
       <?= e($s) ?>
       <?php if ($statusCounts[$s] > 0): ?>
-        <span class="badge <?= $filterStatus === $s ? 'bg-white text-dark' : 'bg-secondary' ?> ms-1">
+        <span class="badge <?= $filterStatus === $s && !$showArchived ? 'bg-white text-dark' : 'bg-secondary' ?> ms-1">
           <?= $statusCounts[$s] ?>
         </span>
       <?php endif; ?>
     </a>
   </div>
   <?php endforeach; ?>
+  <div class="col-auto ms-auto">
+    <a href="<?= BASE_URL ?>/staff/registrations.php?archived=1"
+       class="btn btn-sm <?= $showArchived ? 'btn-dark' : 'btn-outline-secondary' ?>">
+      <i class="bi bi-archive me-1"></i>Archived
+      <?php if ($archivedCount > 0): ?>
+        <span class="badge <?= $showArchived ? 'bg-white text-dark' : 'bg-secondary' ?> ms-1"><?= $archivedCount ?></span>
+      <?php endif; ?>
+    </a>
+  </div>
 </div>
 
 <!-- Filter Bar -->
@@ -98,6 +112,9 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
   <form method="GET" class="row g-2 align-items-end">
     <?php if ($filterStatus): ?>
       <input type="hidden" name="status" value="<?= e($filterStatus) ?>">
+    <?php endif; ?>
+    <?php if ($showArchived): ?>
+      <input type="hidden" name="archived" value="1">
     <?php endif; ?>
     <div class="col-sm-4 col-md-3">
       <label class="form-label">Search</label>

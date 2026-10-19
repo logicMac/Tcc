@@ -31,6 +31,10 @@ $currentFile = basename($_SERVER['PHP_SELF']);
        class="nav-link <?= in_array($currentFile, ['staff.php','create_staff.php','edit_staff.php']) ? 'active' : '' ?>">
       <i class="bi bi-people"></i> Staff Accounts
     </a>
+    <a href="<?= BASE_URL ?>/registrar/students.php"
+       class="nav-link <?= $currentFile === 'students.php' ? 'active' : '' ?>">
+      <i class="bi bi-mortarboard"></i> Student Accounts
+    </a>
 
     <div class="sidebar-section-label">Monitoring</div>
     <a href="<?= BASE_URL ?>/registrar/registrations.php"
@@ -40,6 +44,10 @@ $currentFile = basename($_SERVER['PHP_SELF']);
     <a href="<?= BASE_URL ?>/registrar/document_requests.php"
        class="nav-link <?= $currentFile === 'document_requests.php' ? 'active' : '' ?>">
       <i class="bi bi-file-earmark-ruled"></i> Document Requests
+    </a>
+    <a href="<?= BASE_URL ?>/staff/master_list.php"
+       class="nav-link">
+      <i class="bi bi-list-check"></i> Student Master List
     </a>
 
     <div class="sidebar-section-label">System</div>

@@ -13,11 +13,12 @@ $pageTitle = 'Document Requests';
 $filterStatus  = get('status');
 $filterDocType = getInt('doc_type');
 $filterSearch  = get('search');
+$showArchived  = get('archived') === '1';
 $page          = max(1, getInt('page', 1));
 $perPage       = 20;
 
-$where  = ['1=1'];
-$params = [];
+$where  = ['dr.is_archived = ?'];
+$params = [$showArchived ? 1 : 0];
 
 if ($filterStatus) {
     $where[]  = 'dr.status = ?';
@@ -47,6 +48,7 @@ $queryParts = array_filter([
     $filterStatus  ? 'status='   . urlencode($filterStatus) : '',
     $filterDocType ? 'doc_type=' . $filterDocType           : '',
     $filterSearch  ? 'search='   . urlencode($filterSearch) : '',
+    $showArchived  ? 'archived=1'                           : '',
 ]);
 $baseUrl = BASE_URL . '/staff/document_requests.php?' . implode('&', $queryParts);
 
@@ -68,6 +70,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 <!-- Filter Bar -->
 <div class="filter-bar">
   <form method="GET" class="row g-2 align-items-end">
+    <?php if ($showArchived): ?><input type="hidden" name="archived" value="1"><?php endif; ?>
     <div class="col-sm-4 col-md-3">
       <label class="form-label small text-muted mb-1">Search</label>
       <input type="text" name="search" class="form-control form-control-sm"
@@ -98,6 +101,12 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
         <i class="bi bi-search me-1"></i>Filter
       </button>
       <a href="<?= BASE_URL ?>/staff/document_requests.php" class="btn btn-outline-secondary btn-sm ms-1">Reset</a>
+    </div>
+    <div class="col-auto ms-auto">
+      <a href="<?= BASE_URL ?>/staff/document_requests.php?archived=1"
+         class="btn btn-sm <?= $showArchived ? 'btn-dark' : 'btn-outline-secondary' ?>">
+        <i class="bi bi-archive me-1"></i><?= $showArchived ? 'Viewing Archived' : 'Archived' ?>
+      </a>
     </div>
   </form>
 </div>

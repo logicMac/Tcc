@@ -30,7 +30,8 @@ CREATE DATABASE tcc_rrs
 USE tcc_rrs;
 
 -- ============================================================
--- TABLE: users  (Registrar & Staff only — no student accounts)
+-- TABLE: users  (Registrar & Staff — student accounts live in
+--               the separate `students` table below)
 -- ============================================================
 CREATE TABLE users (
     id                   INT UNSIGNED     NOT NULL AUTO_INCREMENT,
@@ -51,6 +52,27 @@ CREATE TABLE users (
     UNIQUE KEY uq_employee_id (employee_id),
     UNIQUE KEY uq_email (email),
     CONSTRAINT fk_users_created_by FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
+-- TABLE: students  (Student portal accounts)
+-- ============================================================
+CREATE TABLE students (
+    id              INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    student_no      VARCHAR(30)          NULL DEFAULT NULL,
+    first_name      VARCHAR(100)     NOT NULL,
+    middle_name     VARCHAR(100)         NULL DEFAULT NULL,
+    last_name       VARCHAR(100)     NOT NULL,
+    suffix          VARCHAR(20)          NULL DEFAULT NULL,
+    email           VARCHAR(150)     NOT NULL,
+    contact_number  VARCHAR(20)      NOT NULL,
+    password_hash   VARCHAR(255)     NOT NULL,
+    is_active       TINYINT(1)       NOT NULL DEFAULT 1,
+    last_login      DATETIME             NULL DEFAULT NULL,
+    created_at      DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_student_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
@@ -130,6 +152,12 @@ CREATE TABLE pre_registrations (
     remarks             TEXT                NULL DEFAULT NULL,
     processed_at        DATETIME            NULL DEFAULT NULL,
     approved_at         DATETIME            NULL DEFAULT NULL,
+    -- Link to student account (optional — guest submissions stay NULL)
+    student_account_id  INT UNSIGNED        NULL DEFAULT NULL,
+    -- Archival (records management)
+    is_archived         TINYINT(1)      NOT NULL DEFAULT 0,
+    archived_at         DATETIME            NULL DEFAULT NULL,
+    archived_by         INT UNSIGNED        NULL DEFAULT NULL,
     -- Meta
     ip_address          VARCHAR(45)         NULL DEFAULT NULL,
     submitted_at        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -138,8 +166,12 @@ CREATE TABLE pre_registrations (
     UNIQUE KEY uq_reg_tracking (tracking_code),
     KEY idx_reg_status  (status),
     KEY idx_reg_email   (email),
+    KEY idx_reg_student (student_account_id),
+    KEY idx_reg_archived (is_archived),
     CONSTRAINT fk_reg_program     FOREIGN KEY (program_id)  REFERENCES programs (id) ON DELETE SET NULL,
-    CONSTRAINT fk_reg_assigned    FOREIGN KEY (assigned_to) REFERENCES users    (id) ON DELETE SET NULL
+    CONSTRAINT fk_reg_assigned    FOREIGN KEY (assigned_to) REFERENCES users    (id) ON DELETE SET NULL,
+    CONSTRAINT fk_reg_student     FOREIGN KEY (student_account_id) REFERENCES students (id) ON DELETE SET NULL,
+    CONSTRAINT fk_reg_archiver    FOREIGN KEY (archived_by) REFERENCES users (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
@@ -175,6 +207,12 @@ CREATE TABLE document_requests (
     remarks             TEXT                NULL DEFAULT NULL,
     processed_at        DATETIME            NULL DEFAULT NULL,
     released_at         DATETIME            NULL DEFAULT NULL,
+    -- Link to student account (optional — guest submissions stay NULL)
+    student_account_id  INT UNSIGNED        NULL DEFAULT NULL,
+    -- Archival (records management)
+    is_archived         TINYINT(1)      NOT NULL DEFAULT 0,
+    archived_at         DATETIME            NULL DEFAULT NULL,
+    archived_by         INT UNSIGNED        NULL DEFAULT NULL,
     -- Meta
     ip_address          VARCHAR(45)         NULL DEFAULT NULL,
     submitted_at        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -183,8 +221,12 @@ CREATE TABLE document_requests (
     UNIQUE KEY uq_doc_tracking (tracking_code),
     KEY idx_doc_status  (status),
     KEY idx_doc_email   (email),
+    KEY idx_doc_student (student_account_id),
+    KEY idx_doc_archived (is_archived),
     CONSTRAINT fk_doc_type       FOREIGN KEY (document_type_id) REFERENCES document_types (id) ON DELETE SET NULL,
-    CONSTRAINT fk_doc_assigned   FOREIGN KEY (assigned_to)      REFERENCES users           (id) ON DELETE SET NULL
+    CONSTRAINT fk_doc_assigned   FOREIGN KEY (assigned_to)      REFERENCES users           (id) ON DELETE SET NULL,
+    CONSTRAINT fk_doc_student    FOREIGN KEY (student_account_id) REFERENCES students (id) ON DELETE SET NULL,
+    CONSTRAINT fk_doc_archiver   FOREIGN KEY (archived_by) REFERENCES users (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
@@ -204,6 +246,31 @@ CREATE TABLE status_history (
     KEY idx_sh_tracking (tracking_code),
     KEY idx_sh_ref      (reference_type, reference_id),
     CONSTRAINT fk_sh_user FOREIGN KEY (changed_by) REFERENCES users (id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
+-- TABLE: issued_documents  (Official released documents carrying
+--                            a unique verification code + QR)
+-- ============================================================
+CREATE TABLE issued_documents (
+    id                  INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    verification_code   VARCHAR(30)     NOT NULL,
+    document_request_id INT UNSIGNED    NOT NULL,
+    tracking_code       VARCHAR(30)     NOT NULL,
+    document_type       VARCHAR(200)    NOT NULL,
+    issued_to           VARCHAR(200)    NOT NULL,
+    student_id          VARCHAR(50)         NULL DEFAULT NULL,
+    copies              INT             NOT NULL DEFAULT 1,
+    purpose             TEXT                NULL DEFAULT NULL,
+    issued_by           INT UNSIGNED        NULL DEFAULT NULL,
+    issued_at           DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    notes               TEXT                NULL DEFAULT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_issued_code (verification_code),
+    UNIQUE KEY uq_issued_req  (document_request_id),
+    KEY idx_issued_tracking (tracking_code),
+    CONSTRAINT fk_issued_req  FOREIGN KEY (document_request_id) REFERENCES document_requests (id) ON DELETE CASCADE,
+    CONSTRAINT fk_issued_user FOREIGN KEY (issued_by) REFERENCES users (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
@@ -364,7 +431,8 @@ INSERT INTO system_settings (setting_key, setting_value, label, description) VAL
 -- ── Tracking code sequences ───────────────────────────────
 INSERT INTO tracking_sequences (prefix, year, last_seq) VALUES
     ('TCC-REG', YEAR(CURDATE()), 0),
-    ('TCC-DOC', YEAR(CURDATE()), 0);
+    ('TCC-DOC', YEAR(CURDATE()), 0),
+    ('TCC-VRF', YEAR(CURDATE()), 0);
 
 -- ============================================================
 -- END OF SCHEMA

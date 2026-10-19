@@ -39,7 +39,7 @@ $activePage = 'home';
     <h1 class="display-5 fw-bold mb-3">Welcome to TCC Student Portal</h1>
     <p class="lead mb-5 opacity-90" style="max-width:560px;margin:0 auto;">
       Pre-register for enrollment, request official documents, and track your
-      submissions — all without creating an account.
+      submissions — with or without an account.
     </p>
     <div class="d-flex flex-wrap gap-3 justify-content-center">
       <a href="<?= BASE_URL ?>/student/pre_registration.php"
@@ -59,7 +59,7 @@ $activePage = 'home';
   <div class="container">
     <div class="text-center mb-5">
       <h2 class="fw-bold">What can you do here?</h2>
-      <p class="text-muted">Three core services — no account needed.</p>
+      <p class="text-muted">Three core services — sign in for a full history, or use a tracking code.</p>
     </div>
     <div class="row g-4 justify-content-center">
 

@@ -16,8 +16,8 @@ $logoutUrl = BASE_URL . '/auth/logout.php';
 $role      = ucfirst(currentRole());
 
 // Pending counts for notification bell
-$pendingReg   = (int) db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE status = 'Pending'");
-$pendingDoc   = (int) db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status = 'Pending'");
+$pendingReg   = (int) db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE status = 'Pending' AND is_archived = 0");
+$pendingDoc   = (int) db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status = 'Pending' AND is_archived = 0");
 $pendingTotal = $pendingReg + $pendingDoc;
 
 $breadcrumbs = $breadcrumbs ?? [];

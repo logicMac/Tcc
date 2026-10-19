@@ -12,16 +12,16 @@ $pageTitle = 'Staff Dashboard';
 
 // ── Stats ──────────────────────────────────────────────────────────────────
 $stats = [
-    'reg_pending'    => db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE status = 'Pending'"),
-    'reg_review'     => db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE status = 'Under Review'"),
-    'reg_processing' => db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE status = 'Processing'"),
-    'reg_approved'   => db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE status = 'Approved'"),
-    'reg_total'      => db()->fetchValue("SELECT COUNT(*) FROM pre_registrations"),
-    'doc_pending'    => db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status = 'Pending'"),
-    'doc_processing' => db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status = 'Processing'"),
-    'doc_ready'      => db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status = 'Ready for Release'"),
-    'doc_released'   => db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status = 'Released'"),
-    'doc_total'      => db()->fetchValue("SELECT COUNT(*) FROM document_requests"),
+    'reg_pending'    => db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE status = 'Pending' AND is_archived = 0"),
+    'reg_review'     => db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE status = 'Under Review' AND is_archived = 0"),
+    'reg_processing' => db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE status = 'Processing' AND is_archived = 0"),
+    'reg_approved'   => db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE status = 'Approved' AND is_archived = 0"),
+    'reg_total'      => db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE is_archived = 0"),
+    'doc_pending'    => db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status = 'Pending' AND is_archived = 0"),
+    'doc_processing' => db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status = 'Processing' AND is_archived = 0"),
+    'doc_ready'      => db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status = 'Ready for Release' AND is_archived = 0"),
+    'doc_released'   => db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status = 'Released' AND is_archived = 0"),
+    'doc_total'      => db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE is_archived = 0"),
 ];
 
 // ── Recent submissions ─────────────────────────────────────────────────────
@@ -29,12 +29,14 @@ $recentRegs = db()->fetchAll(
     "SELECT pr.*, p.code AS prog_code
      FROM pre_registrations pr
      LEFT JOIN programs p ON p.id = pr.program_id
+     WHERE pr.is_archived = 0
      ORDER BY pr.submitted_at DESC LIMIT 5"
 );
 $recentDocs = db()->fetchAll(
     "SELECT dr.*, dt.code AS doc_code
      FROM document_requests dr
      LEFT JOIN document_types dt ON dt.id = dr.document_type_id
+     WHERE dr.is_archived = 0
      ORDER BY dr.submitted_at DESC LIMIT 5"
 );
 
