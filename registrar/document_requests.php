@@ -96,7 +96,7 @@ foreach ($result['data'] as $d) {
         statusBadge($d['status'], 'document_request'),
         '<span class="text-muted small">' . e($d['assigned_name'] ?? 'Unassigned') . '</span>',
         '<span class="text-muted small">' . formatDate($d['submitted_at']) . '</span>',
-        '<a href="' . BASE_URL . '/staff/view_document.php?id=' . (int)$d['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2">View</a>',
+        '<a href="' . BASE_URL . '/registrar/view_document.php?id=' . (int)$d['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2">View</a>',
     ];
 }
 
@@ -106,8 +106,8 @@ echo ui_card_open(
     $filterStatus ? '' : 'file-earmark-text'
 );
 echo ui_table(['Tracking Code', 'Name', 'Student ID', 'Document', 'Status', 'Assigned To', 'Submitted', ['label' => '', 'style' => 'width:70px']],
-              $rows, ['empty_msg' => 'No records.', 'empty_icon' => 'inbox']);
-echo ui_list_footer($page, $result['pages'], $result['total'], $perPage, $baseUrl);
+              $rows, ['empty_msg' => 'No records.', 'empty_icon' => 'inbox',
+              'pagination' => ['page' => $page, 'pages' => $result['pages'], 'total' => $result['total'], 'per_page' => $perPage, 'base_url' => $baseUrl]]);
 echo ui_card_close();
 ?>
 </div>

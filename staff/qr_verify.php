@@ -38,7 +38,7 @@ if ($code) {
 }
 
 include __DIR__ . '/../includes/partials/head.php';
-include __DIR__ . '/../includes/partials/staff_sidebar.php';
+include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
 ?>
 <div class="main-content">
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>
@@ -123,11 +123,11 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
             ['label' => 'Issued On',         'value' => formatDateTime($record['issued_at'])],
         ]) ?>
         <div class="mt-3 pt-3 border-top d-flex gap-2">
-          <a href="<?= BASE_URL ?>/staff/view_document.php?id=<?= (int)$record['document_request_id'] ?>"
+          <a href="<?= BASE_URL ?>/<?= currentRole() ?>/view_document.php?id=<?= (int)$record['document_request_id'] ?>"
              class="btn btn-primary btn-sm">
             <i class="bi bi-arrow-right me-1"></i>Open Original Request
           </a>
-          <a href="<?= BASE_URL ?>/staff/qr_verify.php" class="btn btn-outline-secondary btn-sm">
+          <a href="<?= BASE_URL ?>/<?= currentRole() ?>/qr_verify.php" class="btn btn-outline-secondary btn-sm">
             <i class="bi bi-qr-code-scan me-1"></i>Verify Another
           </a>
         </div>
@@ -196,13 +196,13 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
         <div class="mt-3 pt-3 border-top d-flex gap-2">
           <?php
           $viewUrl = $isReg
-            ? BASE_URL . '/staff/view_registration.php?id=' . (int)$record['id']
-            : BASE_URL . '/staff/view_document.php?id='     . (int)$record['id'];
+            ? BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . (int)$record['id']
+            : BASE_URL . '/' . currentRole() . '/view_document.php?id='     . (int)$record['id'];
           ?>
           <a href="<?= $viewUrl ?>" class="btn btn-primary btn-sm">
             <i class="bi bi-arrow-right me-1"></i>Open Full Record
           </a>
-          <a href="<?= BASE_URL ?>/staff/qr_verify.php" class="btn btn-outline-secondary btn-sm">
+          <a href="<?= BASE_URL ?>/<?= currentRole() ?>/qr_verify.php" class="btn btn-outline-secondary btn-sm">
             <i class="bi bi-qr-code-scan me-1"></i>Verify Another
           </a>
         </div>

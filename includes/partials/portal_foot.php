@@ -23,7 +23,7 @@ $schoolName = $schoolName ?? getSetting('school_name', 'Tampakan Community Colle
           <a href="<?= BASE_URL ?>/student/document_request.php" class="btn btn-sm btn-outline-light">Documents</a>
           <a href="<?= BASE_URL ?>/student/track.php" class="btn btn-sm btn-outline-light">Track</a>
           <a href="<?= BASE_URL ?>/verify.php" class="btn btn-sm btn-outline-light">Verify Doc</a>
-          <a href="<?= BASE_URL ?>/student/login.php" class="btn btn-sm btn-outline-light">My Account</a>
+          <a href="<?= BASE_URL ?>/auth/login.php" class="btn btn-sm btn-outline-light">My Account</a>
         </div>
         <div class="small">&copy; <?= date('Y') ?> <?= e($schoolName) ?>. All rights reserved.</div>
       </div>
@@ -32,6 +32,7 @@ $schoolName = $schoolName ?? getSetting('school_name', 'Tampakan Community Colle
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="<?= BASE_URL ?>/assets/js/main.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/lenis.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/main.js<?= assetVer("assets/js/main.js") ?>"></script>
 </body>
 </html>

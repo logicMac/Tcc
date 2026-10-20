@@ -119,8 +119,8 @@ echo ui_card_open(
     'people'
 );
 echo ui_table(['Name', 'Employee ID', 'Email', 'Status', 'Last Login', 'Created', 'Actions'],
-              $rows, ['empty_icon' => 'people', 'empty_msg' => 'No staff accounts found.']);
-echo ui_list_footer($page, $result['pages'], $result['total'], $perPage, $baseUrl);
+              $rows, ['empty_icon' => 'people', 'empty_msg' => 'No staff accounts found.',
+              'pagination' => ['page' => $page, 'pages' => $result['pages'], 'total' => $result['total'], 'per_page' => $perPage, 'base_url' => $baseUrl]]);
 echo ui_card_close();
 ?>
 </div>

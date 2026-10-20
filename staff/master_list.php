@@ -89,7 +89,7 @@ $qParts  = array_filter([
     $filterSearch  ? 'search='.urlencode($filterSearch) : '',
 ]);
 $qs       = implode('&', $qParts);
-$exportUrl = BASE_URL . '/staff/master_list.php' . ($qs ? '?' . $qs . '&export=csv' : '?export=csv');
+$exportUrl = BASE_URL . '/' . currentRole() . '/master_list.php' . ($qs ? '?' . $qs . '&export=csv' : '?export=csv');
 
 include __DIR__ . '/../includes/partials/head.php';
 include isRegistrar()
@@ -111,7 +111,7 @@ include isRegistrar()
 
 <?php
 echo ui_filter_bar(
-    BASE_URL . '/staff/master_list.php',
+    BASE_URL . '/' . currentRole() . '/master_list.php',
     [
         ['type' => 'search', 'name' => 'search', 'label' => 'Search', 'value' => $filterSearch,
          'placeholder' => 'Name, email, LRN…'],
@@ -129,7 +129,7 @@ echo ui_filter_bar(
          'options' => ['' => 'All Statuses'] + array_combine(array_keys(REG_STATUSES), array_keys(REG_STATUSES))],
     ],
     [],
-    BASE_URL . '/staff/master_list.php'
+    BASE_URL . '/' . currentRole() . '/master_list.php'
 );
 
 $tableRows = [];
@@ -144,7 +144,7 @@ foreach ($rows as $i => $r) {
         '<span class="small">' . e($r['enrollment_type']) . '</span>',
         '<span class="small text-muted">' . e($r['school_year']) . '<br>' . e($r['semester']) . '</span>',
         statusBadge($r['status']),
-        ['html' => '<a href="' . BASE_URL . '/staff/view_registration.php?id=' . (int)$r['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2">View</a>',
+        ['html' => '<a href="' . BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . (int)$r['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2">View</a>',
          'class' => 'd-print-none'],
     ];
 }

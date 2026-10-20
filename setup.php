@@ -146,6 +146,21 @@ if ($dbOk && empty($missingTables)) {
             $accountNotes[] = "{$u['email']} — exists with a custom password, left unchanged.";
         }
     }
+    // ── Default student account (one per role) ──────────────────────────
+    $studentsTable = db()->fetchOne("SHOW TABLES LIKE 'students'");
+    if ($studentsTable) {
+        $existing = db()->fetchOne('SELECT * FROM students WHERE email = ?', ['student@tcc.edu.ph']);
+        if (!$existing) {
+            db()->insert(
+                "INSERT INTO students (student_no, first_name, middle_name, last_name, email, contact_number, password_hash, is_active)
+                 VALUES ('TCC-STD-001', 'Sample', 'D.', 'Student', 'student@tcc.edu.ph', '09123456789', ?, 1)",
+                [$hash]
+            );
+            $accountNotes[] = "student@tcc.edu.ph — created (password123).";
+        } else {
+            $accountNotes[] = "student@tcc.edu.ph — exists, left unchanged.";
+        }
+    }
     step('Default accounts ready', true, implode(' ', $accountNotes));
 } else {
     step('Default accounts ready', false, 'Skipped — database not ready.');
@@ -180,7 +195,7 @@ $allOk = !in_array(false, array_column($steps, 'ok'), true);
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css<?= assetVer("assets/css/main.css") ?>">
 </head>
 <body class="d-flex align-items-center" style="min-height:100vh;background:var(--bg-app);">
 <div class="container py-5" style="max-width:640px;">

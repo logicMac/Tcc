@@ -13,10 +13,11 @@
 --  ├─────────────┼─────────────────────────┼─────────────┤
 --  │ Registrar   │ registrar@tcc.edu.ph    │ password123 │
 --  │ Staff       │ staff@tcc.edu.ph        │ password123 │
+--  │ Student     │ student@tcc.edu.ph      │ password123 │
 --  └─────────────┴─────────────────────────┴─────────────┘
---  Both accounts are flagged to REQUIRE a password change
---  on first login. You cannot access the dashboard until
---  the password is updated.
+--  The staff accounts are flagged to REQUIRE a password
+--  change on first login. The student account signs in
+--  straight to the portal (no forced change).
 --
 --  Password hash verified with XAMPP PHP 8.x bcrypt cost 10:
 --  password_verify('password123', '<hash>') === true
@@ -179,6 +180,9 @@ CREATE TABLE pre_registrations (
     spouse_name         VARCHAR(150)        NULL DEFAULT NULL,
     -- Applicant photo (2x2)
     photo_path          VARCHAR(255)        NULL DEFAULT NULL,
+    -- School credentials: {key: file_path} uploaded scans, {key: 1} originals verified by staff
+    credentials_submitted JSON              NULL DEFAULT NULL,
+    credentials_presented JSON              NULL DEFAULT NULL,
     -- Processing
     status              ENUM('Pending','Under Review','Processing','Approved','Needs Correction','Declined') NOT NULL DEFAULT 'Pending',
     assigned_to         INT UNSIGNED        NULL DEFAULT NULL,
@@ -411,6 +415,24 @@ VALUES
         'staff',
         1,
         1,
+        1
+    );
+
+-- ── Default student account ───────────────────────────────
+--  Same temporary password (password123). Student accounts
+--  have no must_change_password flag — sign-in goes straight
+--  to the portal.
+INSERT INTO students
+    (student_no, first_name, middle_name, last_name, email, contact_number, password_hash, is_active)
+VALUES
+    (
+        'TCC-STD-001',
+        'Sample',
+        'D.',
+        'Student',
+        'student@tcc.edu.ph',
+        '09123456789',
+        '$2y$10$FqMwPjvINF44VD5c3gOqUeORPFaRbVA26niDavuVf5NqRifUtrpUS',
         1
     );
 

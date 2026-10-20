@@ -1,21 +1,29 @@
 <?php
 /**
  * Reusable Public Portal Navbar
- * Set $activePage = 'home' | 'register' | 'document' | 'track' before including.
+ * Set $activePage = 'home' | 'register' | 'document' | 'track' | 'account' before including.
  */
 $schoolName  = getSetting('school_name', 'Tampakan Community College');
+$schoolShort = getSetting('school_short_name', 'TCC');
 $activePage  = $activePage ?? '';
+$navLinks = [
+    ['key' => 'home',     'href' => BASE_URL . '/student/index.php',            'label' => 'Home'],
+    ['key' => 'register', 'href' => BASE_URL . '/student/pre_registration.php', 'label' => 'Pre-Register'],
+    ['key' => 'document', 'href' => BASE_URL . '/student/document_request.php', 'label' => 'Documents'],
+    ['key' => 'track',    'href' => BASE_URL . '/student/track.php',            'label' => 'Track'],
+    ['key' => 'verify',   'href' => BASE_URL . '/verify.php',                   'label' => 'Verify'],
+];
 ?>
 <nav class="navbar navbar-expand-lg portal-nav sticky-top">
   <div class="container">
     <!-- Brand -->
-    <a class="navbar-brand d-flex align-items-center gap-2" href="<?= BASE_URL ?>/student/index.php">
+    <a class="navbar-brand portal-brand" href="<?= BASE_URL ?>/student/index.php">
       <img src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="TCC seal"
            class="brand-logo brand-logo-sm">
-      <div style="line-height:1.15;">
-        <div class="fw-bold" style="font-size:.85rem;color:#fff;"><?= e($schoolName) ?></div>
-        <div style="font-size:.6rem;color:rgba(255,255,255,.6);">Registration &amp; Records System</div>
-      </div>
+      <span class="portal-brand-text">
+        <span class="portal-brand-name"><?= e($schoolName) ?></span>
+        <span class="portal-brand-sub">Registration &amp; Records System</span>
+      </span>
     </a>
 
     <!-- Toggler -->
@@ -25,59 +33,33 @@ $activePage  = $activePage ?? '';
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Links -->
+    <!-- Links + actions -->
     <div class="collapse navbar-collapse" id="portalNavMenu">
-      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 py-2 py-lg-0">
+      <ul class="navbar-nav mx-lg-auto align-items-lg-center py-2 py-lg-0">
+        <?php foreach ($navLinks as $l): ?>
         <li class="nav-item">
-          <a class="nav-link <?= $activePage === 'home'     ? 'active-page' : '' ?>"
-             href="<?= BASE_URL ?>/student/index.php">
-            <i class="bi bi-house me-1"></i>Home
-          </a>
+          <a class="nav-link <?= $activePage === $l['key'] ? 'active-page' : '' ?>"
+             href="<?= e($l['href']) ?>"><?= e($l['label']) ?></a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link <?= $activePage === 'register' ? 'active-page' : '' ?>"
-             href="<?= BASE_URL ?>/student/pre_registration.php">
-            <i class="bi bi-person-plus me-1"></i>Pre-Register
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link <?= $activePage === 'document' ? 'active-page' : '' ?>"
-             href="<?= BASE_URL ?>/student/document_request.php">
-            <i class="bi bi-file-earmark-plus me-1"></i>Request Document
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link <?= $activePage === 'track'    ? 'active-page' : '' ?>"
-             href="<?= BASE_URL ?>/student/track.php">
-            <i class="bi bi-search me-1"></i>Track Status
-          </a>
-        </li>
+        <?php endforeach; ?>
+      </ul>
+
+      <div class="portal-nav-actions d-flex align-items-lg-center gap-2 pb-3 pb-lg-0">
         <?php if (isStudentLoggedIn()): ?>
-        <li class="nav-item">
-          <a class="nav-link <?= $activePage === 'account' ? 'active-page' : '' ?>"
+          <a class="nav-ghost <?= $activePage === 'account' ? 'active-page' : '' ?>"
              href="<?= BASE_URL ?>/student/account.php">
             <i class="bi bi-person-circle me-1"></i>My Account
           </a>
-        </li>
-        <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
           <a class="btn btn-portal btn-sm px-3" href="<?= BASE_URL ?>/student/logout.php">
             <i class="bi bi-box-arrow-right me-1"></i>Sign Out
           </a>
-        </li>
         <?php else: ?>
-        <li class="nav-item">
-          <a class="nav-link <?= $activePage === 'account' ? 'active-page' : '' ?>"
-             href="<?= BASE_URL ?>/student/login.php">
-            <i class="bi bi-person-circle me-1"></i>Student Sign In
+          <a class="nav-ghost" href="<?= BASE_URL ?>/auth/login.php">Sign In</a>
+          <a class="btn btn-portal btn-sm px-3" href="<?= BASE_URL ?>/student/register.php">
+            Get Started
           </a>
-        </li>
-        <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-          <a class="btn btn-portal btn-sm px-3" href="<?= BASE_URL ?>/auth/login.php">
-            <i class="bi bi-lock-fill me-1"></i>Staff Login
-          </a>
-        </li>
         <?php endif; ?>
-      </ul>
+      </div>
     </div>
   </div>
 </nav>

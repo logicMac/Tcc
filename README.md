@@ -183,8 +183,9 @@ chmod -R 755 uploads/documents/
 |---|---|---|
 | **Registrar** | `registrar@tcc.edu.ph` | `password123` |
 | **Staff** | `staff@tcc.edu.ph` | `password123` |
+| **Student** | `student@tcc.edu.ph` | `password123` |
 
-> Both accounts will **require a password change on first login**. You cannot access any dashboard page until the password is changed.
+> The staff accounts will **require a password change on first login**. You cannot access any dashboard page until the password is changed. The student account signs in directly to the student portal.
 
 To change a password after first login — use the 🔑 key icon in the sidebar footer at any time.
 

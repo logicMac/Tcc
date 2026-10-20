@@ -120,8 +120,8 @@ echo ui_card_open(
         . ' of ' . number_format($result['total']) . '</span>'
 );
 echo ui_table(['Date & Time', 'User', 'Role', 'Action', 'Module', 'Description', 'Reference', 'IP'],
-              $rows, ['empty_icon' => 'journal-x', 'empty_msg' => 'No logs found.']);
-echo ui_list_footer($page, $result['pages'], $result['total'], $perPage, $baseUrl);
+              $rows, ['empty_icon' => 'journal-x', 'empty_msg' => 'No logs found.',
+              'pagination' => ['page' => $page, 'pages' => $result['pages'], 'total' => $result['total'], 'per_page' => $perPage, 'base_url' => $baseUrl]]);
 echo ui_card_close();
 ?>
 </div>

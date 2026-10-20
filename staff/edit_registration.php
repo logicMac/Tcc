@@ -10,14 +10,14 @@ startSession();
 requireAuth(ROLE_STAFF, ROLE_REGISTRAR);
 
 $id  = getInt('id');
-if (!$id) { flash('danger','Invalid registration.'); redirect(BASE_URL.'/staff/registrations.php'); }
+if (!$id) { flash('danger','Invalid registration.'); redirect(BASE_URL.'/'.currentRole().'/registrations.php'); }
 
 $reg = db()->fetchOne("SELECT * FROM pre_registrations WHERE id = ?", [$id]);
-if (!$reg) { flash('danger','Registration not found.'); redirect(BASE_URL.'/staff/registrations.php'); }
+if (!$reg) { flash('danger','Registration not found.'); redirect(BASE_URL.'/'.currentRole().'/registrations.php'); }
 
 $pageTitle   = 'Edit Registration – ' . $reg['tracking_code'];
 $breadcrumbs = [
-    ['label' => 'Pre-Registrations', 'url' => BASE_URL . '/staff/registrations.php'],
+    ['label' => 'Pre-Registrations', 'url' => BASE_URL . '/' . currentRole() . '/registrations.php'],
     ['label' => e($reg['tracking_code'])],
 ];
 $programs = getActivePrograms();
@@ -48,6 +48,13 @@ if (isPost()) {
     $data['program_id']            = postInt('program_id') ?: null;
     $data['mail_same_as_permanent']= post('mail_same_as_permanent') ? 1 : 0;
 
+    // Originals presented at the office — checklist of credential keys
+    $presented = [];
+    foreach ((array) post('cred_presented', []) as $ck => $v) {
+        if (isset(credentialCatalog()[$ck])) $presented[$ck] = 1;
+    }
+    $data['credentials_presented'] = $presented ? json_encode($presented) : null;
+
     if (empty($data['first_name']))        $errors[] = 'First name is required.';
     if (empty($data['last_name']))         $errors[] = 'Last name is required.';
     if (!validateDate($data['date_of_birth'])) $errors[] = 'Valid date of birth is required.';
@@ -73,6 +80,7 @@ if (isPost()) {
         $set[]   = 'nationality = ?';           $binds[] = $data['nationality'];
         $set[]   = 'program_id = ?';            $binds[] = $data['program_id'];
         $set[]   = 'mail_same_as_permanent = ?';$binds[] = $data['mail_same_as_permanent'];
+        $set[]   = 'credentials_presented = ?'; $binds[] = $data['credentials_presented'];
         $set[]   = 'updated_at = NOW()';
         $binds[] = $id;
 
@@ -87,7 +95,7 @@ if (isPost()) {
             "Edited registration record {$reg['tracking_code']}", $reg['tracking_code']);
 
         flash('success', 'Record updated successfully.');
-        redirect(BASE_URL . '/staff/view_registration.php?id=' . $id);
+        redirect(BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . $id);
     }
     $reg = array_merge($reg, $data);
 }
@@ -100,7 +108,7 @@ $opts = static fn(array $list, string $first = '') =>
     ($first !== '' ? ['' => $first] : []) + array_combine($list, $list);
 
 include __DIR__ . '/../includes/partials/head.php';
-include __DIR__ . '/../includes/partials/staff_sidebar.php';
+include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
 ?>
 <div class="main-content">
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>
@@ -111,7 +119,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     'Edit Record — ' . e($reg['tracking_code']),
     "Update the student's submitted information. Changes are logged.",
     'pencil-square',
-    ui_back(BASE_URL . '/staff/view_registration.php?id=' . (int)$id, 'Cancel & Back')
+    ui_back(BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . (int)$id, 'Cancel & Back')
 ) ?>
 
 <?php if (!empty($errors)): ?>
@@ -248,6 +256,53 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     </div>
   <?= ui_card_close() ?>
 
+  <!-- School Credentials Presented -->
+  <?= ui_card_open('School Credentials Presented', 'folder-check', '', 'mb-3') ?>
+    <div class="content-card-body">
+      <?php
+      $submitted = json_decode($reg['credentials_submitted'] ?? '', true) ?: [];
+      $presented = json_decode($reg['credentials_presented'] ?? '', true) ?: [];
+      ?>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Document</th>
+              <th style="width:140px;">Attached Scan</th>
+              <th class="text-center" style="width:130px;">Original<br>Presented</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach (credentialCatalog() as $ck => $cred): ?>
+            <?php if (!empty($cred['transferee']) && fv('enrollment_type',$reg) !== 'Transferee' && empty($submitted[$ck]) && empty($presented[$ck])) continue; ?>
+            <tr>
+              <td>
+                <div class="small fw-semibold"><?= e($cred['label']) ?></div>
+                <div class="text-muted" style="font-size:.68rem;"><?= e($cred['note']) ?></div>
+              </td>
+              <td>
+                <?php if (!empty($submitted[$ck])): ?>
+                <button type="button" class="btn btn-sm btn-outline-primary doc-view"
+                        data-url="<?= UPLOAD_URL . '/' . e($submitted[$ck]) ?>"
+                        data-label="<?= e($cred['label']) ?>">
+                  <i class="bi bi-paperclip me-1"></i>View
+                </button>
+                <?php else: ?>
+                <span class="text-muted small">—</span>
+                <?php endif; ?>
+              </td>
+              <td class="text-center">
+                <input class="form-check-input" type="checkbox" name="cred_presented[<?= $ck ?>]" value="1"
+                       <?= !empty($presented[$ck]) ? 'checked' : '' ?>>
+              </td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <?= ui_card_close() ?>
+
   <!-- Edit note + submit -->
   <?= ui_card_open('', '', '', 'mb-3') ?>
     <div class="content-card-body">
@@ -261,7 +316,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
           <button type="submit" class="btn btn-primary flex-fill">
             <i class="bi bi-check-lg me-1"></i>Save Changes
           </button>
-          <a href="<?= BASE_URL ?>/staff/view_registration.php?id=<?= (int)$id ?>" class="btn btn-outline-secondary">
+          <a href="<?= BASE_URL ?>/<?= currentRole() ?>/view_registration.php?id=<?= (int)$id ?>" class="btn btn-outline-secondary">
             Cancel
           </a>
         </div>

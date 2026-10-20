@@ -11,7 +11,7 @@ startSession();
 requireAuth(ROLE_STAFF, ROLE_REGISTRAR);
 
 $id = getInt('id');
-if (!$id) { flash('danger','Invalid request.'); redirect(BASE_URL.'/staff/document_requests.php'); }
+if (!$id) { flash('danger','Invalid request.'); redirect(BASE_URL . '/' . currentRole() . '/document_requests.php'); }
 
 $req = db()->fetchOne(
     "SELECT dr.*, dt.name AS doc_name
@@ -19,7 +19,7 @@ $req = db()->fetchOne(
      LEFT JOIN document_types dt ON dt.id = dr.document_type_id
      WHERE dr.id = ?", [$id]
 );
-if (!$req) { flash('danger','Request not found.'); redirect(BASE_URL.'/staff/document_requests.php'); }
+if (!$req) { flash('danger','Request not found.'); redirect(BASE_URL . '/' . currentRole() . '/document_requests.php'); }
 
 $issued = db()->fetchOne(
     "SELECT i.*, u.full_name AS issued_by_name
@@ -28,7 +28,7 @@ $issued = db()->fetchOne(
 );
 if (!$issued) {
     flash('warning','No verified document has been issued for this request yet.');
-    redirect(BASE_URL . '/staff/view_document.php?id=' . $id);
+    redirect(BASE_URL . '/' . currentRole() . '/view_document.php?id=' . $id);
 }
 
 $verifyUrl  = verificationUrl($issued['verification_code']);
@@ -43,7 +43,7 @@ $printMode  = get('print') === '1';
 <title>Verification Slip – <?= e($issued['verification_code']) ?></title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css<?= assetVer("assets/css/main.css") ?>">
 <style>body{background:#fff;padding:24px;}@media print{body{padding:0;}}</style>
 </head>
 <body>
@@ -51,11 +51,11 @@ $printMode  = get('print') === '1';
 <?php
 $pageTitle   = 'Verification Slip – ' . $issued['verification_code'];
 $breadcrumbs = [
-    ['label' => 'Document Requests', 'url' => BASE_URL . '/staff/document_requests.php'],
+    ['label' => 'Document Requests', 'url' => BASE_URL . '/' . currentRole() . '/document_requests.php'],
     ['label' => e($issued['verification_code'])],
 ];
 include __DIR__ . '/../includes/partials/head.php';
-include __DIR__ . '/../includes/partials/staff_sidebar.php';
+include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
 ?>
 <div class="main-content">
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>
@@ -65,7 +65,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     'Verification Slip',
     'Attach this slip to the released document — its QR code verifies authenticity.',
     'patch-check',
-    ui_back(BASE_URL . '/staff/view_document.php?id=' . (int)$id, 'Back to Request')
+    ui_back(BASE_URL . '/' . currentRole() . '/view_document.php?id=' . (int)$id, 'Back to Request')
     . '<a href="?id=' . (int)$id . '&amp;print=1" target="_blank" class="btn btn-sm btn-outline-dark"><i class="bi bi-printer me-1"></i>Print Slip</a>'
 ) ?>
 <?php endif; ?>
@@ -117,7 +117,8 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 
 <?php if ($printMode): ?>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="<?= BASE_URL ?>/assets/js/main.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/lenis.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/main.js<?= assetVer("assets/js/main.js") ?>"></script>
 <script>
 generateQrCode('qrcode-slip', '<?= e($verifyUrl) ?>', {width:150,height:150});
 window.onload = () => setTimeout(() => window.print(), 400);

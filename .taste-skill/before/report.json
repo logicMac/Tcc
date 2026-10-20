@@ -1,0 +1,2147 @@
+{
+ "url": "http://localhost/tcc_rrs/student/index.php",
+ "at": "2026-10-20T08:07:36.277Z",
+ "allow": [],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 3,
+   "filled": [
+    1,
+    0.67,
+    0.67
+   ],
+   "motion": {
+    "elements": 20,
+    "css": 10,
+    "transitions": 10,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 2319,
+     "screens": 2.6,
+     "words": 278,
+     "img": 4,
+     "video": 0,
+     "canvas": 1,
+     "svg": 0,
+     "sections": 5,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Registrar services, done online.",
+     "words": 4,
+     "chars": 32,
+     "lines": 2,
+     "size": 62.4,
+     "vw": 4.3,
+     "font": "Inter",
+     "weight": 800,
+     "tracking": -0.03,
+     "leading": 1.06,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "left",
+     "position": "left",
+     "widthRatio": 0.43,
+     "top": 324,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Registrar services, done online.",
+     "words": 4,
+     "lines": 2,
+     "size": 62.4,
+     "font": "Inter"
+    },
+    "headings": [
+     {
+      "text": "Registrar services, done online.",
+      "words": 4,
+      "chars": 32,
+      "lines": 2,
+      "size": 62.4,
+      "vw": 4.3,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.03,
+      "leading": 1.06,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.43,
+      "top": 324,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "12+",
+      "words": 1,
+      "chars": 3,
+      "lines": 1,
+      "size": 32,
+      "vw": 2.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.21,
+      "top": 941,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "10+",
+      "words": 1,
+      "chars": 3,
+      "lines": 1,
+      "size": 32,
+      "vw": 2.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.21,
+      "top": 941,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "1+",
+      "words": 1,
+      "chars": 2,
+      "lines": 1,
+      "size": 32,
+      "vw": 2.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "right",
+      "widthRatio": 0.21,
+      "top": 941,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "24/7",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 32,
+      "vw": 2.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "right",
+      "widthRatio": 0.21,
+      "top": 941,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "Three things, done properly",
+      "words": 4,
+      "chars": 27,
+      "lines": 1,
+      "size": 34.4,
+      "vw": 2.4,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.39,
+      "top": 1149,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Ready to skip the line?",
+      "words": 5,
+      "chars": 23,
+      "lines": 1,
+      "size": 32,
+      "vw": 2.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.86,
+      "top": 1916,
+      "tag": "h2",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 7,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 5,
+     "medianWords": 1,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Inter",
+       "share": 0.99,
+       "mono": false
+      },
+      {
+       "family": "ui-monospace",
+       "share": 0.01,
+       "mono": false
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      20,
+      32,
+      34,
+      62
+     ],
+     "sizeCount": 12,
+     "notLoaded": [],
+     "body": {
+      "font": "Inter",
+      "size": 12.8,
+      "leading": 1.5,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 3.1
+     },
+     "measureChars": 72,
+     "max": {
+      "size": 62.4,
+      "vw": 4.3,
+      "font": "Inter",
+      "text": "Registrar services,"
+     },
+     "monoShare": 0.01,
+     "monoProseShare": 0.01,
+     "monoFamilies": [
+      "ui-monospace"
+     ],
+     "monoSamples": [
+      "TCC-REG-2026-000042"
+     ],
+     "microLabels": 7,
+     "microLabelShare": 0.066,
+     "microSamples": [
+      "Registration Slip · TCC-RRMO",
+      "Live",
+      "Programs Offered",
+      "Official Documents",
+      "Submissions Handled",
+      "Online Access"
+     ],
+     "upperShare": 0.1,
+     "centerShare": 0.2,
+     "smallText": 24
+    },
+    "eyebrows": [
+     {
+      "text": "What you can do",
+      "above": "Three things, done properly",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": false,
+      "size": 11.5,
+      "top": 1121
+     }
+    ],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#f2f5f0",
+     "bodyBgHsl": {
+      "h": 96,
+      "s": 0.2,
+      "l": 0.95
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#ffffff",
+       "top": 1762,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#87958b",
+       "share": 0.42
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.23
+      },
+      {
+       "color": "#1b2a21",
+       "share": 0.1
+      },
+      {
+       "color": "#4c5f52",
+       "share": 0.08
+      },
+      {
+       "color": "#052317",
+       "share": 0.04
+      }
+     ],
+     "button": {
+      "bg": "#ffffff",
+      "hsl": {
+       "h": 0,
+       "s": 0,
+       "l": 1
+      },
+      "fg": "#1b2a21"
+     },
+     "lowContrast": [
+      {
+       "text": "Submit once, track anytime. Every reques",
+       "ratio": 2.8,
+       "need": 4.5,
+       "size": 15.2,
+       "fg": "#87958b",
+       "bg": "#f2f5f0"
+      },
+      {
+       "text": "Programs Offered",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.2,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Official Documents",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.2,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Submissions Handled",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.2,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Online Access",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.2,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Apply for enrollment online. Get a track",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.8,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 12,
+     "inHero": 4,
+     "radius": 7,
+     "height": 31,
+     "withShadow": 3,
+     "withGradient": 1,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Track Status",
+      "Pre-register",
+      "Request a document",
+      "Verify a document"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 10,
+     "shadowOverlay": 1,
+     "shadowSamples": [
+      "a.btn.btn-portal → rgba(201, 162, 39, 0.3) 0px 2px 10px 0px",
+      "span.hero-pill.hero-anim → rgba(5, 35, 23, 0.18) 0px 4px 14px 0px",
+      "form.hero-box.hero-anim → rgba(5, 35, 23, 0.12) 0px 18px 44px 0px",
+      "button.btn.btn-primary → rgba(5, 35, 23, 0.18) 0px 1px 2px 0px, rgba(255, 255, 255, 0.14) 0px 1px 0px 0px"
+     ],
+     "gradients": 2,
+     "scrims": 0,
+     "gradientSamples": [
+      "section.lp-hero → radial-gradient(600px 300px at 15% 0%, rgba(201, 162, 39, 0.1), rgba(0, 0, 0, 0) 60%), radial-gradient(700px 3",
+      "div.cta-band.reveal → radial-gradient(500px 220px at 85% 15%, rgba(201, 162, 39, 0.35), rgba(0, 0, 0, 0) 60%), linear-gradient(135de"
+     ],
+     "gradientText": 0,
+     "hairlines": 6,
+     "hairlineSamples": [
+      "nav.navbar.navbar-expand-lg 1440px",
+      "li.done 331px",
+      "li.now 331px",
+      "section.lp-stats 1440px",
+      "a.svc-row 684px"
+     ],
+     "outlinedBoxes": 3,
+     "dashed": 2,
+     "blurred": 1,
+     "roundedBoxes": 2,
+     "boxRadius": 20,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 8,
+     "fixed": true,
+     "height": 68,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": [
+     "inter",
+     "bootstrap-icons"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "pageH": 2319,
+    "margins": {
+     "left": 72,
+     "right": 78
+    },
+    "sections": [
+     {
+      "sel": "section.lp-hero",
+      "tag": "section",
+      "top": 68,
+      "height": 833,
+      "words": 84,
+      "media": 0,
+      "middle": 222,
+      "heading": {
+       "text": "Registrar services,",
+       "size": 62,
+       "tag": "h1"
+      },
+      "left": 72,
+      "right": 78,
+      "textLeft": 72,
+      "textRight": 78,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.lp-stats",
+      "tag": "section",
+      "top": 901,
+      "height": 139,
+      "words": 11,
+      "media": 0,
+      "middle": 192,
+      "heading": {
+       "text": "12",
+       "size": 32,
+       "tag": "div"
+      },
+      "left": 153,
+      "right": 170,
+      "textLeft": 153,
+      "textRight": 170,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.lp-section",
+      "tag": "section",
+      "top": 1040,
+      "height": 470,
+      "words": 84,
+      "media": 0,
+      "middle": 243,
+      "heading": {
+       "text": "Three things, done properly",
+       "size": 34,
+       "tag": "h2"
+      },
+      "left": 72,
+      "right": 135,
+      "textLeft": 72,
+      "textRight": 135,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.lp-section.alt",
+      "tag": "section",
+      "top": 1510,
+      "height": 253,
+      "words": 28,
+      "media": 0,
+      "middle": 121,
+      "heading": null,
+      "left": 297,
+      "right": 245,
+      "textLeft": 297,
+      "textRight": 245,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.lp-section.alt",
+      "tag": "section",
+      "top": 1762,
+      "height": 431,
+      "words": 0,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": null,
+      "right": null,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "footer.portal-footer.mt-auto",
+      "tag": "footer",
+      "top": 2193,
+      "height": 126,
+      "words": 27,
+      "media": 0,
+      "middle": 561,
+      "heading": null,
+      "left": 72,
+      "right": 72,
+      "textLeft": 72,
+      "textRight": 72,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Registrar services, done online.",
+      "size": 62,
+      "top": 324,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 72,
+      "n": 5
+     }
+    ],
+    "leftBlocks": 5,
+    "bodySize": 13,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0.13,
+    "voidBox": {
+     "x": 0,
+     "y": 540,
+     "w": 1440,
+     "h": 120
+    }
+   },
+   "app": null,
+   "consoleErrors": []
+  },
+  {
+   "width": 768,
+   "height": 1024,
+   "load": "load",
+   "screens": 3,
+   "filled": [
+    1,
+    0.72,
+    0.72
+   ],
+   "motion": {
+    "elements": 19,
+    "css": 10,
+    "transitions": 9,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "page": {
+     "height": 2835,
+     "screens": 2.8,
+     "words": 269,
+     "img": 4,
+     "video": 0,
+     "canvas": 1,
+     "svg": 0,
+     "sections": 5,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Registrar services, done online.",
+     "words": 4,
+     "chars": 32,
+     "lines": 2,
+     "size": 41.5,
+     "vw": 5.4,
+     "font": "Inter",
+     "weight": 800,
+     "tracking": -0.03,
+     "leading": 1.06,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "center",
+     "position": "center",
+     "widthRatio": 0.81,
+     "top": 212,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Registrar services, done online.",
+     "words": 4,
+     "lines": 2,
+     "size": 41.5,
+     "font": "Inter"
+    },
+    "headings": [
+     {
+      "text": "Registrar services, done online.",
+      "words": 4,
+      "chars": 32,
+      "lines": 2,
+      "size": 41.5,
+      "vw": 5.4,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.03,
+      "leading": 1.06,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.81,
+      "top": 212,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "12+",
+      "words": 1,
+      "chars": 3,
+      "lines": 1,
+      "size": 32,
+      "vw": 4.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.2,
+      "top": 1104,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "10+",
+      "words": 1,
+      "chars": 3,
+      "lines": 1,
+      "size": 32,
+      "vw": 4.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.2,
+      "top": 1104,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "1+",
+      "words": 1,
+      "chars": 2,
+      "lines": 1,
+      "size": 32,
+      "vw": 4.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "right",
+      "widthRatio": 0.2,
+      "top": 1104,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "24/7",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 32,
+      "vw": 4.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "right",
+      "widthRatio": 0.2,
+      "top": 1104,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "Ready to skip the line?",
+      "words": 5,
+      "chars": 23,
+      "lines": 1,
+      "size": 28.1,
+      "vw": 3.7,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.82,
+      "top": 2393,
+      "tag": "h2",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 6,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 6,
+     "medianWords": 1,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Inter",
+       "share": 0.99,
+       "mono": false
+      },
+      {
+       "family": "ui-monospace",
+       "share": 0.01,
+       "mono": false
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      20,
+      26,
+      28,
+      32,
+      42
+     ],
+     "sizeCount": 13,
+     "notLoaded": [],
+     "body": {
+      "font": "Inter",
+      "size": 12.8,
+      "leading": 1.5,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 3.1
+     },
+     "measureChars": 72,
+     "max": {
+      "size": 41.5,
+      "vw": 5.4,
+      "font": "Inter",
+      "text": "Registrar services,"
+     },
+     "monoShare": 0.01,
+     "monoProseShare": 0.01,
+     "monoFamilies": [
+      "ui-monospace"
+     ],
+     "monoSamples": [
+      "TCC-REG-2026-000042"
+     ],
+     "microLabels": 7,
+     "microLabelShare": 0.068,
+     "microSamples": [
+      "Registration Slip · TCC-RRMO",
+      "Live",
+      "Programs Offered",
+      "Official Documents",
+      "Submissions Handled",
+      "Online Access"
+     ],
+     "upperShare": 0.11,
+     "centerShare": 0.36,
+     "smallText": 24
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#f2f5f0",
+     "bodyBgHsl": {
+      "h": 96,
+      "s": 0.2,
+      "l": 0.95
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#ffffff",
+       "top": 1914,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#87958b",
+       "share": 0.44
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.21
+      },
+      {
+       "color": "#1b2a21",
+       "share": 0.1
+      },
+      {
+       "color": "#4c5f52",
+       "share": 0.08
+      },
+      {
+       "color": "#052317",
+       "share": 0.04
+      }
+     ],
+     "button": {
+      "bg": "#ffffff",
+      "hsl": {
+       "h": 0,
+       "s": 0,
+       "l": 1
+      },
+      "fg": "#1b2a21"
+     },
+     "lowContrast": [
+      {
+       "text": "Submit once, track anytime. Every reques",
+       "ratio": 2.8,
+       "need": 4.5,
+       "size": 15.2,
+       "fg": "#87958b",
+       "bg": "#f2f5f0"
+      },
+      {
+       "text": "Programs Offered",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.2,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Official Documents",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.2,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Submissions Handled",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.2,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Online Access",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.2,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Apply for enrollment online. Get a track",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.8,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 11,
+     "inHero": 4,
+     "radius": 7,
+     "height": 31,
+     "withShadow": 2,
+     "withGradient": 1,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Track Status",
+      "Pre-register",
+      "Request a document",
+      "Verify a document"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 9,
+     "shadowOverlay": 1,
+     "shadowSamples": [
+      "span.hero-pill.hero-anim → rgba(5, 35, 23, 0.18) 0px 4px 14px 0px",
+      "form.hero-box.hero-anim → rgba(5, 35, 23, 0.12) 0px 18px 44px 0px",
+      "button.btn.btn-primary → rgba(5, 35, 23, 0.18) 0px 1px 2px 0px, rgba(255, 255, 255, 0.14) 0px 1px 0px 0px",
+      "div.slip-card → rgba(5, 35, 23, 0.22) 0px 30px 60px -18px, rgba(5, 35, 23, 0.06) 0px 4px 12px 0p"
+     ],
+     "gradients": 2,
+     "scrims": 0,
+     "gradientSamples": [
+      "section.lp-hero → radial-gradient(600px 300px at 15% 0%, rgba(201, 162, 39, 0.1), rgba(0, 0, 0, 0) 60%), radial-gradient(700px 3",
+      "div.cta-band.reveal → radial-gradient(500px 220px at 85% 15%, rgba(201, 162, 39, 0.35), rgba(0, 0, 0, 0) 60%), linear-gradient(135de"
+     ],
+     "gradientText": 0,
+     "hairlines": 6,
+     "hairlineSamples": [
+      "nav.navbar.navbar-expand-lg 768px",
+      "li.done 331px",
+      "li.now 331px",
+      "section.lp-stats 768px",
+      "a.svc-row 694px"
+     ],
+     "outlinedBoxes": 3,
+     "dashed": 2,
+     "blurred": 1,
+     "roundedBoxes": 2,
+     "boxRadius": 20,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 1,
+     "fixed": true,
+     "height": 68,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": [
+     "inter",
+     "bootstrap-icons"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "pageH": 2835,
+    "margins": {
+     "left": 36,
+     "right": 36
+    },
+    "sections": [
+     {
+      "sel": "section.lp-hero",
+      "tag": "section",
+      "top": 68,
+      "height": 996,
+      "words": 84,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Registrar services,",
+       "size": 41,
+       "tag": "h1"
+      },
+      "left": 90,
+      "right": 42,
+      "textLeft": 90,
+      "textRight": 42,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.lp-stats",
+      "tag": "section",
+      "top": 1064,
+      "height": 158,
+      "words": 11,
+      "media": 0,
+      "middle": 77,
+      "heading": {
+       "text": "12",
+       "size": 32,
+       "tag": "div"
+      },
+      "left": 42,
+      "right": 59,
+      "textLeft": 42,
+      "textRight": 59,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.lp-section",
+      "tag": "section",
+      "top": 1222,
+      "height": 692,
+      "words": 84,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Three things, done properly",
+       "size": 26,
+       "tag": "h2"
+      },
+      "left": 36,
+      "right": 109,
+      "textLeft": 36,
+      "textRight": 109,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.lp-section.alt",
+      "tag": "section",
+      "top": 1914,
+      "height": 325,
+      "words": 0,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": null,
+      "right": null,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.lp-section.alt",
+      "tag": "section",
+      "top": 2239,
+      "height": 426,
+      "words": 0,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": null,
+      "right": null,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "footer.portal-footer.mt-auto",
+      "tag": "footer",
+      "top": 2665,
+      "height": 170,
+      "words": 27,
+      "media": 0,
+      "middle": 130,
+      "heading": null,
+      "left": 36,
+      "right": 36,
+      "textLeft": 36,
+      "textRight": 36,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Registrar services, done online.",
+      "size": 41,
+      "top": 212,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 36,
+      "n": 2
+     }
+    ],
+    "leftBlocks": 2,
+    "bodySize": 13,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": null,
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 4,
+   "filled": [
+    1,
+    0.69,
+    0.69,
+    0.75
+   ],
+   "motion": {
+    "elements": 18,
+    "css": 10,
+    "transitions": 8,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "page": {
+     "height": 3146,
+     "screens": 3.7,
+     "words": 269,
+     "img": 4,
+     "video": 0,
+     "canvas": 1,
+     "svg": 0,
+     "sections": 5,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Registrar services, done online.",
+     "words": 4,
+     "chars": 32,
+     "lines": 2,
+     "size": 38.4,
+     "vw": 9.8,
+     "font": "Inter",
+     "weight": 800,
+     "tracking": -0.03,
+     "leading": 1.06,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "center",
+     "position": "center",
+     "widthRatio": 0.94,
+     "top": 198,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Registrar services, done online.",
+     "words": 4,
+     "lines": 2,
+     "size": 38.4,
+     "font": "Inter"
+    },
+    "headings": [
+     {
+      "text": "Registrar services, done online.",
+      "words": 4,
+      "chars": 32,
+      "lines": 2,
+      "size": 38.4,
+      "vw": 9.8,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.03,
+      "leading": 1.06,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.94,
+      "top": 198,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "12+",
+      "words": 1,
+      "chars": 3,
+      "lines": 1,
+      "size": 32,
+      "vw": 8.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.44,
+      "top": 1187,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "10+",
+      "words": 1,
+      "chars": 3,
+      "lines": 1,
+      "size": 32,
+      "vw": 8.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "right",
+      "widthRatio": 0.44,
+      "top": 1187,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "1+",
+      "words": 1,
+      "chars": 2,
+      "lines": 1,
+      "size": 32,
+      "vw": 8.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.44,
+      "top": 1269,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "24/7",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 32,
+      "vw": 8.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "right",
+      "widthRatio": 0.44,
+      "top": 1269,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "Three things, done properly",
+      "words": 4,
+      "chars": 27,
+      "lines": 1,
+      "size": 25.6,
+      "vw": 6.6,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.94,
+      "top": 1453,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Ready to skip the line?",
+      "words": 5,
+      "chars": 23,
+      "lines": 1,
+      "size": 24.7,
+      "vw": 6.3,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.77,
+      "top": 2577,
+      "tag": "h2",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 7,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 6,
+     "medianWords": 1,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Inter",
+       "share": 0.99,
+       "mono": false
+      },
+      {
+       "family": "ui-monospace",
+       "share": 0.01,
+       "mono": false
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      20,
+      25,
+      26,
+      32,
+      38
+     ],
+     "sizeCount": 13,
+     "notLoaded": [],
+     "body": {
+      "font": "Inter",
+      "size": 12.8,
+      "leading": 1.5,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 3.1
+     },
+     "measureChars": 42,
+     "max": {
+      "size": 38.4,
+      "vw": 9.8,
+      "font": "Inter",
+      "text": "Registrar services,"
+     },
+     "monoShare": 0.01,
+     "monoProseShare": 0.01,
+     "monoFamilies": [
+      "ui-monospace"
+     ],
+     "monoSamples": [
+      "TCC-REG-2026-000042"
+     ],
+     "microLabels": 7,
+     "microLabelShare": 0.068,
+     "microSamples": [
+      "Registration Slip · TCC-RRMO",
+      "Live",
+      "Programs Offered",
+      "Official Documents",
+      "Submissions Handled",
+      "Online Access"
+     ],
+     "upperShare": 0.11,
+     "centerShare": 0.44,
+     "smallText": 24
+    },
+    "eyebrows": [
+     {
+      "text": "What you can do",
+      "above": "Three things, done properly",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": false,
+      "size": 11.5,
+      "top": 1425
+     }
+    ],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#f2f5f0",
+     "bodyBgHsl": {
+      "h": 96,
+      "s": 0.2,
+      "l": 0.95
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#ffffff",
+       "top": 690,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#87958b",
+       "share": 0.44
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.21
+      },
+      {
+       "color": "#1b2a21",
+       "share": 0.1
+      },
+      {
+       "color": "#4c5f52",
+       "share": 0.08
+      },
+      {
+       "color": "#052317",
+       "share": 0.04
+      }
+     ],
+     "button": {
+      "bg": "#ffffff",
+      "hsl": {
+       "h": 0,
+       "s": 0,
+       "l": 1
+      },
+      "fg": "#1b2a21"
+     },
+     "lowContrast": [
+      {
+       "text": "Submit once, track anytime. Every reques",
+       "ratio": 2.8,
+       "need": 4.5,
+       "size": 15.2,
+       "fg": "#87958b",
+       "bg": "#f2f5f0"
+      },
+      {
+       "text": "Programs Offered",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.2,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Official Documents",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.2,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Submissions Handled",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.2,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Online Access",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.2,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      },
+      {
+       "text": "Apply for enrollment online. Get a track",
+       "ratio": 3.1,
+       "need": 4.5,
+       "size": 12.8,
+       "fg": "#87958b",
+       "bg": "#ffffff"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 11,
+     "inHero": 4,
+     "radius": 7,
+     "height": 31,
+     "withShadow": 2,
+     "withGradient": 1,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Track Status",
+      "Pre-register",
+      "Request a document",
+      "Verify a document"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 9,
+     "shadowOverlay": 1,
+     "shadowSamples": [
+      "span.hero-pill.hero-anim → rgba(5, 35, 23, 0.18) 0px 4px 14px 0px",
+      "form.hero-box.hero-anim → rgba(5, 35, 23, 0.12) 0px 18px 44px 0px",
+      "button.btn.btn-primary → rgba(5, 35, 23, 0.18) 0px 1px 2px 0px, rgba(255, 255, 255, 0.14) 0px 1px 0px 0px",
+      "div.slip-card → rgba(5, 35, 23, 0.22) 0px 30px 60px -18px, rgba(5, 35, 23, 0.06) 0px 4px 12px 0p"
+     ],
+     "gradients": 2,
+     "scrims": 1,
+     "gradientSamples": [
+      "section.lp-hero → radial-gradient(600px 300px at 15% 0%, rgba(201, 162, 39, 0.1), rgba(0, 0, 0, 0) 60%), radial-gradient(700px 3",
+      "div.cta-band.reveal → radial-gradient(500px 220px at 85% 15%, rgba(201, 162, 39, 0.35), rgba(0, 0, 0, 0) 60%), linear-gradient(135de"
+     ],
+     "gradientText": 0,
+     "hairlines": 6,
+     "hairlineSamples": [
+      "nav.navbar.navbar-expand-lg 390px",
+      "li.done 317px",
+      "li.now 317px",
+      "section.lp-stats 390px",
+      "a.svc-row 364px"
+     ],
+     "outlinedBoxes": 4,
+     "dashed": 2,
+     "blurred": 1,
+     "roundedBoxes": 3,
+     "boxRadius": 20,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 1,
+     "fixed": true,
+     "height": 68,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": [
+     "inter",
+     "bootstrap-icons"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "pageH": 3146,
+    "margins": {
+     "left": 12,
+     "right": 12
+    },
+    "sections": [
+     {
+      "sel": "section.lp-hero",
+      "tag": "section",
+      "top": 68,
+      "height": 1079,
+      "words": 84,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Registrar services,",
+       "size": 38,
+       "tag": "h1"
+      },
+      "left": 19,
+      "right": 19,
+      "textLeft": 19,
+      "textRight": 19,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.lp-stats",
+      "tag": "section",
+      "top": 1147,
+      "height": 221,
+      "words": 11,
+      "media": 0,
+      "middle": 35,
+      "heading": {
+       "text": "12",
+       "size": 32,
+       "tag": "div"
+      },
+      "left": 15,
+      "right": 20,
+      "textLeft": 15,
+      "textRight": 20,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.lp-section",
+      "tag": "section",
+      "top": 1368,
+      "height": 761,
+      "words": 30,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Three things, done properly",
+       "size": 26,
+       "tag": "h2"
+      },
+      "left": 12,
+      "right": 31,
+      "textLeft": 12,
+      "textRight": 31,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.lp-section.alt",
+      "tag": "section",
+      "top": 2129,
+      "height": 318,
+      "words": 0,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": null,
+      "right": null,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.lp-section.alt",
+      "tag": "section",
+      "top": 2447,
+      "height": 459,
+      "words": 0,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": null,
+      "right": null,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "footer.portal-footer.mt-auto",
+      "tag": "footer",
+      "top": 2906,
+      "height": 240,
+      "words": 27,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 12,
+      "right": 12,
+      "textLeft": 12,
+      "textRight": 12,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Registrar services, done online.",
+      "size": 38,
+      "top": 198,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [
+     {
+      "text": "Submissions Handled",
+      "side": "left",
+      "px": 15
+     },
+     {
+      "text": "What you can do",
+      "side": "left",
+      "px": 12
+     },
+     {
+      "text": "Three things, done properly",
+      "side": "left",
+      "px": 12
+     },
+     {
+      "text": "Submit once, track anytime. Every request lands di",
+      "side": "left",
+      "px": 12
+     },
+     {
+      "text": "© 2026 Tampakan Community College. All rights rese",
+      "side": "left",
+      "px": 12
+     }
+    ],
+    "edges": [
+     {
+      "x": 12,
+      "n": 2
+     }
+    ],
+    "leftBlocks": 2,
+    "bodySize": 12,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": null,
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "FAIL",
+   "id": "eyebrow",
+   "width": 1440,
+   "message": "1 eyebrow/kicker label(s) above headings: \"What you can do\" above \"Three things, done properly\"",
+   "fix": "Delete them. If the label carried real information, fold it into the headline or the supporting sentence.",
+   "alsoAt": [
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "mono",
+   "width": 1440,
+   "message": "Monospace type outside code: ui-monospace — e.g. \"TCC-REG-2026-000042\"",
+   "fix": "Set it in the text face. Monospace is for literal code inside <pre>/<code> only.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "micro-label",
+   "width": 1440,
+   "message": "7 tiny uppercase letter-spaced labels (e.g. \"Registration Slip · TCC-RRMO\", \"Live\", \"Programs Offered\", \"Official Documents\").",
+   "fix": "Use sentence-case text at a readable size, or delete the label.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "gradient",
+   "width": 1440,
+   "message": "2 gradient fill(s): section.lp-hero → radial-gradient(600px 300px at 15% 0%, rgba(201, 162, 39, 0.1), rgba(0, 0, 0, 0) 60%), radial-gradient(700px 3 | div.cta-band.reveal → radial-gradient(500px 220px at 85% 15%, rgba(201, 162, 39, 0.35), rgba(0, 0, 0, 0) 60%), linear-gradient(135de",
+   "fix": "Use a flat colour or a real image. The only gradient allowed by default is a neutral scrim over a photo for legibility.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "shadow",
+   "width": 1440,
+   "message": "10 box-shadow(s) on elements at rest: a.btn.btn-portal → rgba(201, 162, 39, 0.3) 0px 2px 10px 0px | span.hero-pill.hero-anim → rgba(5, 35, 23, 0.18) 0px 4px 14px 0px | form.hero-box.hero-anim → rgba(5, 35, 23, 0.12) 0px 18px 44px 0px",
+   "fix": "Remove. Separate surfaces with a tone step or space. Shadows are for things that really float (menus, dialogs, sticky bars).",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "button-fx",
+   "width": 1440,
+   "message": "Buttons with gradient fill and shadow/glow.",
+   "fix": "Flat fill, one colour.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "hairline",
+   "width": 1440,
+   "message": "6 thin rule(s)/divider line(s): nav.navbar.navbar-expand-lg 1440px | li.done 331px | li.now 331px | section.lp-stats 1440px",
+   "fix": "Delete. Separate with space, a tone change, or scale. Lines are only for real tables and form fields.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "outlined-box",
+   "width": 1440,
+   "message": "3 boxes drawn with a 1px outline.",
+   "fix": "Define a surface by its fill (one tone step from the page) or leave the content unboxed.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "dashed",
+   "width": 1440,
+   "message": "2 dashed/dotted border(s).",
+   "fix": "Remove unless it is a real drop zone.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "contrast",
+   "width": 1440,
+   "message": "Low-contrast text: \"Submit once, track anytime. Every reques\" 2.8:1 needs 4.5:1; \"Programs Offered\" 3.1:1 needs 4.5:1; \"Official Documents\" 3.1:1 needs 4.5:1; \"Submissions Handled\" 3.1:1 needs 4.5:1",
+   "fix": "Darken or lighten the text colour.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "size-count",
+   "width": 1440,
+   "message": "12 different font sizes (10, 11, 12, 13, 14, 15, 16, 17, 20, 32, 34, 62).",
+   "fix": "A page needs about five: display, heading, lead, body, small.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "body-size",
+   "width": 1440,
+   "message": "Body text is 12.8px (the size most of the running text is set in).",
+   "fix": "Body copy 16–20px. Map small sizes from blueprints onto your body step.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "grey-body",
+   "width": 1440,
+   "message": "The running text is a soft grey on its ground (3.1:1).",
+   "fix": "Set body copy in the full ink (7:1 or more). Keep the muted ink for secondary notes; pages read thin and unfinished when everything is grey.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "few-pictures",
+   "width": 1440,
+   "message": "Only 0 picture(s) on the page (0 photographs, footage or raster images, 0 interface fragments). Drawings in SVG do not count.",
+   "fix": "Find real pictures of the subject's world with scripts/assets.mjs (photographs, archival images, maps, engravings, footage), download them to assets/ and give them room: a hero picture, one per section that has a subject, a full-width band. At least four, usually six to twelve."
+  },
+  {
+   "level": "WARN",
+   "id": "no-footage",
+   "width": 1440,
+   "message": "No video anywhere on the page.",
+   "fix": "Look for one honest clip with scripts/assets.mjs --video (the place, the material, the process) and use it as a muted loop with a poster frame. Defend its absence only if no clip fits the subject."
+  },
+  {
+   "level": "FAIL",
+   "id": "small-text",
+   "width": 1440,
+   "message": "24 text blocks under 13px.",
+   "fix": "Nothing meant to be read goes below 13px.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "focal-point",
+   "width": 1440,
+   "message": "The first screen has no dominant element: the largest type is 62.4px (4.3vw) and no single picture holds a third of the viewport.",
+   "fix": "Make one thing lead: the headline at display size, or one large picture. A grid of many small pictures is not one thing; in blind tests jurors marked a first screen without a headline down every time. On the strongest studied sites the largest type has a median of 8.4vw."
+  },
+  {
+   "level": "WARN",
+   "id": "edge-text",
+   "width": 390,
+   "message": "5 text block(s) sit 12–15px from the phone's edge: \"Submissions Handled\" (15px); \"What you can do\" (12px); \"Three things, done properly\" (12px)",
+   "fix": "The page margin is 16–20px on a phone; the header and the corner labels sit on it too."
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\before\\desktop-fold.jpg",
+   "pages": [
+    "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\before\\desktop-page-01.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "tablet",
+   "width": 768,
+   "fold": "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\before\\tablet-fold.jpg",
+   "pages": [
+    "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\before\\tablet-page-01.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\before\\mobile-fold.jpg",
+   "pages": [
+    "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\before\\mobile-page-01.jpg"
+   ],
+   "film": []
+  }
+ ]
+}

@@ -8,6 +8,17 @@ $pageTitle = $pageTitle ?? 'TCC RRS';
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+  document.documentElement.classList.add('js');
+  try {
+    if (localStorage.getItem('tccSidebarCollapsed') === '1' && window.innerWidth >= 992) {
+      document.documentElement.classList.add('sidebar-collapsed');
+    }
+    if (localStorage.getItem('tccTheme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  } catch (_) {}
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
@@ -22,9 +33,18 @@ $pageTitle = $pageTitle ?? 'TCC RRS';
 <!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <!-- App CSS -->
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css<?= assetVer("assets/css/main.css") ?>">
 </head>
 <body>
+<!-- Page loader (content area only — sidebar & topbar stay visible) -->
+<div class="page-loader dash-loader" id="pageLoader" aria-hidden="true">
+  <div class="pl-ring">
+    <svg class="pl-arc-svg" viewBox="0 0 100 100"><circle class="pl-track" cx="50" cy="50" r="44"/><circle class="pl-arc" cx="50" cy="50" r="44"/></svg>
+    <img src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="" class="pl-logo">
+  </div>
+  <div class="pl-text">Tampakan <b>Community College</b></div>
+</div>
+
 <div class="dashboard-wrapper">
 <!-- Sidebar Overlay (mobile) -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>

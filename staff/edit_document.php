@@ -9,14 +9,14 @@ startSession();
 requireAuth(ROLE_STAFF, ROLE_REGISTRAR);
 
 $id = getInt('id');
-if (!$id) { flash('danger','Invalid request.'); redirect(BASE_URL.'/staff/document_requests.php'); }
+if (!$id) { flash('danger','Invalid request.'); redirect(BASE_URL.'/'.currentRole().'/document_requests.php'); }
 
 $req = db()->fetchOne("SELECT * FROM document_requests WHERE id = ?", [$id]);
-if (!$req) { flash('danger','Request not found.'); redirect(BASE_URL.'/staff/document_requests.php'); }
+if (!$req) { flash('danger','Request not found.'); redirect(BASE_URL.'/'.currentRole().'/document_requests.php'); }
 
 $pageTitle   = 'Edit Document Request – ' . $req['tracking_code'];
 $breadcrumbs = [
-    ['label' => 'Document Requests', 'url' => BASE_URL . '/staff/document_requests.php'],
+    ['label' => 'Document Requests', 'url' => BASE_URL . '/' . currentRole() . '/document_requests.php'],
     ['label' => e($req['tracking_code'])],
 ];
 $docTypes = getActiveDocumentTypes();
@@ -80,7 +80,7 @@ if (isPost()) {
             "Edited document request {$req['tracking_code']}", $req['tracking_code']);
 
         flash('success', 'Record updated successfully.');
-        redirect(BASE_URL . '/staff/view_document.php?id=' . $id);
+        redirect(BASE_URL . '/' . currentRole() . '/view_document.php?id=' . $id);
     }
     $req = array_merge($req, $data);
 }
@@ -90,7 +90,7 @@ function fv(string $key, array $req) {
 }
 
 include __DIR__ . '/../includes/partials/head.php';
-include __DIR__ . '/../includes/partials/staff_sidebar.php';
+include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
 ?>
 <div class="main-content">
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>
@@ -101,7 +101,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     'Edit Request — ' . e($req['tracking_code']),
     'Update the request details. Changes are logged.',
     'pencil-square',
-    ui_back(BASE_URL . '/staff/view_document.php?id=' . (int)$id, 'Cancel & Back')
+    ui_back(BASE_URL . '/' . currentRole() . '/view_document.php?id=' . (int)$id, 'Cancel & Back')
 ) ?>
 
 <?php if (!empty($errors)): ?>
@@ -170,7 +170,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
           <button type="submit" class="btn btn-primary flex-fill">
             <i class="bi bi-check-lg me-1"></i>Save Changes
           </button>
-          <a href="<?= BASE_URL ?>/staff/view_document.php?id=<?= (int)$id ?>" class="btn btn-outline-secondary">
+          <a href="<?= BASE_URL ?>/<?= currentRole() ?>/view_document.php?id=<?= (int)$id ?>" class="btn btn-outline-secondary">
             Cancel
           </a>
         </div>

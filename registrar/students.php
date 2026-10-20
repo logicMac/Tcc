@@ -122,9 +122,9 @@ echo ui_table(
     ['Student', 'Student No.', 'Submissions', 'Last Login', 'Registered', 'Status',
      ['label' => 'Action', 'style' => 'width:120px']],
     $rows,
-    ['empty_icon' => 'people', 'empty_msg' => 'No student accounts found.']
+    ['empty_icon' => 'people', 'empty_msg' => 'No student accounts found.',
+     'pagination'  => ['page' => $page, 'pages' => $result['pages'], 'total' => $result['total'], 'per_page' => $perPage, 'base_url' => $baseUrl]]
 );
-echo ui_list_footer($page, $result['pages'], $result['total'], $perPage, $baseUrl);
 echo ui_card_close();
 ?>
 

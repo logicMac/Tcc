@@ -10,7 +10,7 @@ startSession();
 requireAuth(ROLE_STAFF, ROLE_REGISTRAR);
 
 $id  = getInt('id');
-if (!$id) { flash('danger','Invalid registration.'); redirect(BASE_URL.'/staff/registrations.php'); }
+if (!$id) { flash('danger','Invalid registration.'); redirect(BASE_URL.'/'.currentRole().'/registrations.php'); }
 
 $reg = db()->fetchOne(
     "SELECT pr.*, p.name AS prog_name, p.code AS prog_code, p.department
@@ -18,18 +18,18 @@ $reg = db()->fetchOne(
      LEFT JOIN programs p ON p.id = pr.program_id
      WHERE pr.id = ?", [$id]
 );
-if (!$reg) { flash('danger','Registration not found.'); redirect(BASE_URL.'/staff/registrations.php'); }
+if (!$reg) { flash('danger','Registration not found.'); redirect(BASE_URL.'/'.currentRole().'/registrations.php'); }
 
 $pageTitle = 'View Registration – ' . $reg['tracking_code'];
 
 // Build back URL preserving any referrer filter state
 $backUrl = isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'registrations.php') !== false
     ? $_SERVER['HTTP_REFERER']
-    : BASE_URL . '/staff/registrations.php';
+    : BASE_URL . '/' . currentRole() . '/registrations.php';
 
 // Breadcrumbs
 $breadcrumbs = [
-    ['label' => 'Pre-Registrations', 'url' => BASE_URL . '/staff/registrations.php'],
+    ['label' => 'Pre-Registrations', 'url' => BASE_URL . '/' . currentRole() . '/registrations.php'],
     ['label' => e($reg['tracking_code'])],
 ];
 
@@ -50,7 +50,7 @@ if (isPost()) {
         logActivity($toArchive ? 'RECORD_ARCHIVE' : 'RECORD_RESTORE', 'Records Management',
             ($toArchive ? 'Archived' : 'Restored') . " registration {$reg['tracking_code']}", $reg['tracking_code']);
         flash('success', 'Record ' . ($toArchive ? 'archived' : 'restored') . '.');
-        redirect(BASE_URL . '/staff/view_registration.php?id=' . $id);
+        redirect(BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . $id);
     }
 
     // ── Status update ────────────────────────────────────────────────────
@@ -90,7 +90,7 @@ if (isPost()) {
         }
 
         flash('success', 'Status updated to ' . $newStatus . ' successfully.');
-        redirect(BASE_URL . '/staff/view_registration.php?id=' . $id);
+        redirect(BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . $id);
     }
 }
 
@@ -98,19 +98,38 @@ $history     = getStatusHistory($reg['tracking_code']);
 $trackingUrl = trackingUrl($reg['tracking_code']);
 
 include __DIR__ . '/../includes/partials/head.php';
-include __DIR__ . '/../includes/partials/staff_sidebar.php';
+include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
 ?>
 <div class="main-content">
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>
 <div class="page-content">
 <?= renderFlash() ?>
 
+<!-- Print-only document header (long bond) -->
+<div class="print-header d-none d-print-block">
+  <div class="ph-brand">
+    <img src="<?= BASE_URL ?>/assets/images/school_logo.png" class="ph-seal" alt="TCC seal">
+    <div>
+      <div class="ph-school">Tampakan Community College</div>
+      <div class="ph-addr">Purok Mahunsay, Brgy. Poblacion, Tampakan, South Cotabato</div>
+    </div>
+    <div class="ph-meta">
+      <?php if (!empty($reg['photo_path'])): ?>
+      <img src="<?= UPLOAD_URL . '/' . e($reg['photo_path']) ?>" class="ph-photo" alt="Applicant photo">
+      <?php endif; ?>
+      <div class="ph-doc">PRE-REGISTRATION RECORD</div>
+      <div class="ph-code"><?= e($reg['tracking_code']) ?></div>
+      <div class="ph-date">Printed <?= date('F d, Y · h:i A') ?></div>
+    </div>
+  </div>
+</div>
+
 <?= ui_page_header(
     e($reg['tracking_code']),
     'Pre-Registration Detail — Submitted ' . formatDateTime($reg['submitted_at']),
     '',
     ui_back($backUrl)
-    . '<a href="' . BASE_URL . '/staff/edit_registration.php?id=' . (int)$id . '" class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i>Edit Record</a>'
+    . '<a href="' . BASE_URL . '/' . currentRole() . '/edit_registration.php?id=' . (int)$id . '" class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i>Edit Record</a>'
     . '<a href="' . e($trackingUrl) . '" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye me-1"></i>Student View</a>'
     . '<button onclick="window.print()" class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer me-1"></i>Print</button>'
 ) ?>
@@ -119,8 +138,14 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
   <!-- ── Left: Details ── -->
   <div class="col-lg-8">
 
-    <!-- Status Banner -->
-    <?= ui_card_open('', '', '', 'mb-3') ?>
+    <!-- Applicant Card: photo + identity + status -->
+    <?php
+    $photoUrl  = (!empty($reg['photo_path']) && is_file(UPLOAD_DIR . '/' . $reg['photo_path']))
+        ? UPLOAD_URL . '/' . $reg['photo_path'] : '';
+    $applicant = fullName($reg);
+    $apInit    = implode('', array_map(fn($p) => strtoupper($p[0]), array_slice(explode(' ', trim($applicant)), 0, 2)));
+    ?>
+    <?= ui_card_open('', '', '', 'mb-3 applicant-card') ?>
       <div class="content-card-body py-3">
         <?php if ($reg['is_archived']): ?>
         <div class="alert alert-secondary d-flex align-items-center gap-2 py-2 mb-3">
@@ -130,31 +155,47 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
             It is hidden from the default lists but remains fully retrievable.</div>
         </div>
         <?php endif; ?>
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-          <div class="d-flex align-items-center gap-3">
-            <div>
-              <div class="text-muted small">Current Status</div>
-              <div><?= statusBadge($reg['status']) ?></div>
-            </div>
-            <?php if ($reg['processed_at']): ?>
-            <div>
-              <div class="text-muted small">Processed</div>
-              <div class="small fw-semibold"><?= formatDateTime($reg['processed_at']) ?></div>
-            </div>
-            <?php endif; ?>
-            <?php if ($reg['approved_at']): ?>
-            <div>
-              <div class="text-muted small">Approved</div>
-              <div class="small fw-semibold"><?= formatDateTime($reg['approved_at']) ?></div>
-            </div>
+        <div class="applicant-row">
+          <div class="applicant-photo">
+            <?php if ($photoUrl): ?>
+            <button type="button" class="doc-view ap-photo-btn"
+                    data-url="<?= e($photoUrl) ?>"
+                    data-label="Applicant Photo — <?= e($applicant) ?>"
+                    title="Click to enlarge">
+              <img src="<?= e($photoUrl) ?>" alt="2x2 applicant photo of <?= e($applicant) ?>">
+            </button>
+            <?php else: ?>
+            <span class="ap-photo-empty" title="No photo submitted"><?= e($apInit) ?></span>
             <?php endif; ?>
           </div>
-          <div>
-            <span class="font-monospace text-muted small"><?= e($reg['tracking_code']) ?></span>
+          <div class="applicant-main">
+            <div class="ap-name"><?= e($applicant) ?></div>
+            <div class="ap-prog">
+              <span class="badge bg-light text-dark"><?= e($reg['prog_code'] ?: ($reg['program_other'] ?: '—')) ?></span>
+              <span class="text-muted small"><?= e($reg['prog_name'] ?? '') ?> · <?= e($reg['year_level']) ?></span>
+            </div>
+            <div class="ap-meta">
+              <span><i class="bi bi-envelope me-1"></i><?= e($reg['email']) ?></span>
+              <span><i class="bi bi-phone me-1"></i><?= e($reg['contact_number']) ?></span>
+              <?php if (!empty($reg['lrn'])): ?>
+              <span><i class="bi bi-card-text me-1"></i>LRN <?= e($reg['lrn']) ?></span>
+              <?php endif; ?>
+              <span><?= ui_code($reg['tracking_code']) ?></span>
+            </div>
+          </div>
+          <div class="applicant-status">
+            <div class="ap-status-label">Current Status</div>
+            <div><?= statusBadge($reg['status']) ?></div>
+            <?php if ($reg['processed_at']): ?>
+            <div class="ap-status-date">Processed <?= formatDateTime($reg['processed_at']) ?></div>
+            <?php endif; ?>
+            <?php if ($reg['approved_at']): ?>
+            <div class="ap-status-date">Approved <?= formatDateTime($reg['approved_at']) ?></div>
+            <?php endif; ?>
           </div>
         </div>
         <?php if (!empty($reg['remarks'])): ?>
-        <div class="mt-2 p-2 rounded bg-light border-start border-warning border-3 small">
+        <div class="mt-3 p-2 rounded bg-light border-start border-warning border-3 small">
           <strong>Remarks:</strong> <?= e($reg['remarks']) ?>
         </div>
         <?php endif; ?>
@@ -237,13 +278,68 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     </div>
     <?= ui_card_close() ?>
 
+    <!-- School Credentials -->
+    <?= ui_card_open('School Credentials', 'folder-check', '', 'mb-3') ?>
+    <div class="content-card-body">
+      <?php
+      $submitted = json_decode($reg['credentials_submitted'] ?? '', true) ?: [];
+      $presented = json_decode($reg['credentials_presented'] ?? '', true) ?: [];
+      ?>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Document</th>
+              <th>Attached Scan</th>
+              <th class="text-center" style="width:120px;">Original<br>Presented</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach (credentialCatalog() as $ck => $cred): ?>
+            <?php if (!empty($cred['transferee']) && $reg['enrollment_type'] !== 'Transferee' && empty($submitted[$ck]) && empty($presented[$ck])) continue; ?>
+            <tr>
+              <td>
+                <div class="small fw-semibold"><?= e($cred['label']) ?></div>
+                <div class="text-muted" style="font-size:.68rem;"><?= e($cred['note']) ?></div>
+              </td>
+              <td>
+                <?php if (!empty($submitted[$ck])): ?>
+                <button type="button" class="btn btn-sm btn-outline-primary doc-view"
+                        data-url="<?= UPLOAD_URL . '/' . e($submitted[$ck]) ?>"
+                        data-label="<?= e($cred['label']) ?>">
+                  <i class="bi bi-paperclip me-1"></i>View
+                </button>
+                <span class="d-none d-print-inline small">&#10003; Attached</span>
+                <?php else: ?>
+                <span class="text-muted small">—</span>
+                <?php endif; ?>
+              </td>
+              <td class="text-center">
+                <?php if (!empty($presented[$ck])): ?>
+                <span class="badge badge-soft-success"><i class="bi bi-check-lg me-1"></i>Yes</span>
+                <?php else: ?>
+                <span class="badge badge-soft-secondary">No</span>
+                <?php endif; ?>
+              </td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+      <div class="text-muted mt-2" style="font-size:.7rem;">
+        Tick originals under <a href="<?= BASE_URL ?>/<?= currentRole() ?>/edit_registration.php?id=<?= (int)$id ?>">Edit Record</a>
+        once the student presents them at the office.
+      </div>
+    </div>
+    <?= ui_card_close() ?>
+
   </div><!-- /col-lg-8 -->
 
   <!-- ── Right: Actions + Timeline ── -->
   <div class="col-lg-4">
 
     <!-- Update Status -->
-    <?= ui_card_open('Update Status', 'arrow-repeat', '', 'mb-3') ?>
+    <?= ui_card_open('Update Status', 'arrow-repeat', '', 'mb-3 d-print-none') ?>
       <div class="content-card-body">
         <form method="POST" action="">
           <?= csrfField() ?>
@@ -296,7 +392,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     <?= ui_card_close() ?>
 
     <!-- Archive / Restore -->
-    <?= ui_card_open('', '', '', 'mt-3') ?>
+    <?= ui_card_open('', '', '', 'mt-3 d-print-none') ?>
       <div class="content-card-body">
         <form method="POST" onsubmit="return confirm('<?= $reg['is_archived'] ? 'Restore this record from the archive?' : 'Archive this record? It will be hidden from default lists.' ?>')">
           <?= csrfField() ?>
@@ -317,6 +413,18 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 
   </div><!-- /col-lg-4 -->
 </div><!-- /row -->
+
+<!-- Print-only signature block -->
+<div class="print-footer d-none d-print-block">
+  <div class="pf-row">
+    <div class="pf-sig"><div class="pf-line"></div><span>Student's Signature over Printed Name / Date</span></div>
+    <div class="pf-sig"><div class="pf-line"></div><span>Verified by — Registrar's Office / Date</span></div>
+  </div>
+  <div class="pf-note">
+    Generated by the TCC Registration &amp; Records System &middot; Verify this record at
+    <?= e(preg_replace('#^https?://#', '', $trackingUrl)) ?> &middot; <?= e($reg['tracking_code']) ?>
+  </div>
+</div>
 
 </div>
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>

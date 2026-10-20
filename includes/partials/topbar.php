@@ -1,15 +1,8 @@
 <?php
 /**
  * Shared Topbar – Staff & Registrar dashboards.
- *
- * Pages can set before including:
- *   $pageTitle    – page heading shown in topbar
- *   $breadcrumbs  – array of ['label'=>'...','url'=>'...'] + last item is current page
- *                   e.g. [ ['label'=>'Enrollments','url'=>'.../registrations.php'],
- *                           ['label'=>'TCC-REG-2026-000001'] ]
  */
 $user      = currentUser();
-$initials  = implode('', array_map(fn($p) => strtoupper($p[0]), array_slice(explode(' ', $user['full_name']), 0, 2)));
 $dashUrl   = BASE_URL . '/' . currentRole() . '/dashboard.php';
 $changePwdUrl = BASE_URL . '/auth/change_password.php';
 $logoutUrl = BASE_URL . '/auth/logout.php';
@@ -20,147 +13,123 @@ $pendingReg   = (int) db()->fetchValue("SELECT COUNT(*) FROM pre_registrations W
 $pendingDoc   = (int) db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status = 'Pending' AND is_archived = 0");
 $pendingTotal = $pendingReg + $pendingDoc;
 
-$breadcrumbs = $breadcrumbs ?? [];
+// Current term
+$termSY  = getSetting('current_school_year');
+$termSem = getSetting('current_semester');
+$termLabel = trim('S.Y. ' . $termSY . ($termSem ? ' · ' . $termSem : ''));
 ?>
 <header class="topbar">
 
-  <!-- ── Mobile sidebar toggle ── -->
-  <button class="btn btn-sidebar-toggle topbar-icon-btn" id="sidebarToggle" aria-label="Toggle sidebar">
-    <i class="bi bi-list" style="font-size:1.2rem;"></i>
+  <!-- ── Sidebar toggle (drawer on mobile, icon rail on desktop) ── -->
+  <button class="topbar-icon-btn" id="sidebarToggle" aria-label="Toggle sidebar" title="Toggle sidebar">
+    <i class="bi bi-layout-sidebar-inset"></i>
   </button>
 
-  <!-- ── Title + breadcrumb ── -->
-  <div class="topbar-breadcrumb">
-    <?php if (!empty($breadcrumbs)): ?>
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item">
-          <a href="<?= $dashUrl ?>"><i class="bi bi-house-door"></i></a>
-        </li>
-        <?php foreach ($breadcrumbs as $i => $bc): ?>
-        <?php if ($i < count($breadcrumbs) - 1): ?>
-          <li class="breadcrumb-item">
-            <a href="<?= e($bc['url'] ?? '#') ?>"><?= e($bc['label']) ?></a>
-          </li>
-        <?php else: ?>
-          <li class="breadcrumb-item active" aria-current="page"><?= e($bc['label']) ?></li>
-        <?php endif; ?>
-        <?php endforeach; ?>
-      </ol>
-    </nav>
-    <?php endif; ?>
-    <div class="topbar-title"><?= e($pageTitle ?? 'Dashboard') ?></div>
-  </div>
+  <!-- ── Global search ── -->
+  <form class="topbar-search d-none d-md-flex" method="GET"
+        action="<?= BASE_URL ?>/<?= currentRole() ?>/registrations.php" role="search">
+    <i class="bi bi-search"></i>
+    <input type="search" name="search" placeholder="Type to search…"
+           aria-label="Search registrations" autocomplete="off">
+    <kbd>/</kbd>
+  </form>
 
   <!-- ── Right actions ── -->
   <div class="topbar-actions">
 
-    <!-- Notification bell (always visible) -->
+    <!-- Theme switch -->
+    <button class="theme-switch" id="themeToggle" role="switch" aria-checked="false"
+            aria-label="Toggle dark mode" title="Toggle dark mode">
+      <span class="ts-track"><span class="ts-knob"><i class="bi bi-sun-fill"></i></span></span>
+    </button>
+
+    <!-- Notification bell -->
     <div class="dropdown">
       <button class="topbar-icon-btn" data-bs-toggle="dropdown" aria-label="Notifications"
-              data-bs-offset="0,8">
-        <i class="bi bi-bell" style="font-size:.95rem;"></i>
+              data-bs-offset="0,10">
+        <i class="bi bi-bell"></i>
         <?php if ($pendingTotal > 0): ?>
-          <span class="notif-dot"></span>
+          <span class="notif-dot pulse"><span class="visually-hidden">Pending items</span></span>
         <?php endif; ?>
       </button>
-      <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0"
-           style="min-width:260px;border-radius:12px;overflow:hidden;">
-        <div class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center"
-             style="background:var(--surface-subtle);">
-          <span class="fw-semibold small">Notifications</span>
-          <?php if ($pendingTotal > 0): ?>
-          <span class="badge bg-danger rounded-pill"><?= $pendingTotal ?></span>
+      <div class="dropdown-menu dropdown-menu-end topbar-menu">
+        <div class="tb-menu-head">
+          <span>Notifications</span>
+          <span class="tb-count <?= $pendingTotal > 0 ? 'has-items' : '' ?>"><?= $pendingTotal ?></span>
+        </div>
+        <div class="tb-menu-body">
+          <?php if ($pendingTotal === 0): ?>
+          <div class="tb-empty">
+            <i class="bi bi-check-circle"></i>
+            All caught up
+          </div>
           <?php else: ?>
-          <span class="badge bg-light text-muted rounded-pill">0</span>
+          <?php if ($pendingReg > 0): ?>
+          <a class="tb-item" href="<?= BASE_URL ?>/<?= currentRole() ?>/registrations.php?status=Pending">
+            <span class="tb-item-ico warn"><i class="bi bi-person-plus"></i></span>
+            <span class="tb-item-text">Pending enrollments</span>
+            <span class="tb-item-n warn"><?= $pendingReg ?></span>
+          </a>
+          <?php endif; ?>
+          <?php if ($pendingDoc > 0): ?>
+          <a class="tb-item" href="<?= BASE_URL ?>/<?= currentRole() ?>/document_requests.php?status=Pending">
+            <span class="tb-item-ico info"><i class="bi bi-file-earmark-text"></i></span>
+            <span class="tb-item-text">Pending doc requests</span>
+            <span class="tb-item-n info"><?= $pendingDoc ?></span>
+          </a>
+          <?php endif; ?>
           <?php endif; ?>
         </div>
-        <?php if ($pendingTotal === 0): ?>
-        <div class="py-4 text-center text-muted small">
-          <i class="bi bi-check-circle d-block mb-1 fs-5 text-success"></i>
-          All caught up!
-        </div>
-        <?php else: ?>
-        <?php if ($pendingReg > 0): ?>
-        <a class="dropdown-item d-flex justify-content-between align-items-center py-2 px-3"
-           href="<?= BASE_URL ?>/<?= currentRole() ?>/registrations.php?status=Pending">
-          <div>
-            <i class="bi bi-person-plus text-warning me-2"></i>
-            <span class="small">Pending Enrollments</span>
-          </div>
-          <span class="badge bg-warning text-dark"><?= $pendingReg ?></span>
+        <a class="tb-menu-foot" href="<?= BASE_URL ?>/<?= currentRole() ?>/reports.php">
+          <i class="bi bi-bar-chart"></i> View reports
         </a>
-        <?php endif; ?>
-        <?php if ($pendingDoc > 0): ?>
-        <a class="dropdown-item d-flex justify-content-between align-items-center py-2 px-3"
-           href="<?= BASE_URL ?>/<?= currentRole() ?>/document_requests.php?status=Pending">
-          <div>
-            <i class="bi bi-file-earmark-text text-info me-2"></i>
-            <span class="small">Pending Doc Requests</span>
-          </div>
-          <span class="badge bg-info text-dark"><?= $pendingDoc ?></span>
-        </a>
-        <?php endif; ?>
-        <?php endif; ?>
-        <div class="px-3 py-2 border-top text-center" style="background:var(--surface-subtle);">
-          <a href="<?= BASE_URL ?>/<?= currentRole() ?>/reports.php"
-             class="small text-muted text-decoration-none">
-            <i class="bi bi-bar-chart me-1"></i>View Reports
-          </a>
-        </div>
       </div>
     </div>
 
-    <!-- User menu -->
+    <!-- Current term -->
+    <?php if ($termSY || $termSem): ?>
+    <span class="topbar-icon-btn d-none d-lg-inline-flex" role="img" aria-label="Current term"
+          data-bs-toggle="tooltip" data-bs-placement="bottom" title="Current term — <?= e($termLabel) ?>">
+      <i class="bi bi-calendar3"></i>
+    </span>
+    <?php endif; ?>
+
+    <!-- Fullscreen -->
+    <button class="topbar-icon-btn d-none d-md-inline-flex" id="fullscreenToggle"
+            aria-label="Toggle fullscreen" title="Toggle fullscreen">
+      <i class="bi bi-fullscreen"></i>
+    </button>
+
+    <!-- User -->
     <div class="dropdown">
-      <button class="topbar-user-btn d-flex align-items-center gap-2 px-2 py-1"
-              data-bs-toggle="dropdown" data-bs-offset="0,8">
-        <?= ui_avatar($user['full_name'], 28) ?>
-        <div class="d-none d-md-block text-start" style="line-height:1.1;">
-          <div class="small fw-semibold" style="font-size:.78rem;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-            <?= e($user['full_name']) ?>
-          </div>
-          <div style="font-size:.65rem;color:var(--text-muted);text-transform:capitalize;"><?= e(currentRole()) ?></div>
-        </div>
-        <i class="bi bi-chevron-down d-none d-md-block" style="font-size:.6rem;color:var(--text-muted);"></i>
+      <button class="topbar-avatar-btn" data-bs-toggle="dropdown" data-bs-offset="0,10"
+              aria-label="Account menu">
+        <?= ui_avatar($user['full_name'], 34) ?>
       </button>
-      <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0"
-          style="min-width:220px;border-radius:12px;overflow:hidden;">
-        <!-- User info header -->
+      <ul class="dropdown-menu dropdown-menu-end topbar-menu">
         <li>
-          <div class="px-3 pt-3 pb-2 border-bottom" style="background:var(--surface-subtle);">
-            <div class="d-flex align-items-center gap-2 mb-1">
-              <?= ui_avatar($user['full_name'], 36) ?>
-              <div style="min-width:0;">
-                <div class="fw-semibold small" style="line-height:1.1;"><?= e($user['full_name']) ?></div>
-                <div style="font-size:.7rem;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px;">
-                  <?= e($user['email']) ?>
-                </div>
-              </div>
+          <div class="tb-menu-head user-head">
+            <?= ui_avatar($user['full_name'], 38) ?>
+            <div class="tb-user-detail">
+              <div class="tb-user-name full"><?= e($user['full_name']) ?></div>
+              <div class="tb-user-mail"><?= e($user['email']) ?></div>
+              <span class="tb-role-badge"><?= e($role) ?></span>
             </div>
-            <span class="badge bg-primary" style="font-size:.65rem;"><?= e($role) ?></span>
           </div>
         </li>
-        <!-- Links -->
-        <li>
-          <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="<?= $dashUrl ?>">
-            <i class="bi bi-grid text-primary" style="width:16px;"></i>
-            <span class="small">Dashboard</span>
-          </a>
-        </li>
-        <li>
-          <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="<?= $changePwdUrl ?>">
-            <i class="bi bi-key text-warning" style="width:16px;"></i>
-            <span class="small">Change Password</span>
-          </a>
-        </li>
-        <li><hr class="dropdown-divider my-1"></li>
-        <li>
-          <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="<?= $logoutUrl ?>">
-            <i class="bi bi-box-arrow-right text-danger" style="width:16px;"></i>
-            <span class="small">Sign Out</span>
-          </a>
-        </li>
+        <li><a class="tb-item" href="<?= $dashUrl ?>">
+          <span class="tb-item-ico green"><i class="bi bi-grid"></i></span>
+          <span class="tb-item-text">Dashboard</span>
+        </a></li>
+        <li><a class="tb-item" href="<?= $changePwdUrl ?>">
+          <span class="tb-item-ico gold"><i class="bi bi-key"></i></span>
+          <span class="tb-item-text">Change password</span>
+        </a></li>
+        <li><div class="tb-sep"></div></li>
+        <li><a class="tb-item danger" href="<?= $logoutUrl ?>">
+          <span class="tb-item-ico danger"><i class="bi bi-box-arrow-right"></i></span>
+          <span class="tb-item-text">Sign out</span>
+        </a></li>
       </ul>
     </div>
 

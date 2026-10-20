@@ -54,7 +54,7 @@ $approvedReg = db()->fetchValue("SELECT COUNT(*) FROM pre_registrations WHERE st
 $releasedDoc = db()->fetchValue("SELECT COUNT(*) FROM document_requests WHERE status='Released'");
 
 include __DIR__ . '/../includes/partials/head.php';
-include __DIR__ . '/../includes/partials/staff_sidebar.php';
+include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
 ?>
 <div class="main-content">
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>

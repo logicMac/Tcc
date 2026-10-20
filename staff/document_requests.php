@@ -50,10 +50,10 @@ $queryParts = array_filter([
     $filterSearch  ? 'search='   . urlencode($filterSearch) : '',
     $showArchived  ? 'archived=1'                           : '',
 ]);
-$baseUrl = BASE_URL . '/staff/document_requests.php?' . implode('&', $queryParts);
+$baseUrl = BASE_URL . '/' . currentRole() . '/document_requests.php?' . implode('&', $queryParts);
 
 include __DIR__ . '/../includes/partials/head.php';
-include __DIR__ . '/../includes/partials/staff_sidebar.php';
+include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
 ?>
 <div class="main-content">
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>
@@ -65,27 +65,27 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 <?php
 // ── Status quick tabs ──
 $tabs = [[
-    'label' => 'All', 'url' => BASE_URL . '/staff/document_requests.php',
+    'label' => 'All', 'url' => BASE_URL . '/' . currentRole() . '/document_requests.php',
     'active' => !$filterStatus && !$showArchived, 'variant' => 'primary',
 ]];
 foreach (DOC_STATUSES as $s => $info) {
     $tabs[] = [
         'label'   => $s,
-        'url'     => BASE_URL . '/staff/document_requests.php?status=' . urlencode($s) . ($filterSearch ? '&search=' . urlencode($filterSearch) : ''),
+        'url'     => BASE_URL . '/' . currentRole() . '/document_requests.php?status=' . urlencode($s) . ($filterSearch ? '&search=' . urlencode($filterSearch) : ''),
         'active'  => $filterStatus === $s && !$showArchived,
         'variant' => $info['color'],
     ];
 }
 $tabs[] = ['spacer' => true];
 $tabs[] = [
-    'label' => 'Archived', 'url' => BASE_URL . '/staff/document_requests.php?archived=1',
+    'label' => 'Archived', 'url' => BASE_URL . '/' . currentRole() . '/document_requests.php?archived=1',
     'active' => $showArchived, 'variant' => 'dark', 'icon' => 'archive',
 ];
 echo ui_status_tabs($tabs);
 
 // ── Filters ──
 echo ui_filter_bar(
-    BASE_URL . '/staff/document_requests.php',
+    BASE_URL . '/' . currentRole() . '/document_requests.php',
     [
         ['type' => 'search', 'name' => 'search', 'label' => 'Search', 'value' => $filterSearch,
          'placeholder' => 'Name, code, student ID…', 'col' => 'col-md-3'],
@@ -95,7 +95,7 @@ echo ui_filter_bar(
          'options' => ['' => 'All Types'] + array_column($docTypes, 'name', 'id'), 'col' => 'col-md-3'],
     ],
     ['archived' => $showArchived ? '1' : null],
-    BASE_URL . '/staff/document_requests.php'
+    BASE_URL . '/' . currentRole() . '/document_requests.php'
 );
 
 // ── Table rows ──
@@ -111,7 +111,7 @@ foreach ($result['data'] as $i => $d) {
         ['html' => '<span class="small">' . (int)$d['copies'] . '</span>', 'class' => 'text-center'],
         statusBadge($d['status'], 'document_request'),
         '<span class="small text-muted">' . formatDate($d['submitted_at']) . '</span><div class="row-sub">' . timeAgo($d['submitted_at']) . '</div>',
-        '<a href="' . BASE_URL . '/staff/view_document.php?id=' . (int)$d['id'] . '" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View &amp; Process"><i class="bi bi-eye"></i></a>',
+        '<a href="' . BASE_URL . '/' . currentRole() . '/view_document.php?id=' . (int)$d['id'] . '" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View &amp; Process"><i class="bi bi-eye"></i></a>',
     ];
 }
 
@@ -127,9 +127,9 @@ echo ui_table(
     ],
     $rows,
     ['empty_title' => 'No document requests found',
-     'empty_msg'   => ($filterStatus || $filterSearch) ? 'Try adjusting your filters.' : 'No student document requests have been submitted yet.']
+     'empty_msg'   => ($filterStatus || $filterSearch) ? 'Try adjusting your filters.' : 'No student document requests have been submitted yet.',
+     'pagination'  => ['page' => $page, 'pages' => $result['pages'], 'total' => $result['total'], 'per_page' => $perPage, 'base_url' => $baseUrl]]
 );
-echo ui_list_footer($page, $result['pages'], $result['total'], $perPage, $baseUrl);
 echo ui_card_close();
 ?>
 </div>

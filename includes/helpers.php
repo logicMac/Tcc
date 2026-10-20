@@ -123,7 +123,7 @@ function currentStudentId(): ?int
 }
 
 /**
- * Require a signed-in student; redirects to the student login page otherwise,
+ * Require a signed-in student; redirects to the unified login page otherwise,
  * preserving the intended destination in ?return=.
  */
 function requireStudentAuth(): void
@@ -131,7 +131,7 @@ function requireStudentAuth(): void
     startSession();
     if (!isStudentLoggedIn()) {
         $return = $_SERVER['REQUEST_URI'] ?? '';
-        redirect(BASE_URL . '/student/login.php?return=' . urlencode($return));
+        redirect(BASE_URL . '/auth/login.php?return=' . urlencode($return));
     }
 }
 
@@ -486,7 +486,7 @@ function statusBadge(string $status, string $type = 'registration'): string
 {
     $statuses = $type === 'registration' ? REG_STATUSES : DOC_STATUSES;
     $info     = $statuses[$status] ?? ['label' => $status, 'color' => 'secondary', 'icon' => 'circle'];
-    return '<span class="badge bg-' . e($info['color']) . '">'
+    return '<span class="badge badge-soft badge-soft-' . e($info['color']) . '">'
          . '<i class="bi bi-' . e($info['icon']) . ' me-1"></i>'
          . e($info['label']) . '</span>';
 }
@@ -688,4 +688,32 @@ function ensureDir(string $path): void
     if (!is_dir($path)) {
         mkdir($path, 0755, true);
     }
+}
+
+/**
+ * Cache-busting query string for a local asset, based on file mtime.
+ * Usage: href="<?= BASE_URL ?>/assets/css/main.css<?= assetVer('assets/css/main.css') ?>"
+ */
+function assetVer(string $path): string
+{
+    $file = dirname(__DIR__) . '/' . ltrim($path, '/');
+    return is_file($file) ? '?v=' . filemtime($file) : '';
+}
+
+/**
+ * School credentials checklist — mirrors TCC-RRMO-FORM-001 "Credentials
+ * Presented" section. Shared by the student form (uploads), staff view and
+ * staff edit (original-presented ticks).
+ */
+function credentialCatalog(): array
+{
+    return [
+        'psa_birth'    => ['label' => 'PSA Birth Certificate',                                'note' => 'Original'],
+        'psa_marriage' => ['label' => 'PSA Marriage Certificate',                             'note' => 'Original · for married women'],
+        'good_moral'   => ['label' => 'Certificate of Good Moral Character',                  'note' => 'Original'],
+        'indigency'    => ['label' => 'Certificate of Indigency',                             'note' => 'Original'],
+        'report_card'  => ['label' => 'Report Card',                                          'note' => 'Original'],
+        'photos_2x2'   => ['label' => '2 pcs. 2×2 ID Photos',                                 'note' => 'White background'],
+        'tor'          => ['label' => 'TOR / Transfer Credential / Honorable Dismissal',      'note' => 'Original', 'transferee' => true],
+    ];
 }

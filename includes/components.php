@@ -104,7 +104,7 @@ function ui_status_tabs(array $tabs): string
  */
 function ui_filter_bar(string $action, array $fields, array $hidden = [], string $resetUrl = '', string $submitLabel = 'Filter'): string
 {
-    $html  = '<div class="filter-bar"><form method="GET" action="' . e($action) . '" class="row g-2 align-items-end">';
+    $html  = '<div class="filter-bar"><form method="GET" action="' . e($action) . '" class="filter-form">';
     foreach ($hidden as $n => $v) {
         if ($v === '' || $v === null) continue;
         $html .= '<input type="hidden" name="' . e($n) . '" value="' . e($v) . '">';
@@ -116,10 +116,13 @@ function ui_filter_bar(string $action, array $fields, array $hidden = [], string
         $value = $f['value'] ?? '';
         $col   = $f['col']   ?? 'col-md-2';
         $req   = !empty($f['required']) ? ' required' : '';
-        $html .= '<div class="col-sm-6 ' . e($col) . '">';
+        // Bootstrap col-md-N hint → flex-basis N/12 so search can grow wider than selects
+        $basis = '170px';
+        if (preg_match('/col-md-(\d+)/', $col, $m)) $basis = round($m[1] / 12 * 100, 2) . '%';
+        $html .= '<div class="filter-field" style="flex:1 1 ' . $basis . ';min-width:150px">';
         if ($label !== '') $html .= '<label class="form-label" for="ff-' . e($name) . '">' . e($label) . '</label>';
         if ($type === 'select') {
-            $html .= '<select name="' . e($name) . '" id="ff-' . e($name) . '" class="form-select form-select-sm"' . $req . '>';
+            $html .= '<select name="' . e($name) . '" id="ff-' . e($name) . '" class="form-select"' . $req . '>';
             foreach (($f['options'] ?? []) as $ov => $ol) {
                 $sel = ((string)$value === (string)$ov) ? ' selected' : '';
                 $html .= '<option value="' . e($ov) . '"' . $sel . '>' . e($ol) . '</option>';
@@ -130,20 +133,20 @@ function ui_filter_bar(string $action, array $fields, array $hidden = [], string
             $ph   = e($f['placeholder'] ?? '');
             $icon = $type === 'search' ? ($f['icon'] ?? 'search') : ($f['icon'] ?? '');
             if ($icon !== '') {
-                $html .= '<div class="input-group input-group-sm">'
+                $html .= '<div class="input-group">'
                        . '<span class="input-group-text"><i class="bi bi-' . e($icon) . '"></i></span>'
                        . '<input type="' . $inputType . '" name="' . e($name) . '" id="ff-' . e($name) . '" class="form-control" value="' . e($value) . '" placeholder="' . $ph . '"' . $req . '>'
                        . '</div>';
             } else {
-                $html .= '<input type="' . $inputType . '" name="' . e($name) . '" id="ff-' . e($name) . '" class="form-control form-control-sm" value="' . e($value) . '" placeholder="' . $ph . '"' . $req . '>';
+                $html .= '<input type="' . $inputType . '" name="' . e($name) . '" id="ff-' . e($name) . '" class="form-control" value="' . e($value) . '" placeholder="' . $ph . '"' . $req . '>';
             }
         }
         $html .= '</div>';
     }
-    $html .= '<div class="col-auto d-flex gap-1">'
-           . '<button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-funnel me-1"></i>' . e($submitLabel) . '</button>';
+    $html .= '<div class="filter-actions">'
+           . '<button type="submit" class="btn btn-primary"><i class="bi bi-funnel me-1"></i>' . e($submitLabel) . '</button>';
     if ($resetUrl !== '') {
-        $html .= '<a href="' . e($resetUrl) . '" class="btn btn-outline-secondary btn-sm" title="Clear filters"><i class="bi bi-x-lg"></i></a>';
+        $html .= '<a href="' . e($resetUrl) . '" class="btn btn-outline-secondary" title="Clear filters"><i class="bi bi-x-lg"></i></a>';
     }
     $html .= '</div></form></div>';
     return $html;
@@ -211,6 +214,29 @@ function ui_stat_card(string $icon, string $label, int|string $value, string $co
 // EMPTY STATE
 // ══════════════════════════════════════════════════════════════════════════════
 
+/**
+ * KPI metric card — label + delta chip, big value, trend caption.
+ * $delta: signed % (null → no chip). $caption icon auto: trend arrow.
+ */
+function ui_kpi(string $label, int|string $value, ?float $delta, string $caption, string $href = ''): string
+{
+    $chip = '';
+    if ($delta !== null) {
+        $dir  = $delta > 0 ? 'up' : ($delta < 0 ? 'down' : 'flat');
+        $icon = $delta > 0 ? 'arrow-up-right' : ($delta < 0 ? 'arrow-down-right' : 'dash');
+        $chip = '<span class="kpi-delta ' . $dir . '"><i class="bi bi-' . $icon . '"></i>'
+              . ($delta > 0 ? '+' : '') . rtrim(rtrim(number_format($delta, 1), '0'), '.') . '%</span>';
+    }
+    $trendIcon = $delta !== null && $delta > 0 ? 'graph-up-arrow' : ($delta !== null && $delta < 0 ? 'graph-down-arrow' : 'activity');
+    $inner =
+        '<div class="kpi-head"><span class="kpi-label">' . e($label) . '</span>' . $chip . '</div>'
+      . '<div class="kpi-value">' . e((string)$value) . '</div>'
+      . '<div class="kpi-trend"><i class="bi bi-' . $trendIcon . '"></i> ' . e($caption) . '</div>';
+    return $href
+        ? '<a href="' . e($href) . '" class="kpi-card">' . $inner . '</a>'
+        : '<div class="kpi-card">' . $inner . '</div>';
+}
+
 function ui_empty(string $icon = 'inbox', string $title = 'Nothing here yet', string $msg = '', string $actionHtml = ''): string
 {
     $m = $msg !== '' ? '<p>' . e($msg) . '</p>' : '';
@@ -230,11 +256,24 @@ function ui_empty(string $icon = 'inbox', string $title = 'Nothing here yet', st
  *                        or ['cells'=>[...], 'class'=>'...']
  * @param array $opts     empty_icon, empty_title, empty_msg, class, id
  */
+/**
+ * @param array $opts  …plus 'pagination' => ['page','pages','total','per_page','base_url']
+ *                     renders the range + pager footer inside the card.
+ */
 function ui_table(array $headers, array $rows, array $opts = []): string
 {
-    return ui_table_open($headers, $opts)
+    $html = ui_table_open($headers, $opts)
          . ui_table_rows($rows, count($headers), $opts)
          . ui_table_close();
+    if (isset($opts['pagination'])) {
+        $pg = $opts['pagination'];
+        $html .= ui_list_footer(
+            (int)$pg['page'], (int)$pg['pages'],
+            (int)$pg['total'], (int)$pg['per_page'],
+            (string)$pg['base_url']
+        );
+    }
+    return $html;
 }
 
 function ui_table_open(array $headers, array $opts = []): string
@@ -356,10 +395,11 @@ function ui_progress_rows(array $items, int $labelWidth = 140): string
 // MISC
 // ══════════════════════════════════════════════════════════════════════════════
 
-/** Monospace tracking/verification code chip. */
+/** Monospace tracking/verification code chip — click to copy. */
 function ui_code(string $code): string
 {
-    return '<span class="ui-code">' . e($code) . '</span>';
+    return '<span class="ui-code" data-copy="' . e($code) . '" title="Click to copy" role="button" tabindex="0">'
+         . e($code) . '<i class="bi bi-copy"></i></span>';
 }
 
 /** Initials avatar circle. */

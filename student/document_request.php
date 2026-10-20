@@ -26,7 +26,42 @@ $pre = [
     'student_id'     => $student['student_no']     ?? '',
     'email'          => $student['email']          ?? '',
     'contact_number' => $student['contact_number'] ?? '',
+    'address'        => '',
+    'program'        => '',
+    'year_graduated' => '',
 ];
+
+// Autofill the rest from the student's history: latest document request
+// first (same fields), else their latest pre-registration record.
+if ($student) {
+    $lastReq = db()->fetchOne(
+        "SELECT address, program, year_graduated, student_id FROM document_requests
+         WHERE student_account_id = ? OR email = ?
+         ORDER BY id DESC LIMIT 1",
+        [$student['id'], $student['email']]
+    );
+    if ($lastReq) {
+        $pre['address']        = $lastReq['address']        ?? '';
+        $pre['program']        = $lastReq['program']        ?? '';
+        $pre['year_graduated'] = $lastReq['year_graduated'] ?? '';
+        $pre['student_id']     = $pre['student_id'] ?: ($lastReq['student_id'] ?? '');
+    } else {
+        $lastReg = db()->fetchOne(
+            "SELECT pr.*, p.name AS prog_name FROM pre_registrations pr
+             LEFT JOIN programs p ON p.id = pr.program_id
+             WHERE pr.email = ? ORDER BY pr.id DESC LIMIT 1",
+            [$student['email']]
+        );
+        if ($lastReg) {
+            $pre['address'] = implode(', ', array_filter([
+                $lastReg['house_no_street'] ?? '', $lastReg['barangay'] ?? '',
+                $lastReg['municipality_city'] ?? '', $lastReg['province'] ?? '',
+            ]));
+            $pre['program']        = $lastReg['program_other'] ?: ($lastReg['prog_name'] ?? '');
+            $pre['year_graduated'] = $lastReg['shs_year_graduated'] ?: ($lastReg['last_year_attended'] ?? '');
+        }
+    }
+}
 
 if (isPost()) {
     abortCsrf();
@@ -211,7 +246,8 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="<?= BASE_URL ?>/assets/js/main.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/lenis.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/main.js<?= assetVer("assets/js/main.js") ?>"></script>
 <script>document.addEventListener('DOMContentLoaded',()=>generateQrCode('qrcode-doc-out','<?= e($trackingUrl) ?>'));</script>
 </body></html>
 <?php exit; endif; ?>
@@ -302,17 +338,17 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
         </div>
         <div class="col-md-6">
           <label class="form-label">Complete Address</label>
-          <textarea name="address" class="form-control" rows="2" maxlength="500"><?= e(post('address')) ?></textarea>
+          <textarea name="address" class="form-control" rows="2" maxlength="500"><?= e(post('address', $pre['address'])) ?></textarea>
         </div>
         <div class="col-md-3">
           <label class="form-label">Program / Course</label>
           <input type="text" name="program" class="form-control"
-                 value="<?= e(post('program')) ?>" maxlength="200">
+                 value="<?= e(post('program', $pre['program'])) ?>" maxlength="200">
         </div>
         <div class="col-md-3">
           <label class="form-label">Year Graduated <small class="text-muted">(or last attended)</small></label>
           <input type="text" name="year_graduated" class="form-control"
-                 value="<?= e(post('year_graduated')) ?>" maxlength="10" placeholder="e.g. 2025">
+                 value="<?= e(post('year_graduated', $pre['year_graduated'])) ?>" maxlength="10" placeholder="e.g. 2025">
         </div>
       </div>
     </div>

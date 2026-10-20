@@ -10,7 +10,7 @@ startSession();
 requireAuth(ROLE_STAFF, ROLE_REGISTRAR);
 
 $id = getInt('id');
-if (!$id) { flash('danger','Invalid request.'); redirect(BASE_URL.'/staff/document_requests.php'); }
+if (!$id) { flash('danger','Invalid request.'); redirect(BASE_URL.'/'.currentRole().'/document_requests.php'); }
 
 $req = db()->fetchOne(
     "SELECT dr.*, dt.name AS doc_name, dt.code AS doc_code, dt.fee AS doc_fee, dt.processing_days
@@ -18,16 +18,16 @@ $req = db()->fetchOne(
      LEFT JOIN document_types dt ON dt.id = dr.document_type_id
      WHERE dr.id = ?", [$id]
 );
-if (!$req) { flash('danger','Request not found.'); redirect(BASE_URL.'/staff/document_requests.php'); }
+if (!$req) { flash('danger','Request not found.'); redirect(BASE_URL.'/'.currentRole().'/document_requests.php'); }
 
 $pageTitle = 'View Document Request – ' . $req['tracking_code'];
 
 $backUrl = isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'document_requests.php') !== false
     ? $_SERVER['HTTP_REFERER']
-    : BASE_URL . '/staff/document_requests.php';
+    : BASE_URL . '/' . currentRole() . '/document_requests.php';
 
 $breadcrumbs = [
-    ['label' => 'Document Requests', 'url' => BASE_URL . '/staff/document_requests.php'],
+    ['label' => 'Document Requests', 'url' => BASE_URL . '/' . currentRole() . '/document_requests.php'],
     ['label' => e($req['tracking_code'])],
 ];
 
@@ -47,7 +47,7 @@ if (isPost()) {
         logActivity($toArchive ? 'RECORD_ARCHIVE' : 'RECORD_RESTORE', 'Records Management',
             ($toArchive ? 'Archived' : 'Restored') . " document request {$req['tracking_code']}", $req['tracking_code']);
         flash('success', 'Record ' . ($toArchive ? 'archived' : 'restored') . '.');
-        redirect(BASE_URL . '/staff/view_document.php?id=' . $id);
+        redirect(BASE_URL . '/' . currentRole() . '/view_document.php?id=' . $id);
     }
 
     // ── Issue official document (creates QR-verifiable issued record) ────
@@ -55,7 +55,7 @@ if (isPost()) {
         $existing = db()->fetchValue("SELECT id FROM issued_documents WHERE document_request_id = ?", [$id]);
         if ($existing) {
             flash('warning', 'A verification record already exists for this request.');
-            redirect(BASE_URL . '/staff/issue_document.php?id=' . $id);
+            redirect(BASE_URL . '/' . currentRole() . '/issue_document.php?id=' . $id);
         }
         $vCode    = generateVerificationCode();
         $typeName = $req['document_type_other'] ?: ($req['doc_name'] ?? 'Document');
@@ -70,7 +70,7 @@ if (isPost()) {
         );
         logActivity('DOC_ISSUE', 'QR Verification',
             "Issued verified document {$vCode} for {$req['tracking_code']}", $vCode);
-        redirect(BASE_URL . '/staff/issue_document.php?id=' . $id);
+        redirect(BASE_URL . '/' . currentRole() . '/issue_document.php?id=' . $id);
     }
 
     $newStatus = post('new_status');
@@ -108,7 +108,7 @@ if (isPost()) {
         }
 
         flash('success', 'Status updated to ' . $newStatus . '.');
-        redirect(BASE_URL . '/staff/view_document.php?id=' . $id);
+        redirect(BASE_URL . '/' . currentRole() . '/view_document.php?id=' . $id);
     }
 }
 
@@ -117,7 +117,7 @@ $trackingUrl = trackingUrl($req['tracking_code']);
 $docTypeName = $req['document_type_other'] ?: ($req['doc_name'] ?? 'Document');
 
 include __DIR__ . '/../includes/partials/head.php';
-include __DIR__ . '/../includes/partials/staff_sidebar.php';
+include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
 ?>
 <div class="main-content">
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>
@@ -129,7 +129,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
     'Document Request — Submitted ' . formatDateTime($req['submitted_at']),
     '',
     ui_back($backUrl)
-    . '<a href="' . BASE_URL . '/staff/edit_document.php?id=' . (int)$id . '" class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i>Edit Record</a>'
+    . '<a href="' . BASE_URL . '/' . currentRole() . '/edit_document.php?id=' . (int)$id . '" class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i>Edit Record</a>'
     . '<a href="' . e($trackingUrl) . '" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye me-1"></i>Student View</a>'
     . '<button onclick="window.print()" class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer me-1"></i>Print</button>'
 ) ?>
@@ -279,7 +279,7 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
         </div>
         <div class="mb-1"><?= ui_code($issued['verification_code']) ?></div>
         <div class="text-muted small mb-3">Issued <?= formatDateTime($issued['issued_at']) ?></div>
-        <a href="<?= BASE_URL ?>/staff/issue_document.php?id=<?= (int)$id ?>" class="btn btn-outline-primary btn-sm w-100">
+        <a href="<?= BASE_URL ?>/<?= currentRole() ?>/issue_document.php?id=<?= (int)$id ?>" class="btn btn-outline-primary btn-sm w-100">
           <i class="bi bi-qr-code me-1"></i>View Verification Slip
         </a>
         <?php else: ?>

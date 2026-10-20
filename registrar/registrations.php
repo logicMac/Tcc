@@ -100,7 +100,7 @@ foreach ($result['data'] as $r) {
         statusBadge($r['status']),
         '<span class="text-muted small">' . e($r['assigned_name'] ?? 'Unassigned') . '</span>',
         '<span class="text-muted small">' . formatDate($r['submitted_at']) . '</span>',
-        '<a href="' . BASE_URL . '/staff/view_registration.php?id=' . (int)$r['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2">View</a>',
+        '<a href="' . BASE_URL . '/registrar/view_registration.php?id=' . (int)$r['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2">View</a>',
     ];
 }
 
@@ -110,8 +110,8 @@ echo ui_card_open(
     $filterStatus ? '' : 'list-ul'
 );
 echo ui_table(['Tracking Code', 'Name', 'Program', 'Type', 'Status', 'Assigned To', 'Submitted', ['label' => '', 'style' => 'width:70px']],
-              $rows, ['empty_msg' => 'No records.', 'empty_icon' => 'inbox']);
-echo ui_list_footer($page, $result['pages'], $result['total'], $perPage, $baseUrl);
+              $rows, ['empty_msg' => 'No records.', 'empty_icon' => 'inbox',
+              'pagination' => ['page' => $page, 'pages' => $result['pages'], 'total' => $result['total'], 'per_page' => $perPage, 'base_url' => $baseUrl]]);
 echo ui_card_close();
 ?>
 </div>

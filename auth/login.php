@@ -1,6 +1,9 @@
 <?php
 /**
- * TCC RRS – Login Page (Registrar & Staff only)
+ * TCC RRS – Unified Login Page (Registrar, Staff & Students)
+ *
+ * One sign-in for the whole system. Looks up the users table first,
+ * then students — and routes to the correct portal by account type.
  */
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/db.php';
@@ -8,9 +11,17 @@ require_once __DIR__ . '/../includes/helpers.php';
 
 startSession();
 redirectIfLoggedIn();
+if (isStudentLoggedIn()) {
+    redirect(BASE_URL . '/student/account.php');
+}
 
 $errors = [];
 $email  = '';
+$return = get('return');
+// Only allow in-app redirects (open-redirect protection)
+if ($return && (!str_starts_with($return, '/') || str_starts_with($return, '//'))) {
+    $return = '';
+}
 
 if (isPost()) {
     abortCsrf();
@@ -27,18 +38,25 @@ if (isPost()) {
         $errors[] = 'Password is required.';
     }
 
+    $return = post('return');
+    if ($return && (!str_starts_with($return, '/') || str_starts_with($return, '//'))) {
+        $return = '';
+    }
+
     if (empty($errors)) {
         $user = db()->fetchOne(
             "SELECT * FROM users WHERE email = ? LIMIT 1",
             [$email]
         );
 
-        if (!$user || !password_verify($password, $user['password_hash'])) {
-            $errors[] = 'Invalid email or password.';
-            logActivity('LOGIN_FAILED', 'Auth', "Failed login attempt for: {$email}", '', null, $email, 'unknown');
-        } elseif (!$user['is_active']) {
-            $errors[] = 'Your account has been deactivated. Please contact the Registrar.';
-        } else {
+        // ── Staff / Registrar ────────────────────────────────────────────
+        if ($user) {
+            if (!password_verify($password, $user['password_hash'])) {
+                $errors[] = 'Invalid email or password.';
+                logActivity('LOGIN_FAILED', 'Auth', "Failed login attempt for: {$email}", '', null, $email, 'unknown');
+            } elseif (!$user['is_active']) {
+                $errors[] = 'Your account has been deactivated. Please contact the Registrar.';
+            } else {
             // Set session
             $_SESSION['user_id']   = $user['id'];
             $_SESSION['user_role'] = $user['role'];
@@ -68,6 +86,30 @@ if (isPost()) {
             } else {
                 redirect(BASE_URL . '/staff/dashboard.php');
             }
+            }
+
+        // ── Student ──────────────────────────────────────────────────────
+        } else {
+            $student = db()->fetchOne(
+                "SELECT * FROM students WHERE email = ? LIMIT 1",
+                [$email]
+            );
+
+            if (!$student || !password_verify($password, $student['password_hash'])) {
+                $errors[] = 'Invalid email or password.';
+                logActivity('LOGIN_FAILED', 'Auth', "Failed login attempt for: {$email}", '', null, $email, 'unknown');
+            } elseif (!$student['is_active']) {
+                $errors[] = 'Your account has been deactivated. Please contact the Registrar\'s Office.';
+            } else {
+                loginStudentSession($student);
+                session_regenerate_id(true);
+                db()->execute("UPDATE students SET last_login = NOW() WHERE id = ?", [$student['id']]);
+                claimSubmissionsForStudent((int) $student['id'], $student['email']);
+                logActivity('LOGIN', 'Auth', "Student logged in successfully.", '', null, $student['email'], 'student');
+
+                flash('success', 'Welcome back, ' . $student['first_name'] . '!');
+                redirect($return ?: (BASE_URL . '/student/account.php'));
+            }
         }
     }
 }
@@ -77,98 +119,138 @@ if (isPost()) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Login – TCC Registration & Records System</title>
+<title>Sign In – TCC Registration & Records System</title>
 <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/images/school_logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css">
-<style>
-  .login-card { border:none; border-radius:16px; box-shadow:0 20px 60px rgba(4,28,19,.35); }
-  .login-body { padding:32px; }
-  .form-floating label { color:#6c757d; }
-  .divider-text { position:relative; text-align:center; margin:16px 0; }
-  .divider-text::before { content:''; position:absolute; top:50%; left:0; right:0; height:1px; background:#dee2e6; }
-  .divider-text span { position:relative; background:#fff; padding:0 12px; color:#6c757d; font-size:.8rem; }
-  .portal-link { background:var(--surface-subtle); border-radius:8px; padding:14px; text-align:center; }
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css<?= assetVer("assets/css/main.css") ?>">
 </head>
 <body>
-<div class="auth-shell">
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-5 col-lg-4">
+<!-- Page loader -->
+<div class="page-loader" id="pageLoader" aria-hidden="true">
+  <div class="pl-ring">
+    <svg class="pl-arc-svg" viewBox="0 0 100 100"><circle class="pl-track" cx="50" cy="50" r="44"/><circle class="pl-arc" cx="50" cy="50" r="44"/></svg>
+    <img src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="" class="pl-logo">
+  </div>
+  <div class="pl-text">Tampakan <b>Community College</b></div>
+</div>
 
-      <div class="card login-card overflow-hidden">
-        <!-- Brand Header -->
-        <div class="auth-brand">
-          <img src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="School seal" class="mb-2">
-          <h5 class="mb-1 fw-bold">Tampakan Community College</h5>
-          <p class="mb-0 opacity-75 small">Registration &amp; Records System</p>
+<div class="auth-split">
+
+  <!-- ── Showcase panel ── -->
+  <div class="auth-show">
+    <div class="auth-show-brand">
+      <img src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="School seal">
+      <div>
+        <div class="name">Tampakan Community College</div>
+        <div class="sub">Registration &amp; Records System</div>
+      </div>
+    </div>
+    <div class="auth-show-copy">
+        <h2>One sign-in,<br><span class="accent">every record.</span></h2>
+        <p class="lede">Staff manage registrations and issue documents; students track
+          submissions — all from a single account.</p>
+        <div class="auth-feat">
+          <div class="auth-feat-icon"><i class="bi bi-person-lines-fill"></i></div>
+          <div>
+            <div class="t">Records management</div>
+            <div class="s">Review, edit, and archive student records with a full audit trail.</div>
+          </div>
         </div>
-
-        <!-- Login Form -->
-        <div class="login-body">
-          <h6 class="text-center text-muted mb-4">Staff / Registrar Login</h6>
-
-          <?php if (!empty($errors)): ?>
-          <div class="alert alert-danger d-flex align-items-start py-2" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2 mt-1 flex-shrink-0"></i>
-            <div>
-              <?php foreach ($errors as $err): ?>
-                <div><?= e($err) ?></div>
-              <?php endforeach; ?>
-            </div>
+        <div class="auth-feat">
+          <div class="auth-feat-icon"><i class="bi bi-patch-check"></i></div>
+          <div>
+            <div class="t">QR-verified issuance</div>
+            <div class="s">Every released document carries a verifiable code and QR.</div>
           </div>
-          <?php endif; ?>
-
-          <?= renderFlash() ?>
-
-          <form method="POST" action="<?= BASE_URL ?>/auth/login.php" novalidate>
-            <?= csrfField() ?>
-
-            <div class="form-floating mb-3">
-              <input type="email" class="form-control <?= !empty($errors) ? 'is-invalid' : '' ?>"
-                     id="email" name="email"
-                     value="<?= e($email) ?>"
-                     placeholder="name@tcc.edu.ph"
-                     required autofocus>
-              <label for="email"><i class="bi bi-envelope me-1"></i>Email Address</label>
-            </div>
-
-            <div class="form-floating mb-3">
-              <input type="password" class="form-control <?= !empty($errors) ? 'is-invalid' : '' ?>"
-                     id="password" name="password"
-                     placeholder="Password"
-                     required>
-              <label for="password"><i class="bi bi-lock me-1"></i>Password</label>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-3 mt-2">
-              <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
-            </button>
-          </form>
-
-          <div class="divider-text mt-4"><span>or</span></div>
-
-          <div class="portal-link">
-            <p class="mb-2 small text-muted">Are you a student?</p>
-            <a href="<?= BASE_URL ?>/student/index.php" class="btn btn-outline-secondary btn-sm">
-              <i class="bi bi-person me-1"></i> Go to Student Portal
-            </a>
+        </div>
+        <div class="auth-feat">
+          <div class="auth-feat-icon"><i class="bi bi-collection"></i></div>
+          <div>
+            <div class="t">Student portal</div>
+            <div class="s">Submissions, tracking codes, and status history in one dashboard.</div>
           </div>
+        </div>
+    </div>
+
+    <div class="auth-show-foot">
+      <span>&copy; <?= date('Y') ?> Tampakan Community College &middot; Registrar &middot; Staff &middot; Student</span>
+      <span class="lock"><i class="bi bi-shield-lock-fill"></i> Secured session</span>
+    </div>
+  </div>
+
+  <!-- ── Form panel ── -->
+  <div class="auth-panel">
+    <div class="auth-form">
+      <div class="auth-mobile-brand">
+        <img src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="School seal">
+        <div class="name">Tampakan Community College</div>
+        <div class="sub">Registration &amp; Records System</div>
+      </div>
+      <div class="eyebrow">Sign In</div>
+      <h1>Welcome back</h1>
+      <p class="sub">Sign in with your TCC account — staff or student.</p>
+
+      <?php if (!empty($errors)): ?>
+      <div class="alert alert-danger d-flex align-items-start py-2" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2 mt-1 flex-shrink-0"></i>
+        <div>
+          <?php foreach ($errors as $err): ?>
+            <div><?= e($err) ?></div>
+          <?php endforeach; ?>
         </div>
       </div>
+      <?php endif; ?>
 
-      <p class="text-center text-muted small mt-3">
-        &copy; <?= date('Y') ?> Tampakan Community College. All rights reserved.
-      </p>
+      <?= renderFlash() ?>
+
+      <form method="POST" action="<?= BASE_URL ?>/auth/login.php" novalidate>
+        <?= csrfField() ?>
+        <input type="hidden" name="return" value="<?= e($return) ?>">
+
+        <div class="form-floating mb-3">
+          <input type="email" class="form-control <?= !empty($errors) ? 'is-invalid' : '' ?>"
+                 id="email" name="email"
+                 value="<?= e($email) ?>"
+                 placeholder="name@tcc.edu.ph"
+                 required autofocus>
+          <label for="email"><i class="bi bi-envelope me-1"></i>Email Address</label>
+        </div>
+
+        <div class="form-floating mb-4 pwd-wrap">
+          <input type="password" class="form-control <?= !empty($errors) ? 'is-invalid' : '' ?>"
+                 id="password" name="password" style="padding-right:48px;"
+                 placeholder="Password"
+                 required>
+          <label for="password"><i class="bi bi-lock me-1"></i>Password</label>
+          <button type="button" class="pwd-toggle" data-pwd-toggle="#password"
+                  aria-label="Show password" tabindex="-1">
+            <i class="bi bi-eye"></i>
+          </button>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-3">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+        </button>
+      </form>
+
+      <div class="auth-alt">
+        No student account yet?
+        <a href="<?= BASE_URL ?>/student/register.php">Create one <i class="bi bi-arrow-right"></i></a>
+        <div class="mt-2">
+          <a href="<?= BASE_URL ?>/student/index.php" class="text-muted fw-normal">
+            <i class="bi bi-arrow-left me-1"></i>Back to Portal
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/lenis.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/main.js<?= assetVer("assets/js/main.js") ?>"></script>
 </body>
 </html>

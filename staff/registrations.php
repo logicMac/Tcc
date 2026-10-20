@@ -47,7 +47,7 @@ $qParts  = array_filter([
     $filterSearch  ? 'search='          . urlencode($filterSearch)  : '',
     $showArchived  ? 'archived=1'                                     : '',
 ]);
-$baseUrl = BASE_URL . '/staff/registrations.php?' . implode('&', $qParts);
+$baseUrl = BASE_URL . '/' . currentRole() . '/registrations.php?' . implode('&', $qParts);
 
 // Per-status counts for quick tiles
 $statusCounts = [];
@@ -61,7 +61,7 @@ $archivedCount = (int) db()->fetchValue(
 );
 
 include __DIR__ . '/../includes/partials/head.php';
-include __DIR__ . '/../includes/partials/staff_sidebar.php';
+include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
 ?>
 <div class="main-content">
 <?php include __DIR__ . '/../includes/partials/topbar.php'; ?>
@@ -73,13 +73,13 @@ include __DIR__ . '/../includes/partials/staff_sidebar.php';
 <?php
 // ── Status quick tabs ──
 $tabs = [[
-    'label' => 'All', 'url' => BASE_URL . '/staff/registrations.php',
+    'label' => 'All', 'url' => BASE_URL . '/' . currentRole() . '/registrations.php',
     'count' => array_sum($statusCounts), 'active' => !$filterStatus && !$showArchived, 'variant' => 'primary',
 ]];
 foreach (REG_STATUSES as $s => $info) {
     $tabs[] = [
         'label'   => $s,
-        'url'     => BASE_URL . '/staff/registrations.php?status=' . urlencode($s) . ($filterSearch ? '&search=' . urlencode($filterSearch) : ''),
+        'url'     => BASE_URL . '/' . currentRole() . '/registrations.php?status=' . urlencode($s) . ($filterSearch ? '&search=' . urlencode($filterSearch) : ''),
         'count'   => $statusCounts[$s] ?: null,
         'active'  => $filterStatus === $s && !$showArchived,
         'variant' => $info['color'],
@@ -87,7 +87,7 @@ foreach (REG_STATUSES as $s => $info) {
 }
 $tabs[] = ['spacer' => true];
 $tabs[] = [
-    'label' => 'Archived', 'url' => BASE_URL . '/staff/registrations.php?archived=1',
+    'label' => 'Archived', 'url' => BASE_URL . '/' . currentRole() . '/registrations.php?archived=1',
     'count' => $archivedCount ?: null, 'active' => $showArchived,
     'variant' => 'dark', 'icon' => 'archive',
 ];
@@ -107,9 +107,9 @@ $fields[] = ['type' => 'select', 'name' => 'program_id', 'label' => 'Program', '
 $fields[] = ['type' => 'select', 'name' => 'enrollment_type', 'label' => 'Enrollment Type', 'value' => $filterType,
              'options' => ['' => 'All Types'] + array_combine(ENROLLMENT_TYPES, ENROLLMENT_TYPES)];
 echo ui_filter_bar(
-    BASE_URL . '/staff/registrations.php', $fields,
+    BASE_URL . '/' . currentRole() . '/registrations.php', $fields,
     ['status' => $filterStatus ?: null, 'archived' => $showArchived ? '1' : null],
-    BASE_URL . '/staff/registrations.php'
+    BASE_URL . '/' . currentRole() . '/registrations.php'
 );
 
 // ── Table rows ──
@@ -125,7 +125,7 @@ foreach ($result['data'] as $i => $r) {
         '<span class="small text-muted">' . e($r['year_level']) . '</span>',
         statusBadge($r['status']),
         '<span class="small text-muted">' . formatDate($r['submitted_at']) . '</span><div class="row-sub">' . timeAgo($r['submitted_at']) . '</div>',
-        '<a href="' . BASE_URL . '/staff/view_registration.php?id=' . (int)$r['id'] . '" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View &amp; Process"><i class="bi bi-eye"></i></a>',
+        '<a href="' . BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . (int)$r['id'] . '" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View &amp; Process"><i class="bi bi-eye"></i></a>',
     ];
 }
 
@@ -141,9 +141,9 @@ echo ui_table(
     ],
     $rows,
     ['empty_title' => 'No pre-registrations found',
-     'empty_msg'   => ($filterStatus || $filterSearch) ? 'Try adjusting your filters.' : 'No student registrations have been submitted yet.']
+     'empty_msg'   => ($filterStatus || $filterSearch) ? 'Try adjusting your filters.' : 'No student registrations have been submitted yet.',
+     'pagination'  => ['page' => $page, 'pages' => $result['pages'], 'total' => $result['total'], 'per_page' => $perPage, 'base_url' => $baseUrl]]
 );
-echo ui_list_footer($page, $result['pages'], $result['total'], $perPage, $baseUrl);
 echo ui_card_close();
 ?>
 

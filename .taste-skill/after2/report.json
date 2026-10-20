@@ -1,0 +1,2169 @@
+{
+ "url": "http://localhost/tcc_rrs/student/index.php",
+ "at": "2026-10-20T08:27:10.722Z",
+ "allow": [],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 9,
+   "filled": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "motion": {
+    "elements": 14,
+    "css": 9,
+    "transitions": 5,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 7761,
+     "screens": 8.6,
+     "words": 628,
+     "img": 18,
+     "video": 0,
+     "canvas": 1,
+     "svg": 0,
+     "sections": 7,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 5,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "an-education-volunteer-with-his-high-school.jpg",
+      "enroll.png",
+      "docs.png",
+      "track.png",
+      "verify.png"
+     ],
+     "blendText": 0,
+     "sideScrollers": 1,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "SKIP THE LINE.",
+     "words": 3,
+     "chars": 14,
+     "lines": 1,
+     "size": 115.2,
+     "vw": 8,
+     "font": "Inter",
+     "weight": 800,
+     "tracking": -0.035,
+     "leading": 0.98,
+     "upper": true,
+     "italic": false,
+     "mono": false,
+     "align": "center",
+     "position": "center",
+     "widthRatio": 0.66,
+     "top": 163,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "SKIP THE LINE.",
+     "words": 3,
+     "lines": 1,
+     "size": 115.2,
+     "font": "Inter"
+    },
+    "headings": [
+     {
+      "text": "SKIP THE LINE.",
+      "words": 3,
+      "chars": 14,
+      "lines": 1,
+      "size": 115.2,
+      "vw": 8,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.035,
+      "leading": 0.98,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.66,
+      "top": 163,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "Programs on file",
+      "words": 3,
+      "chars": 16,
+      "lines": 1,
+      "size": 28,
+      "vw": 1.9,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.37,
+      "top": 1144,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Services",
+      "words": 1,
+      "chars": 8,
+      "lines": 1,
+      "size": 48,
+      "vw": 3.3,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.03,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.33,
+      "top": 3133,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "FEES",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 240,
+      "vw": 16.7,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.03,
+      "leading": 0.82,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.42,
+      "top": 4036,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "From form to file",
+      "words": 4,
+      "chars": 17,
+      "lines": 1,
+      "size": 32,
+      "vw": 2.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.17,
+      "top": 5071,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Common questions",
+      "words": 2,
+      "chars": 16,
+      "lines": 1,
+      "size": 41.6,
+      "vw": 2.9,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.57,
+      "top": 5954,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Ready when you are",
+      "words": 4,
+      "chars": 18,
+      "lines": 1,
+      "size": 32,
+      "vw": 2.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "right",
+      "widthRatio": 0.32,
+      "top": 7246,
+      "tag": "h2",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 7,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 4,
+     "medianWords": 3,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Inter",
+       "share": 1,
+       "mono": false
+      }
+     ],
+     "familyCount": 1,
+     "sizes": [
+      10,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      22,
+      24,
+      28,
+      32,
+      42,
+      48,
+      115,
+      240
+     ],
+     "sizeCount": 17,
+     "notLoaded": [],
+     "body": {
+      "font": "Inter",
+      "size": 16,
+      "leading": 1.55,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 7.4
+     },
+     "measureChars": 54,
+     "max": {
+      "size": 240,
+      "vw": 16.7,
+      "font": "Inter",
+      "text": "FEES"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0.01,
+     "centerShare": 0.23,
+     "smallText": 1
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#f2f5f0",
+     "bodyBgHsl": {
+      "h": 96,
+      "s": 0.2,
+      "l": 0.95
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#052317",
+       "top": 67,
+       "hsl": {
+        "h": 156,
+        "s": 0.75,
+        "l": 0.08
+       }
+      },
+      {
+       "color": "#edf6f0",
+       "top": 972,
+       "hsl": {
+        "h": 140,
+        "s": 0.33,
+        "l": 0.95
+       }
+      },
+      {
+       "color": "#faf8ef",
+       "top": 1092,
+       "hsl": {
+        "h": 49,
+        "s": 0.52,
+        "l": 0.96
+       }
+      },
+      {
+       "color": "#ffffff",
+       "top": 3085,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#1b2a21",
+       "share": 0.4
+      },
+      {
+       "color": "#44564a",
+       "share": 0.23
+      },
+      {
+       "color": "#052317",
+       "share": 0.13
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.06
+      },
+      {
+       "color": "#7d9a89",
+       "share": 0.04
+      }
+     ],
+     "button": {
+      "bg": "#c9a227",
+      "hsl": {
+       "h": 46,
+       "s": 0.68,
+       "l": 0.47
+      },
+      "fg": "#faf8ef"
+     },
+     "lowContrast": [
+      {
+       "text": "Fees",
+       "ratio": 4.3,
+       "need": 4.5,
+       "size": 15,
+       "fg": "#052317",
+       "bg": "#a07d1a"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 7,
+     "inHero": 1,
+     "radius": 7,
+     "height": 31,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Track status"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 1,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 0,
+     "hairlineSamples": [],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 1,
+     "roundedBoxes": 0,
+     "boxRadius": 0,
+     "squareMedia": 11,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 6,
+       "iconTopped": false,
+       "rounded": false,
+       "top": 6074
+      }
+     ]
+    },
+    "heroMedia": [
+     {
+      "type": "img",
+      "ratio": 0.27
+     }
+    ],
+    "nav": {
+     "links": 8,
+     "fixed": true,
+     "height": 67,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": [
+     "inter",
+     "bootstrap-icons"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "pageH": 7761,
+    "margins": {
+     "left": 72,
+     "right": 80
+    },
+    "sections": [
+     {
+      "sel": "section.doss-hero",
+      "tag": "section",
+      "top": 67,
+      "height": 905,
+      "words": 61,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Skip the line.",
+       "size": 115,
+       "tag": "h1"
+      },
+      "left": 180,
+      "right": 182,
+      "textLeft": 180,
+      "textRight": 208,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.pg-reg",
+      "tag": "section",
+      "top": 972,
+      "height": 1971,
+      "words": 99,
+      "media": 1,
+      "middle": 0,
+      "heading": {
+       "text": "Programs on file",
+       "size": 28,
+       "tag": "h2"
+      },
+      "left": 441,
+      "right": 441,
+      "textLeft": 460,
+      "textRight": 460,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#services.pg-menu",
+      "tag": "section",
+      "top": 2943,
+      "height": 983,
+      "words": 0,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": null,
+      "right": null,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": true
+     },
+     {
+      "sel": "section#fees.pg-fees",
+      "tag": "section",
+      "top": 3926,
+      "height": 1021,
+      "words": 14,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "FEES",
+       "size": 240,
+       "tag": "h2"
+      },
+      "left": 410,
+      "right": 467,
+      "textLeft": 410,
+      "textRight": 467,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#journey.pg-journey",
+      "tag": "section",
+      "top": 4946,
+      "height": 888,
+      "words": 4,
+      "media": 0,
+      "middle": 930,
+      "heading": {
+       "text": "From form to file",
+       "size": 32,
+       "tag": "h2"
+      },
+      "left": 80,
+      "right": 80,
+      "textLeft": 80,
+      "textRight": 1114,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#questions.pg-faq",
+      "tag": "section",
+      "top": 5834,
+      "height": 973,
+      "words": 2,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Common questions",
+       "size": 42,
+       "tag": "h2"
+      },
+      "left": 310,
+      "right": 746,
+      "textLeft": 310,
+      "textRight": 746,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.pg-cta",
+      "tag": "section",
+      "top": 6807,
+      "height": 828,
+      "words": 37,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 80,
+      "right": 397,
+      "textLeft": 80,
+      "textRight": 397,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "footer.portal-footer.mt-auto",
+      "tag": "footer",
+      "top": 7635,
+      "height": 126,
+      "words": 27,
+      "media": 0,
+      "middle": 561,
+      "heading": null,
+      "left": 72,
+      "right": 72,
+      "textLeft": 72,
+      "textRight": 72,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "SKIP THE LINE.",
+      "size": 115,
+      "top": 163,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 80,
+      "n": 2
+     },
+     {
+      "x": 410,
+      "n": 2
+     },
+     {
+      "x": 180,
+      "n": 1
+     },
+     {
+      "x": 310,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 6,
+    "bodySize": 20,
+    "stage": false,
+    "explains": true,
+    "slivers": [],
+    "voidShare": 0.25,
+    "voidBox": {
+     "x": 0,
+     "y": 120,
+     "w": 420,
+     "h": 780
+    }
+   },
+   "app": null,
+   "consoleErrors": []
+  },
+  {
+   "width": 768,
+   "height": 1024,
+   "load": "load",
+   "screens": 8,
+   "filled": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "motion": {
+    "elements": 16,
+    "css": 9,
+    "transitions": 7,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "page": {
+     "height": 7696,
+     "screens": 7.5,
+     "words": 619,
+     "img": 18,
+     "video": 0,
+     "canvas": 1,
+     "svg": 0,
+     "sections": 7,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 1,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "an-education-volunteer-with-his-high-school.jpg"
+     ],
+     "blendText": 0,
+     "sideScrollers": 1,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "SKIP THE LINE.",
+     "words": 3,
+     "chars": 14,
+     "lines": 1,
+     "size": 61.4,
+     "vw": 8,
+     "font": "Inter",
+     "weight": 800,
+     "tracking": -0.035,
+     "leading": 0.98,
+     "upper": true,
+     "italic": false,
+     "mono": false,
+     "align": "center",
+     "position": "center",
+     "widthRatio": 0.66,
+     "top": 163,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "SKIP THE LINE.",
+     "words": 3,
+     "lines": 1,
+     "size": 61.4,
+     "font": "Inter"
+    },
+    "headings": [
+     {
+      "text": "SKIP THE LINE.",
+      "words": 3,
+      "chars": 14,
+      "lines": 1,
+      "size": 61.4,
+      "vw": 8,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.035,
+      "leading": 0.98,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.66,
+      "top": 163,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "Programs on file",
+      "words": 3,
+      "chars": 16,
+      "lines": 1,
+      "size": 28,
+      "vw": 3.6,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.78,
+      "top": 1162,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Services",
+      "words": 1,
+      "chars": 8,
+      "lines": 1,
+      "size": 48,
+      "vw": 6.3,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.03,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.77,
+      "top": 3116,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "FEES",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 240,
+      "vw": 31.3,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.03,
+      "leading": 0.82,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.79,
+      "top": 4019,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "From form to file",
+      "words": 4,
+      "chars": 17,
+      "lines": 1,
+      "size": 32,
+      "vw": 4.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.32,
+      "top": 5054,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Common questions",
+      "words": 2,
+      "chars": 16,
+      "lines": 1,
+      "size": 30.7,
+      "vw": 4,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.95,
+      "top": 5937,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Ready when you are",
+      "words": 4,
+      "chars": 18,
+      "lines": 1,
+      "size": 32,
+      "vw": 4.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.6,
+      "top": 7117,
+      "tag": "h2",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 7,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 4,
+     "medianWords": 3,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Inter",
+       "share": 1,
+       "mono": false
+      }
+     ],
+     "familyCount": 1,
+     "sizes": [
+      10,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      24,
+      28,
+      31,
+      32,
+      48,
+      61,
+      240
+     ],
+     "sizeCount": 16,
+     "notLoaded": [],
+     "body": {
+      "font": "Inter",
+      "size": 16,
+      "leading": 1.55,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 7.4
+     },
+     "measureChars": 60,
+     "max": {
+      "size": 240,
+      "vw": 31.3,
+      "font": "Inter",
+      "text": "FEES"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0.01,
+     "centerShare": 0.23,
+     "smallText": 1
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#f2f5f0",
+     "bodyBgHsl": {
+      "h": 96,
+      "s": 0.2,
+      "l": 0.95
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#052317",
+       "top": 67,
+       "hsl": {
+        "h": 156,
+        "s": 0.75,
+        "l": 0.08
+       }
+      },
+      {
+       "color": "#edf6f0",
+       "top": 990,
+       "hsl": {
+        "h": 140,
+        "s": 0.33,
+        "l": 0.95
+       }
+      },
+      {
+       "color": "#faf8ef",
+       "top": 1110,
+       "hsl": {
+        "h": 49,
+        "s": 0.52,
+        "l": 0.96
+       }
+      },
+      {
+       "color": "#ffffff",
+       "top": 3068,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#1b2a21",
+       "share": 0.41
+      },
+      {
+       "color": "#44564a",
+       "share": 0.23
+      },
+      {
+       "color": "#052317",
+       "share": 0.13
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.05
+      },
+      {
+       "color": "#7d9a89",
+       "share": 0.04
+      }
+     ],
+     "button": {
+      "bg": "#0d4530",
+      "hsl": {
+       "h": 158,
+       "s": 0.68,
+       "l": 0.16
+      },
+      "fg": "#176849"
+     },
+     "lowContrast": [
+      {
+       "text": "Fees",
+       "ratio": 4.3,
+       "need": 4.5,
+       "size": 15,
+       "fg": "#052317",
+       "bg": "#a07d1a"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 10,
+     "inHero": 5,
+     "radius": 0,
+     "height": 64,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Services",
+      "Fees",
+      "The journey",
+      "Questions",
+      "Track status"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 1,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 0,
+     "hairlineSamples": [],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 1,
+     "roundedBoxes": 0,
+     "boxRadius": 0,
+     "squareMedia": 7,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "img",
+      "ratio": 0.68
+     }
+    ],
+    "nav": {
+     "links": 1,
+     "fixed": true,
+     "height": 67,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": [
+     "inter",
+     "bootstrap-icons"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "pageH": 7696,
+    "margins": {
+     "left": 36,
+     "right": 36
+    },
+    "sections": [
+     {
+      "sel": "section.doss-hero",
+      "tag": "section",
+      "top": 67,
+      "height": 923,
+      "words": 61,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Skip the line.",
+       "size": 61,
+       "tag": "h1"
+      },
+      "left": 74,
+      "right": 50,
+      "textLeft": 74,
+      "textRight": 50,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.pg-reg",
+      "tag": "section",
+      "top": 990,
+      "height": 1936,
+      "words": 99,
+      "media": 1,
+      "middle": 0,
+      "heading": {
+       "text": "Programs on file",
+       "size": 28,
+       "tag": "h2"
+      },
+      "left": 74,
+      "right": 74,
+      "textLeft": 84,
+      "textRight": 84,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#services.pg-menu",
+      "tag": "section",
+      "top": 2926,
+      "height": 983,
+      "words": 0,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": null,
+      "right": null,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#fees.pg-fees",
+      "tag": "section",
+      "top": 3909,
+      "height": 1021,
+      "words": 14,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "FEES",
+       "size": 240,
+       "tag": "h2"
+      },
+      "left": 74,
+      "right": 131,
+      "textLeft": 74,
+      "textRight": 131,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#journey.pg-journey",
+      "tag": "section",
+      "top": 4929,
+      "height": 888,
+      "words": 4,
+      "media": 0,
+      "middle": 330,
+      "heading": {
+       "text": "From form to file",
+       "size": 32,
+       "tag": "h2"
+      },
+      "left": 44,
+      "right": 44,
+      "textLeft": 44,
+      "textRight": 478,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#questions.pg-faq",
+      "tag": "section",
+      "top": 5817,
+      "height": 960,
+      "words": 2,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Common questions",
+       "size": 31,
+       "tag": "h2"
+      },
+      "left": 20,
+      "right": 464,
+      "textLeft": 20,
+      "textRight": 464,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.pg-cta",
+      "tag": "section",
+      "top": 6777,
+      "height": 750,
+      "words": 37,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 44,
+      "right": 77,
+      "textLeft": 44,
+      "textRight": 77,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "footer.portal-footer.mt-auto",
+      "tag": "footer",
+      "top": 7526,
+      "height": 170,
+      "words": 27,
+      "media": 0,
+      "middle": 130,
+      "heading": null,
+      "left": 36,
+      "right": 36,
+      "textLeft": 36,
+      "textRight": 36,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "SKIP THE LINE.",
+      "size": 61,
+      "top": 163,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 74,
+      "n": 3
+     },
+     {
+      "x": 44,
+      "n": 2
+     },
+     {
+      "x": 20,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 6,
+    "bodySize": 20,
+    "stage": false,
+    "explains": true,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": null,
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 10,
+   "filled": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "motion": {
+    "elements": 14,
+    "css": 9,
+    "transitions": 5,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "page": {
+     "height": 7621,
+     "screens": 9,
+     "words": 619,
+     "img": 18,
+     "video": 0,
+     "canvas": 1,
+     "svg": 0,
+     "sections": 7,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 1,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "an-education-volunteer-with-his-high-school.jpg"
+     ],
+     "blendText": 0,
+     "sideScrollers": 1,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "SKIP THE LINE.",
+     "words": 3,
+     "chars": 14,
+     "lines": 2,
+     "size": 66.3,
+     "vw": 17,
+     "font": "Inter",
+     "weight": 800,
+     "tracking": -0.035,
+     "leading": 0.98,
+     "upper": true,
+     "italic": false,
+     "mono": false,
+     "align": "center",
+     "position": "center",
+     "widthRatio": 0.9,
+     "top": 131,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "SKIP THE LINE.",
+     "words": 3,
+     "lines": 2,
+     "size": 66.3,
+     "font": "Inter"
+    },
+    "headings": [
+     {
+      "text": "SKIP THE LINE.",
+      "words": 3,
+      "chars": 14,
+      "lines": 2,
+      "size": 66.3,
+      "vw": 17,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.035,
+      "leading": 0.98,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.9,
+      "top": 131,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "Already submitted?",
+      "words": 2,
+      "chars": 18,
+      "lines": 1,
+      "size": 24,
+      "vw": 6.2,
+      "font": "Inter",
+      "weight": 700,
+      "tracking": -0.02,
+      "leading": 1.55,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.82,
+      "top": 685,
+      "tag": "b",
+      "kind": "heading"
+     },
+     {
+      "text": "Programs on file",
+      "words": 3,
+      "chars": 16,
+      "lines": 1,
+      "size": 28,
+      "vw": 7.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.02,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.8,
+      "top": 1180,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Services",
+      "words": 1,
+      "chars": 8,
+      "lines": 1,
+      "size": 35.2,
+      "vw": 9,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.03,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.86,
+      "top": 3189,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "FEES",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 140,
+      "vw": 35.9,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.03,
+      "leading": 0.82,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.91,
+      "top": 4060,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "From form to file",
+      "words": 4,
+      "chars": 17,
+      "lines": 1,
+      "size": 32,
+      "vw": 8.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.63,
+      "top": 4984,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Common questions",
+      "words": 2,
+      "chars": 16,
+      "lines": 1,
+      "size": 28.8,
+      "vw": 7.4,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.9,
+      "top": 5811,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Ready when you are",
+      "words": 4,
+      "chars": 18,
+      "lines": 2,
+      "size": 32,
+      "vw": 8.2,
+      "font": "Inter",
+      "weight": 800,
+      "tracking": -0.025,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.77,
+      "top": 6909,
+      "tag": "h2",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 8,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 4,
+     "medianWords": 2,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Inter",
+       "share": 1,
+       "mono": false
+      }
+     ],
+     "familyCount": 1,
+     "sizes": [
+      10,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      24,
+      28,
+      29,
+      32,
+      35,
+      66,
+      140
+     ],
+     "sizeCount": 16,
+     "notLoaded": [],
+     "body": {
+      "font": "Inter",
+      "size": 16,
+      "leading": 1.55,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 7.4
+     },
+     "measureChars": 37,
+     "max": {
+      "size": 140,
+      "vw": 35.9,
+      "font": "Inter",
+      "text": "FEES"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0.01,
+     "centerShare": 0.26,
+     "smallText": 1
+    },
+    "eyebrows": [
+     {
+      "text": "Confirm a released document is authentic.",
+      "above": "FEES",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 15,
+      "top": 3886
+     }
+    ],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#f2f5f0",
+     "bodyBgHsl": {
+      "h": 96,
+      "s": 0.2,
+      "l": 0.95
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#052317",
+       "top": 67,
+       "hsl": {
+        "h": 156,
+        "s": 0.75,
+        "l": 0.08
+       }
+      },
+      {
+       "color": "#faf8ef",
+       "top": 653,
+       "hsl": {
+        "h": 49,
+        "s": 0.52,
+        "l": 0.96
+       }
+      },
+      {
+       "color": "#edf6f0",
+       "top": 1064,
+       "hsl": {
+        "h": 140,
+        "s": 0.33,
+        "l": 0.95
+       }
+      },
+      {
+       "color": "#ffffff",
+       "top": 3153,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#1b2a21",
+       "share": 0.41
+      },
+      {
+       "color": "#44564a",
+       "share": 0.23
+      },
+      {
+       "color": "#052317",
+       "share": 0.13
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.05
+      },
+      {
+       "color": "#7d9a89",
+       "share": 0.04
+      }
+     ],
+     "button": {
+      "bg": "#0d4530",
+      "hsl": {
+       "h": 158,
+       "s": 0.68,
+       "l": 0.16
+      },
+      "fg": "#176849"
+     },
+     "lowContrast": [
+      {
+       "text": "Fees",
+       "ratio": 4.3,
+       "need": 4.5,
+       "size": 12.8,
+       "fg": "#052317",
+       "bg": "#a07d1a"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 10,
+     "inHero": 4,
+     "radius": 0,
+     "height": 52,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Services",
+      "Fees",
+      "The journey",
+      "Questions"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 1,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 0,
+     "hairlineSamples": [],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 1,
+     "roundedBoxes": 0,
+     "boxRadius": 0,
+     "squareMedia": 7,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 6,
+       "iconTopped": false,
+       "rounded": false,
+       "top": 5916
+      }
+     ]
+    },
+    "heroMedia": [
+     {
+      "type": "img",
+      "ratio": 0.48
+     }
+    ],
+    "nav": {
+     "links": 1,
+     "fixed": true,
+     "height": 67,
+     "floatingPill": false,
+     "blur": true
+    },
+    "fontsLoaded": [
+     "inter",
+     "bootstrap-icons"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "pageH": 7621,
+    "margins": {
+     "left": 14,
+     "right": 12
+    },
+    "sections": [
+     {
+      "sel": "section.doss-hero",
+      "tag": "section",
+      "top": 67,
+      "height": 997,
+      "words": 61,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Skip the line.",
+       "size": 66,
+       "tag": "h1"
+      },
+      "left": 25,
+      "right": 0,
+      "textLeft": 25,
+      "textRight": -9,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.pg-reg",
+      "tag": "section",
+      "top": 1064,
+      "height": 1983,
+      "words": 99,
+      "media": 1,
+      "middle": 0,
+      "heading": {
+       "text": "Programs on file",
+       "size": 28,
+       "tag": "h2"
+      },
+      "left": 34,
+      "right": 34,
+      "textLeft": 42,
+      "textRight": 42,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#services.pg-menu",
+      "tag": "section",
+      "top": 3047,
+      "height": 993,
+      "words": 0,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": null,
+      "right": null,
+      "textLeft": null,
+      "textRight": null,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#fees.pg-fees",
+      "tag": "section",
+      "top": 4040,
+      "height": 860,
+      "words": 13,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 20,
+      "right": 47,
+      "textLeft": 20,
+      "textRight": 47,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#journey.pg-journey",
+      "tag": "section",
+      "top": 4900,
+      "height": 827,
+      "words": 4,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "From form to file",
+       "size": 32,
+       "tag": "h2"
+      },
+      "left": 20,
+      "right": 124,
+      "textLeft": 20,
+      "textRight": 124,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#questions.pg-faq",
+      "tag": "section",
+      "top": 5727,
+      "height": 853,
+      "words": 2,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Common questions",
+       "size": 29,
+       "tag": "h2"
+      },
+      "left": 20,
+      "right": 104,
+      "textLeft": 20,
+      "textRight": 104,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section.pg-cta",
+      "tag": "section",
+      "top": 6580,
+      "height": 801,
+      "words": 37,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 20,
+      "right": 28,
+      "textLeft": 20,
+      "textRight": 28,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "footer.portal-footer.mt-auto",
+      "tag": "footer",
+      "top": 7381,
+      "height": 240,
+      "words": 27,
+      "media": 0,
+      "middle": 0,
+      "heading": null,
+      "left": 12,
+      "right": 12,
+      "textLeft": 12,
+      "textRight": 12,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "SKIP THE LINE.",
+      "size": 66,
+      "top": 131,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [
+     {
+      "text": "© 2026 Tampakan Community College. All rights rese",
+      "side": "left",
+      "px": 12
+     }
+    ],
+    "edges": [
+     {
+      "x": 14,
+      "n": 5
+     },
+     {
+      "x": 36,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 6,
+    "bodySize": 17,
+    "stage": false,
+    "explains": true,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": null,
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "WARN",
+   "id": "palette-cream",
+   "width": 1440,
+   "message": "Yellow-cream background (section #faf8ef).",
+   "fix": "Use the drawn palette. If you want warmth, take a low-chroma stone or bone, not a yellow cream.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "contrast",
+   "width": 1440,
+   "message": "Low-contrast text: \"Fees\" 4.3:1 needs 4.5:1",
+   "fix": "Darken or lighten the text colour.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "size-count",
+   "width": 1440,
+   "message": "17 different font sizes (10, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 28, 32, 42, 48, 115, 240).",
+   "fix": "A page needs about five: display, heading, lead, body, small.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "no-footage",
+   "width": 1440,
+   "message": "No video anywhere on the page.",
+   "fix": "Look for one honest clip with scripts/assets.mjs --video (the place, the material, the process) and use it as a muted loop with a poster frame. Defend its absence only if no clip fits the subject."
+  },
+  {
+   "level": "WARN",
+   "id": "side-scroll",
+   "width": 1440,
+   "message": "1 row(s) scroll sideways with content past their edge.",
+   "fix": "Jurors and most visitors read a row cut at the edge as clipped, not as scrollable. Wrap it onto more lines, or end it inside the grid.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "small-text",
+   "width": 1440,
+   "message": "1 text block(s) under 13px.",
+   "fix": "Nothing meant to be read goes below 13px.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "untitled-section",
+   "width": 1440,
+   "message": "A section carries text but no heading: section.pg-cta at 6807px.",
+   "fix": "Name it with a short heading unless it is the continuation of the section above.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "still-page",
+   "width": 1440,
+   "message": "Little motion: 14 element(s) moved while the page loaded and scrolled.",
+   "fix": "Give every section an entrance for its parts (not one fade of the whole block) and add one moving picture: a looping clip or a slow move on a photograph."
+  },
+  {
+   "level": "FAIL",
+   "id": "eyebrow",
+   "width": 390,
+   "message": "1 eyebrow/kicker label(s) above headings: \"Confirm a released document is authentic.\" above \"FEES\"",
+   "fix": "Delete them. If the label carried real information, fold it into the headline or the supporting sentence."
+  },
+  {
+   "level": "WARN",
+   "id": "edge-text",
+   "width": 390,
+   "message": "1 text block(s) sit 12–15px from the phone's edge: \"© 2026 Tampakan Community Coll\" (12px)",
+   "fix": "The page margin is 16–20px on a phone; the header and the corner labels sit on it too."
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\after2\\desktop-fold.jpg",
+   "pages": [
+    "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\after2\\desktop-page-01.jpg",
+    "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\after2\\desktop-page-02.jpg",
+    "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\after2\\desktop-page-03.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "tablet",
+   "width": 768,
+   "fold": "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\after2\\tablet-fold.jpg",
+   "pages": [
+    "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\after2\\tablet-page-01.jpg",
+    "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\after2\\tablet-page-02.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\after2\\mobile-fold.jpg",
+   "pages": [
+    "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\after2\\mobile-page-01.jpg",
+    "C:\\wamp64\\www\\tcc_rrs\\.taste-skill\\after2\\mobile-page-02.jpg"
+   ],
+   "film": []
+  }
+ ]
+}
