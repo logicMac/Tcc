@@ -74,10 +74,15 @@ if (isPost()) {
              $data['last_year_attended'],$data['additional_info'],$id]
         );
 
+        $changes = describeRecordChanges($req, $data);
         addStatusHistory('document_request', $id, $req['tracking_code'], $req['status'], $req['status'],
-            'Record details updated by staff.' . ($data['edit_note'] ? ' — ' . $data['edit_note'] : ''));
+            'Record details updated by staff.'
+            . ($data['edit_note'] ? ' — ' . $data['edit_note'] : '')
+            . ($changes ? ' Changed: ' . $changes : ''));
         logActivity('RECORD_EDIT', 'Records Management',
-            "Edited document request {$req['tracking_code']}", $req['tracking_code']);
+            "Edited document request {$req['tracking_code']}"
+            . ($changes ? ' — ' . $changes : ' — no field changes'),
+            $req['tracking_code']);
 
         flash('success', 'Record updated successfully.');
         redirect(BASE_URL . '/' . currentRole() . '/view_document.php?id=' . $id);
@@ -167,12 +172,9 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
                  placeholder="e.g. Updated per student request via phone call">
         </div>
         <div class="col-md-4 d-flex gap-2">
-          <button type="submit" class="btn btn-primary flex-fill">
-            <i class="bi bi-check-lg me-1"></i>Save Changes
-          </button>
-          <a href="<?= BASE_URL ?>/<?= currentRole() ?>/view_document.php?id=<?= (int)$id ?>" class="btn btn-outline-secondary">
-            Cancel
-          </a>
+          <?= ui_btn('Save Changes', ['type'=>'submit','class'=>'flex-fill','icon'=>'check-lg']) ?>
+          <?= ui_btn('Cancel', ['variant'=>'outline-secondary',
+                     'href'=>BASE_URL . '/' . currentRole() . '/view_document.php?id=' . (int)$id]) ?>
         </div>
       </div>
     </div>

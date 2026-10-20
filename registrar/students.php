@@ -108,8 +108,8 @@ foreach ($result['data'] as $s) {
             . csrfField()
             . '<input type="hidden" name="student_id" value="' . (int)$s['id'] . '">'
             . '<input type="hidden" name="action" value="' . $action . '">'
-            . '<button type="submit" class="btn btn-sm ' . $btnClass . '">'
-            . ($s['is_active'] ? 'Deactivate' : 'Activate') . '</button>'
+            . ui_btn($s['is_active'] ? 'Deactivate' : 'Activate',
+                     ['type'=>'submit','size'=>'sm','variant'=>substr($btnClass, 4)])
         . '</form>',
     ];
 }

@@ -94,12 +94,10 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
     'Catalog',
     'Manage the courses and document types offered across the system.',
     'collection',
-    '<button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#programModal" data-mode="add">
-       <i class="bi bi-plus-lg me-1"></i>Add Program
-     </button>
-     <button class="btn btn-gold btn-sm" data-bs-toggle="modal" data-bs-target="#doctypeModal" data-mode="add">
-       <i class="bi bi-plus-lg me-1"></i>Add Document Type
-     </button>'
+    ui_btn('Add Program', ['size'=>'sm','icon'=>'plus-lg',
+           'attrs'=>'data-bs-toggle="modal" data-bs-target="#programModal" data-mode="add"'])
+    . ui_btn('Add Document Type', ['size'=>'sm','variant'=>'gold','icon'=>'plus-lg',
+            'attrs'=>'data-bs-toggle="modal" data-bs-target="#doctypeModal" data-mode="add"'])
 ) ?>
 
 <?php if (!empty($errors)): ?>
@@ -127,13 +125,15 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
             '<span class="badge badge-soft-primary font-monospace">' . e($p['code']) . '</span>',
             '<div class="row-name">' . e($p['name']) . '</div><div class="row-sub">' . e($p['department'] ?? '') . '</div>',
             '<span class="badge badge-soft-' . ($p['is_active'] ? 'success' : 'secondary') . '">' . ($p['is_active'] ? 'Active' : 'Inactive') . '</span>',
-            '<button class="btn btn-sm btn-outline-primary py-0 px-2 me-1" data-bs-toggle="modal" data-bs-target="#programModal"'
-              . ' data-mode="edit" data-id="' . (int)$p['id'] . '" data-code="' . e($p['code']) . '"'
-              . ' data-name="' . e($p['name']) . '" data-department="' . e($p['department'] ?? '') . '">Edit</button>'
+            ui_btn('Edit', ['size'=>'sm','variant'=>'outline-primary','class'=>'py-0 px-2 me-1',
+                   'attrs'=>'data-bs-toggle="modal" data-bs-target="#programModal"'
+                     . ' data-mode="edit" data-id="' . (int)$p['id'] . '" data-code="' . e($p['code']) . '"'
+                     . ' data-name="' . e($p['name']) . '" data-department="' . e($p['department'] ?? '') . '"'])
             . '<form method="POST" class="d-inline">' . csrfField()
               . '<input type="hidden" name="action" value="toggle_program"><input type="hidden" name="id" value="' . (int)$p['id'] . '">'
-              . '<button class="btn btn-sm btn-outline-' . ($p['is_active'] ? 'secondary' : 'success') . ' py-0 px-2">'
-              . ($p['is_active'] ? 'Deactivate' : 'Activate') . '</button></form>',
+              . ui_btn($p['is_active'] ? 'Deactivate' : 'Activate',
+                       ['type'=>'submit','size'=>'sm','class'=>'py-0 px-2',
+                        'variant'=>'outline-' . ($p['is_active'] ? 'secondary' : 'success')]) . '</form>',
         ];
     }
     echo ui_table(['Code', 'Program', 'Status', ''], $rows,
@@ -152,14 +152,16 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
             '<span class="num">' . formatCurrency((float)$d['fee']) . '</span>',
             '<span class="num">' . (int)$d['processing_days'] . 'd</span>',
             '<span class="badge badge-soft-' . ($d['is_active'] ? 'success' : 'secondary') . '">' . ($d['is_active'] ? 'Active' : 'Inactive') . '</span>',
-            '<button class="btn btn-sm btn-outline-primary py-0 px-2 me-1" data-bs-toggle="modal" data-bs-target="#doctypeModal"'
-              . ' data-mode="edit" data-id="' . (int)$d['id'] . '" data-code="' . e($d['code']) . '"'
-              . ' data-name="' . e($d['name']) . '" data-description="' . e($d['description'] ?? '') . '"'
-              . ' data-fee="' . e($d['fee']) . '" data-days="' . (int)$d['processing_days'] . '">Edit</button>'
+            ui_btn('Edit', ['size'=>'sm','variant'=>'outline-primary','class'=>'py-0 px-2 me-1',
+                   'attrs'=>'data-bs-toggle="modal" data-bs-target="#doctypeModal"'
+                     . ' data-mode="edit" data-id="' . (int)$d['id'] . '" data-code="' . e($d['code']) . '"'
+                     . ' data-name="' . e($d['name']) . '" data-description="' . e($d['description'] ?? '') . '"'
+                     . ' data-fee="' . e($d['fee']) . '" data-days="' . (int)$d['processing_days'] . '"'])
             . '<form method="POST" class="d-inline">' . csrfField()
               . '<input type="hidden" name="action" value="toggle_doctype"><input type="hidden" name="id" value="' . (int)$d['id'] . '">'
-              . '<button class="btn btn-sm btn-outline-' . ($d['is_active'] ? 'secondary' : 'success') . ' py-0 px-2">'
-              . ($d['is_active'] ? 'Deactivate' : 'Activate') . '</button></form>',
+              . ui_btn($d['is_active'] ? 'Deactivate' : 'Activate',
+                       ['type'=>'submit','size'=>'sm','class'=>'py-0 px-2',
+                        'variant'=>'outline-' . ($d['is_active'] ? 'secondary' : 'success')]) . '</form>',
         ];
     }
     echo ui_table(['Code', 'Document', 'Fee', 'Est. Days', 'Status', ''], $rows,
@@ -196,8 +198,8 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button>
+        <?= ui_btn('Cancel', ['variant'=>'outline-secondary','attrs'=>'data-bs-dismiss="modal"']) ?>
+        <?= ui_btn('Save', ['type'=>'submit','icon'=>'check-lg']) ?>
       </div>
     </form>
   </div>
@@ -239,8 +241,8 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Save</button>
+        <?= ui_btn('Cancel', ['variant'=>'outline-secondary','attrs'=>'data-bs-dismiss="modal"']) ?>
+        <?= ui_btn('Save', ['type'=>'submit','icon'=>'check-lg']) ?>
       </div>
     </form>
   </div>

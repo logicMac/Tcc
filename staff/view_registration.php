@@ -129,9 +129,11 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
     'Pre-Registration Detail — Submitted ' . formatDateTime($reg['submitted_at']),
     '',
     ui_back($backUrl)
-    . '<a href="' . BASE_URL . '/' . currentRole() . '/edit_registration.php?id=' . (int)$id . '" class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i>Edit Record</a>'
-    . '<a href="' . e($trackingUrl) . '" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye me-1"></i>Student View</a>'
-    . '<button onclick="window.print()" class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer me-1"></i>Print</button>'
+    . ui_btn('Edit Record', ['size'=>'sm','icon'=>'pencil',
+            'href'=>BASE_URL . '/' . currentRole() . '/edit_registration.php?id=' . (int)$id])
+    . ui_btn('Student View', ['size'=>'sm','variant'=>'outline-primary','icon'=>'eye',
+            'href'=>$trackingUrl, 'attrs'=>'target="_blank"'])
+    . ui_btn('Print', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'printer','attrs'=>'onclick="window.print()"'])
 ) ?>
 
 <div class="row g-3">
@@ -304,11 +306,8 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
               </td>
               <td>
                 <?php if (!empty($submitted[$ck])): ?>
-                <button type="button" class="btn btn-sm btn-outline-primary doc-view"
-                        data-url="<?= UPLOAD_URL . '/' . e($submitted[$ck]) ?>"
-                        data-label="<?= e($cred['label']) ?>">
-                  <i class="bi bi-paperclip me-1"></i>View
-                </button>
+                <?= ui_btn('View', ['size'=>'sm','variant'=>'outline-primary','icon'=>'paperclip','class'=>'doc-view',
+                           'attrs'=>'data-url="' . e(UPLOAD_URL . '/' . $submitted[$ck]) . '" data-label="' . e($cred['label']) . '"']) ?>
                 <span class="d-none d-print-inline small">&#10003; Attached</span>
                 <?php else: ?>
                 <span class="text-muted small">—</span>
@@ -359,9 +358,8 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
                       placeholder="Add remarks visible to the student..."
                       data-max-chars="500"><?= e($reg['remarks']) ?></textarea>
           </div>
-          <button type="submit" class="btn btn-primary w-100" id="updateRegBtn">
-            <i class="bi bi-check-lg me-1"></i>Update Status
-          </button>
+          <?= ui_btn('Update Status', ['type'=>'submit','class'=>'w-100','icon'=>'check-lg',
+                     'attrs'=>'id="updateRegBtn"']) ?>
         </form>
       </div>
     <?= ui_card_close() ?>
@@ -374,12 +372,10 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
           <div class="small text-muted mt-1"><?= e($reg['tracking_code']) ?></div>
         </div>
         <div class="d-flex gap-2 justify-content-center mt-2">
-          <button class="btn btn-sm btn-outline-primary" onclick="downloadQr('qr-section','<?= e($reg['tracking_code']) ?>.png')">
-            <i class="bi bi-download"></i>
-          </button>
-          <button class="btn btn-sm btn-outline-secondary" onclick="printSection('qr-section')">
-            <i class="bi bi-printer"></i>
-          </button>
+          <?= ui_btn('', ['size'=>'sm','variant'=>'outline-primary','icon'=>'download',
+                     'attrs'=>'onclick="downloadQr(\'qr-section\',\'' . e($reg['tracking_code']) . '.png\')"']) ?>
+          <?= ui_btn('', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'printer',
+                     'attrs'=>'onclick="printSection(\'qr-section\')"']) ?>
         </div>
       </div>
     <?= ui_card_close() ?>
@@ -398,13 +394,9 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
           <?= csrfField() ?>
           <input type="hidden" name="action" value="<?= $reg['is_archived'] ? 'restore' : 'archive' ?>">
           <?php if ($reg['is_archived']): ?>
-          <button type="submit" class="btn btn-outline-success w-100">
-            <i class="bi bi-arrow-counterclockwise me-1"></i>Restore from Archive
-          </button>
+          <?= ui_btn('Restore from Archive', ['type'=>'submit','variant'=>'outline-success','class'=>'w-100','icon'=>'arrow-counterclockwise']) ?>
           <?php else: ?>
-          <button type="submit" class="btn btn-outline-secondary w-100">
-            <i class="bi bi-archive me-1"></i>Archive This Record
-          </button>
+          <?= ui_btn('Archive This Record', ['type'=>'submit','variant'=>'outline-secondary','class'=>'w-100','icon'=>'archive']) ?>
           <div class="text-muted small mt-2 text-center">Archived records stay searchable and can be restored anytime.</div>
           <?php endif; ?>
         </form>

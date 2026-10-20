@@ -12,7 +12,7 @@ require_once __DIR__ . '/../includes/helpers.php';
 startSession();
 
 if (isStudentLoggedIn()) {
-    redirect(BASE_URL . '/student/account.php');
+    redirect(BASE_URL . '/student/dashboard.php');
 }
 redirectIfLoggedIn();
 

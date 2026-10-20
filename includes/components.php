@@ -54,6 +54,69 @@ function ui_back(string $url, string $label = 'Back to List'): string
     return '<a href="' . e($url) . '" class="btn-back"><i class="bi bi-arrow-left"></i> ' . e($label) . '</a>';
 }
 
+/**
+ * Uniform button / link-button.
+ *
+ * @param string $label Button text (escaped)
+ * @param array  $opts  Options:
+ *   'href'       string  renders <a> instead of <button>
+ *   'type'       string  button type, default 'button' ('submit' in forms)
+ *   'variant'    string  Bootstrap variant, default 'primary'
+ *   'size'       string  '' | 'sm' | 'lg'
+ *   'icon'       string  left icon (bootstrap name, no `bi-` prefix)
+ *   'icon_right' string  right icon
+ *   'class'      string  extra classes appended to .btn
+ *   'attrs'      string  raw extra attributes, e.g. 'onclick="..." id="x"'
+ */
+function ui_btn(string $label, array $opts = []): string
+{
+    $href    = $opts['href']       ?? '';
+    $type    = $opts['type']       ?? 'button';
+    $variant = $opts['variant']    ?? 'primary';
+    $size    = $opts['size']       ?? '';
+    $class   = $opts['class']      ?? '';
+    $attrs   = $opts['attrs']      ?? '';
+    $icon    = isset($opts['icon'])       ? '<i class="bi bi-' . e($opts['icon']) . ' me-1"></i>'       : '';
+    $iconR   = isset($opts['icon_right']) ? '<i class="bi bi-' . e($opts['icon_right']) . ' ms-1"></i>' : '';
+
+    $cls = 'btn btn-' . $variant
+         . ($size !== '' ? ' btn-' . $size : '')
+         . ($class !== '' ? ' ' . $class : '');
+    $inner = $icon . e($label) . $iconR;
+
+    if ($href !== '') {
+        return '<a href="' . e($href) . '" class="' . $cls . '"' . ($attrs ? ' ' . $attrs : '') . '>' . $inner . '</a>';
+    }
+    return '<button type="' . e($type) . '" class="' . $cls . '"' . ($attrs ? ' ' . $attrs : '') . '>' . $inner . '</button>';
+}
+
+/**
+ * Portal-style page header used on student/guest-facing pages:
+ * icon tile + title + subtitle on the left, back link pinned right.
+ *
+ * @param string $title    Page heading
+ * @param string $subtitle Small grey description under the title
+ * @param string $icon     Bootstrap icon name (no `bi-` prefix)
+ * @param string $backUrl  URL for the back link ('' = no back link)
+ * @param string $backLabel
+ */
+function ui_portal_header(string $title, string $subtitle = '', string $icon = '', string $backUrl = '', string $backLabel = 'Back'): string
+{
+    $tile = $icon !== ''
+        ? '<div class="portal-card-icon portal-head-icon"><i class="bi bi-' . e($icon) . ' fs-5"></i></div>'
+        : '';
+    $sub  = $subtitle !== '' ? '<p class="text-muted mb-0 small">' . e($subtitle) . '</p>' : '';
+    $back = $backUrl  !== '' ? ui_back($backUrl, $backLabel) : '';
+    $ttl  = e($title);
+    return <<<HTML
+    <div class="portal-page-head">
+      {$tile}
+      <div class="portal-head-text"><h3 class="fw-bold mb-0">{$ttl}</h3>{$sub}</div>
+      <div class="ms-auto">{$back}</div>
+    </div>
+    HTML;
+}
+
 // ══════════════════════════════════════════════════════════════════════════════
 // STATUS QUICK TABS  (All · Pending · … · Archived)
 // ══════════════════════════════════════════════════════════════════════════════
@@ -82,6 +145,7 @@ function ui_status_tabs(array $tabs): string
         $icon  = isset($t['icon']) ? '<i class="bi bi-' . e($t['icon']) . ' me-1"></i>' : '';
         $html .= '<a href="' . e($t['url']) . '" class="btn btn-sm ' . $cls . '">'
                . $icon . e($t['label']) . $count . '</a>';
+
     }
     $html .= '</div>';
     return $html;
@@ -144,9 +208,10 @@ function ui_filter_bar(string $action, array $fields, array $hidden = [], string
         $html .= '</div>';
     }
     $html .= '<div class="filter-actions">'
-           . '<button type="submit" class="btn btn-primary"><i class="bi bi-funnel me-1"></i>' . e($submitLabel) . '</button>';
+           . ui_btn($submitLabel, ['type'=>'submit','icon'=>'funnel']);
     if ($resetUrl !== '') {
-        $html .= '<a href="' . e($resetUrl) . '" class="btn btn-outline-secondary" title="Clear filters"><i class="bi bi-x-lg"></i></a>';
+        $html .= ui_btn('', ['variant'=>'outline-secondary','icon'=>'x-lg','href'=>$resetUrl,
+                            'attrs'=>'title="Clear filters"']);
     }
     $html .= '</div></form></div>';
     return $html;

@@ -11,6 +11,9 @@ requireStudentAuth();
 
 $student    = currentStudent();
 $studentId  = currentStudentId();
+$student['created_at'] = db()->fetchOne(
+    "SELECT created_at FROM students WHERE id = ?", [$studentId]
+)['created_at'] ?? null;
 $schoolName = getSetting('school_name', 'Tampakan Community College');
 $activePage = 'account';
 $tab        = get('tab', 'registrations');
@@ -69,59 +72,71 @@ $counts = [
 ];
 
 $pageTitle = 'My Account';
-include __DIR__ . '/../includes/partials/portal_head.php';
-include __DIR__ . '/../includes/partials/portal_nav.php';
+include __DIR__ . '/../includes/partials/head.php';
+include __DIR__ . '/../includes/partials/student_sidebar.php';
 ?>
-<div class="container py-4">
+<div class="main-content">
+<?php include __DIR__ . '/../includes/partials/student_topbar.php'; ?>
+<div class="page-content">
+<div class="container-fluid py-2 px-1 px-sm-2">
 
   <?= renderFlash() ?>
 
-  <!-- ── Profile header ── -->
-  <div class="card border-0 shadow-sm mb-4 overflow-hidden" style="border-radius:16px;">
-    <div class="profile-banner d-flex flex-wrap align-items-center gap-3 p-4">
-      <div class="profile-avatar">
-        <?= e(strtoupper($student['first_name'][0] . $student['last_name'][0])) ?>
-      </div>
-      <div class="flex-grow-1">
-        <h4 class="fw-bold mb-1"><?= e($student['first_name'] . ' ' . $student['last_name']) ?></h4>
-        <div class="small opacity-75">
-          <?= e($student['email']) ?>
-          <?php if ($student['student_no']): ?> · Student No. <?= e($student['student_no']) ?><?php endif; ?>
+  <!-- ── Student ID card ── -->
+  <div class="acct-card mb-4 reveal">
+    <div class="acct-id">
+      <div class="acct-id-label">Student Record</div>
+      <div class="acct-id-row">
+        <div class="acct-mono"><?= e(strtoupper($student['first_name'][0] . $student['last_name'][0])) ?></div>
+        <div class="acct-id-main">
+          <h1 class="acct-name"><?= e($student['first_name'] . ' ' . $student['last_name']) ?></h1>
+          <div class="acct-meta">
+            <span><i class="bi bi-envelope me-1"></i><?= e($student['email']) ?></span>
+            <?php if ($student['student_no']): ?>
+            <span><i class="bi bi-person-badge me-1"></i><?= e($student['student_no']) ?></span>
+            <?php endif; ?>
+          </div>
         </div>
-      </div>
-      <div class="d-flex gap-2">
-        <span class="badge rounded-pill px-3 py-2 profile-pill">
-          <?= $counts['registrations'] ?> registration<?= $counts['registrations'] === 1 ? '' : 's' ?>
-        </span>
-        <span class="badge rounded-pill px-3 py-2 profile-pill">
-          <?= $counts['documents'] ?> document<?= $counts['documents'] === 1 ? '' : 's' ?>
-        </span>
+        <div class="acct-stats">
+          <div class="acct-stat">
+            <span class="acct-stat-n"><?= $counts['registrations'] ?></span>
+            <span class="acct-stat-l">Registration<?= $counts['registrations'] === 1 ? '' : 's' ?></span>
+          </div>
+          <div class="acct-stat">
+            <span class="acct-stat-n"><?= $counts['documents'] ?></span>
+            <span class="acct-stat-l">Document<?= $counts['documents'] === 1 ? '' : 's' ?></span>
+          </div>
+          <div class="acct-stat">
+            <span class="acct-stat-n"><?= $counts['pending'] ?></span>
+            <span class="acct-stat-l">Pending</span>
+          </div>
+        </div>
       </div>
     </div>
     <!-- Tabs -->
-    <ul class="nav nav-pills px-3 pt-3 pb-0" role="tablist">
-      <li class="nav-item">
-        <a class="nav-link <?= $tab === 'registrations' ? 'active' : '' ?>"
-           href="?tab=registrations"><i class="bi bi-person-plus me-1"></i>My Registrations</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link <?= $tab === 'documents' ? 'active' : '' ?>"
-           href="?tab=documents"><i class="bi bi-file-earmark-text me-1"></i>My Document Requests</a>
-      </li>
-      <li class="nav-item ms-auto">
-        <a class="nav-link <?= $tab === 'security' ? 'active' : '' ?>"
-           href="?tab=security"><i class="bi bi-shield-lock me-1"></i>Security</a>
-      </li>
-    </ul>
+    <div class="acct-tabs" role="tablist">
+      <a class="acct-tab <?= $tab === 'registrations' ? 'active' : '' ?>"
+         href="?tab=registrations"><i class="bi bi-person-plus"></i>Registrations</a>
+      <a class="acct-tab <?= $tab === 'documents' ? 'active' : '' ?>"
+         href="?tab=documents"><i class="bi bi-file-earmark-text"></i>Document Requests</a>
+      <a class="acct-tab acct-tab-end <?= $tab === 'security' ? 'active' : '' ?>"
+         href="?tab=security"><i class="bi bi-shield-lock"></i>Security</a>
+    </div>
   </div>
 
   <?php if ($tab === 'security'): ?>
   <!-- ── Security tab ── -->
-  <div class="row justify-content-center">
+  <div class="row g-4 justify-content-center">
     <div class="col-lg-5">
-      <div class="card border-0 shadow-sm" style="border-radius:14px;">
+      <div class="card border-0 shadow-sm reveal" style="border-radius:14px;--rd:.12s">
+        <div class="card-header border-0 bg-white pt-4 px-4 pb-0">
+          <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+            <span class="section-num"><i class="bi bi-shield-lock"></i></span>
+            Change Password
+          </h5>
+          <hr class="mt-3 mb-0">
+        </div>
         <div class="card-body p-4">
-          <h5 class="fw-bold mb-3"><i class="bi bi-shield-lock me-2 text-primary"></i>Change Password</h5>
           <form method="POST" action="">
             <?= csrfField() ?>
             <input type="hidden" name="action" value="change_password">
@@ -138,10 +153,40 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
               <label class="form-label">Confirm New Password</label>
               <input type="password" name="confirm_password" class="form-control" required>
             </div>
-            <button type="submit" class="btn btn-primary w-100">
-              <i class="bi bi-key me-1"></i>Update Password
-            </button>
+            <?= ui_btn('Update Password', ['type'=>'submit','class'=>'w-100','icon'=>'key']) ?>
           </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm reveal" style="border-radius:14px;--rd:.2s">
+        <div class="card-header border-0 bg-white pt-4 px-4 pb-0">
+          <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+            <span class="section-num"><i class="bi bi-person-badge"></i></span>
+            Account Details
+          </h5>
+          <hr class="mt-3 mb-0">
+        </div>
+        <div class="card-body p-4">
+          <table class="info-table w-100">
+            <tbody>
+              <tr><td>Full Name</td><td><?= e(trim($student['first_name'] . ' ' . ($student['middle_name'] ?? '') . ' ' . $student['last_name'] . ' ' . ($student['suffix'] ?? ''))) ?></td></tr>
+              <tr><td>Email</td><td><?= e($student['email']) ?></td></tr>
+              <?php if (!empty($student['student_no'])): ?>
+              <tr><td>Student No.</td><td><span class="font-monospace"><?= e($student['student_no']) ?></span></td></tr>
+              <?php endif; ?>
+              <?php if (!empty($student['contact_number'])): ?>
+              <tr><td>Contact</td><td><?= e($student['contact_number']) ?></td></tr>
+              <?php endif; ?>
+              <?php if (!empty($student['created_at'])): ?>
+              <tr><td>Member Since</td><td><?= formatDate($student['created_at']) ?></td></tr>
+              <?php endif; ?>
+            </tbody>
+          </table>
+          <div class="alert alert-light border small text-muted d-flex gap-2 mb-0 mt-3">
+            <i class="bi bi-info-circle flex-shrink-0 mt-1"></i>
+            <div>Keep your password private. Registrations and requests submitted under this email are linked to this account.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -149,59 +194,43 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
 
   <?php elseif ($tab === 'documents'): ?>
   <!-- ── Document requests tab ── -->
-  <div class="card border-0 shadow-sm" style="border-radius:14px;">
-    <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+  <div class="card border-0 shadow-sm reveal" style="border-radius:14px;--rd:.12s">
+    <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
       <h5 class="fw-bold mb-0">My Document Requests</h5>
-      <a href="<?= BASE_URL ?>/student/document_request.php" class="btn btn-primary btn-sm">
-        <i class="bi bi-plus-lg me-1"></i>New Request
-      </a>
+      <?= ui_btn('New Request', ['size'=>'sm','icon'=>'plus-lg',
+                 'href'=>BASE_URL . '/student/document_request.php']) ?>
     </div>
-    <div class="card-body p-0">
+    <div class="card-body px-2 px-sm-3 py-3">
       <?php if (empty($docRequests)): ?>
       <div class="empty-state py-5">
         <i class="bi bi-file-earmark-x"></i>
         <h6>No document requests yet</h6>
         <p class="text-muted small">Requests you submit while signed in (or made with this email) appear here.</p>
-        <a href="<?= BASE_URL ?>/student/document_request.php" class="btn btn-primary btn-sm">Request a Document</a>
+        <?= ui_btn('Request a Document', ['size'=>'sm','href'=>BASE_URL . '/student/document_request.php']) ?>
       </div>
       <?php else: ?>
-      <div class="table-responsive">
-        <table class="table align-middle mb-0">
-          <thead>
-            <tr>
-              <th>Tracking Code</th><th>Document</th><th>Status</th>
-              <th>Verification</th><th>Submitted</th><th></th>
-            </tr>
-          </thead>
-          <tbody>
-          <?php foreach ($docRequests as $d): ?>
-            <tr>
-              <td><span class="font-monospace small fw-semibold"><?= e($d['tracking_code']) ?></span></td>
-              <td>
-                <div class="small fw-semibold"><?= e($d['document_type_other'] ?: ($d['doc_name'] ?? '—')) ?></div>
-                <div class="text-muted" style="font-size:.7rem;"><?= (int)$d['copies'] ?> cop<?= (int)$d['copies'] > 1 ? 'ies' : 'y' ?></div>
-              </td>
-              <td><?= statusBadge($d['status'], 'document_request') ?></td>
-              <td>
+      <div class="slip-list">
+        <?php foreach ($docRequests as $d): ?>
+        <a class="slip" href="<?= e(trackingUrl($d['tracking_code'])) ?>">
+          <div class="slip-head">
+            <span class="slip-code"><?= e($d['tracking_code']) ?></span>
+            <span class="slip-date"><i class="bi bi-calendar3 me-1"></i><?= formatDate($d['submitted_at']) ?></span>
+          </div>
+          <div class="slip-body">
+            <div class="slip-main">
+              <div class="slip-title"><?= e($d['document_type_other'] ?: ($d['doc_name'] ?? '—')) ?></div>
+              <div class="slip-sub"><?= (int)$d['copies'] ?> cop<?= (int)$d['copies'] > 1 ? 'ies' : 'y' ?>
                 <?php if ($d['verification_code']): ?>
-                  <a href="<?= e(verificationUrl($d['verification_code'])) ?>" target="_blank"
-                     class="font-monospace small text-decoration-none">
-                    <i class="bi bi-patch-check me-1"></i><?= e($d['verification_code']) ?>
-                  </a>
-                <?php else: ?>
-                  <span class="text-muted small">—</span>
+                · <i class="bi bi-patch-check text-success"></i>
+                  <span class="font-monospace"><?= e($d['verification_code']) ?></span>
                 <?php endif; ?>
-              </td>
-              <td><span class="small text-muted"><?= formatDate($d['submitted_at']) ?></span></td>
-              <td>
-                <a href="<?= e(trackingUrl($d['tracking_code'])) ?>" class="btn btn-sm btn-outline-primary">
-                  <i class="bi bi-eye"></i>
-                </a>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-          </tbody>
-        </table>
+              </div>
+            </div>
+            <div class="slip-status"><?= statusBadge($d['status'], 'document_request') ?></div>
+            <i class="bi bi-chevron-right slip-arrow"></i>
+          </div>
+        </a>
+        <?php endforeach; ?>
       </div>
       <?php endif; ?>
     </div>
@@ -209,50 +238,41 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
 
   <?php else: ?>
   <!-- ── Registrations tab ── -->
-  <div class="card border-0 shadow-sm" style="border-radius:14px;">
-    <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+  <div class="card border-0 shadow-sm reveal" style="border-radius:14px;--rd:.12s">
+    <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
       <h5 class="fw-bold mb-0">My Pre-Registrations</h5>
-      <a href="<?= BASE_URL ?>/student/pre_registration.php" class="btn btn-primary btn-sm">
-        <i class="bi bi-plus-lg me-1"></i>New Registration
-      </a>
+      <?= ui_btn('New Registration', ['size'=>'sm','icon'=>'plus-lg',
+                 'href'=>BASE_URL . '/student/pre_registration.php']) ?>
     </div>
-    <div class="card-body p-0">
+    <div class="card-body px-2 px-sm-3 py-3">
       <?php if (empty($registrations)): ?>
       <div class="empty-state py-5">
         <i class="bi bi-inbox"></i>
         <h6>No registrations yet</h6>
         <p class="text-muted small">Submissions made while signed in (or with this email) appear here.</p>
-        <a href="<?= BASE_URL ?>/student/pre_registration.php" class="btn btn-primary btn-sm">Pre-Register Now</a>
+        <?= ui_btn('Pre-Register Now', ['size'=>'sm','href'=>BASE_URL . '/student/pre_registration.php']) ?>
       </div>
       <?php else: ?>
-      <div class="table-responsive">
-        <table class="table align-middle mb-0">
-          <thead>
-            <tr>
-              <th>Tracking Code</th><th>Program</th><th>School Year</th>
-              <th>Status</th><th>Submitted</th><th></th>
-            </tr>
-          </thead>
-          <tbody>
-          <?php foreach ($registrations as $r): ?>
-            <tr>
-              <td><span class="font-monospace small fw-semibold"><?= e($r['tracking_code']) ?></span></td>
-              <td>
+      <div class="slip-list">
+        <?php foreach ($registrations as $r): ?>
+        <a class="slip" href="<?= e(trackingUrl($r['tracking_code'])) ?>">
+          <div class="slip-head">
+            <span class="slip-code"><?= e($r['tracking_code']) ?></span>
+            <span class="slip-date"><i class="bi bi-calendar3 me-1"></i><?= formatDate($r['submitted_at']) ?></span>
+          </div>
+          <div class="slip-body">
+            <div class="slip-main">
+              <div class="slip-title">
                 <span class="badge bg-light text-dark"><?= e($r['prog_code'] ?? 'Other') ?></span>
-                <div class="text-muted" style="font-size:.7rem;"><?= e($r['year_level']) ?></div>
-              </td>
-              <td><span class="small"><?= e($r['school_year']) ?> · <?= e($r['semester']) ?></span></td>
-              <td><?= statusBadge($r['status']) ?></td>
-              <td><span class="small text-muted"><?= formatDate($r['submitted_at']) ?></span></td>
-              <td>
-                <a href="<?= e(trackingUrl($r['tracking_code'])) ?>" class="btn btn-sm btn-outline-primary">
-                  <i class="bi bi-eye"></i>
-                </a>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-          </tbody>
-        </table>
+                <?= e($r['year_level']) ?>
+              </div>
+              <div class="slip-sub"><?= e($r['school_year']) ?> · <?= e($r['semester']) ?></div>
+            </div>
+            <div class="slip-status"><?= statusBadge($r['status']) ?></div>
+            <i class="bi bi-chevron-right slip-arrow"></i>
+          </div>
+        </a>
+        <?php endforeach; ?>
       </div>
       <?php endif; ?>
     </div>
@@ -260,5 +280,5 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
   <?php endif; ?>
 
 </div>
-
-<?php include __DIR__ . '/../includes/partials/portal_foot.php'; ?>
+</div>
+<?php include __DIR__ . '/../includes/partials/footer.php'; ?>

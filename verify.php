@@ -14,14 +14,30 @@ $code       = strtoupper(preg_replace('/[^A-Z0-9\-]/', '', trim(get('code'))));
 $issued     = $code ? getIssuedDocument($code) : null;
 $searched   = $code !== '';
 $pageTitle  = 'Verify Document';
-include __DIR__ . '/includes/partials/portal_head.php';
-include __DIR__ . '/includes/partials/portal_nav.php';
+$inPortal   = isStudentLoggedIn();
+if ($inPortal) {
+    include __DIR__ . '/includes/partials/head.php';
+    include __DIR__ . '/includes/partials/student_sidebar.php';
+    echo '<div class="main-content">';
+    include __DIR__ . '/includes/partials/student_topbar.php';
+    echo '<div class="page-content"><div class="container-fluid py-1 px-3 px-lg-4">';
+    echo ui_portal_header(
+        'Verify Document',
+        'Enter the verification code printed on the document or scan its QR code.',
+        'patch-check',
+        BASE_URL . '/student/dashboard.php',
+        'Back to Dashboard'
+    );
+} else {
+    include __DIR__ . '/includes/partials/portal_head.php';
+    include __DIR__ . '/includes/partials/portal_nav.php';
+    echo '<div class="container py-5">';
+}
 ?>
-
-<div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-lg-7">
 
+      <?php if (!$inPortal): ?>
       <div class="text-center mb-4">
         <i class="bi bi-patch-check fs-1 text-primary d-block mb-2"></i>
         <h3 class="fw-bold mb-1">Verify an Official Document</h3>
@@ -29,14 +45,13 @@ include __DIR__ . '/includes/partials/portal_nav.php';
           Enter the verification code printed on the document or scan its QR code.
         </p>
       </div>
+      <?php endif; ?>
 
       <form method="GET" class="d-flex gap-2 mb-4">
         <input type="text" name="code" class="form-control form-control-lg font-monospace"
                value="<?= e($code) ?>" placeholder="TCC-VRF-2026-000001"
                style="text-transform:uppercase;" autofocus>
-        <button type="submit" class="btn btn-primary btn-lg px-4">
-          <i class="bi bi-search"></i>
-        </button>
+        <?= ui_btn('', ['type'=>'submit','size'=>'lg','class'=>'px-4','icon'=>'search']) ?>
       </form>
 
       <?php if ($searched && $issued): ?>
@@ -84,9 +99,7 @@ include __DIR__ . '/includes/partials/portal_nav.php';
             in our records. Double-check the code, or contact the Registrar's Office —
             documents that cannot be verified should not be accepted as official.
           </p>
-          <a href="?" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-repeat me-1"></i>Try Another Code
-          </a>
+          <?= ui_btn('Try Another Code', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'arrow-repeat','href'=>'?']) ?>
         </div>
       </div>
       <?php endif; ?>
@@ -101,4 +114,7 @@ include __DIR__ . '/includes/partials/portal_nav.php';
   </div>
 </div>
 
-<?php include __DIR__ . '/includes/partials/portal_foot.php'; ?>
+</div>
+<?php if ($inPortal): ?>
+<?php include __DIR__ . '/includes/partials/footer.php'; ?>
+<?php else: include __DIR__ . '/includes/partials/portal_foot.php'; endif; ?>

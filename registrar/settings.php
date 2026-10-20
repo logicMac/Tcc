@@ -12,26 +12,57 @@ $pageTitle = 'System Settings';
 
 if (isPost()) {
     abortCsrf();
+
+    // Test email: verify SMTP credentials without saving
+    if (post('send_test') === '1') {
+        require_once __DIR__ . '/../includes/notifications.php';
+        $to = getSetting('smtp_user') ?: getSetting('school_email');
+        if ($to === '') {
+            flash('danger', 'No recipient configured — enter an SMTP Username or School Email first.');
+        } else {
+            $body = '<div style="font-family:Arial,sans-serif;max-width:480px;margin:auto;border:1px solid #e2e8f0;border-radius:12px;padding:24px">'
+                  . '<h3 style="color:#1a5c3a;margin:0 0 8px">SMTP Test Successful</h3>'
+                  . '<p style="color:#475569;font-size:14px;margin:0 0 12px">This test email was sent from the TCC Registration &amp; Records System. Your SMTP settings are working correctly.</p>'
+                  . '<p style="color:#94a3b8;font-size:12px;margin:0">Sent ' . date('M d, Y h:i A') . '</p></div>';
+            $ok = sendEmail($to, '[TCC RRS] SMTP Test Email', $body, 'Registrar');
+            if ($ok) {
+                logActivity('SETTINGS_UPDATE', 'System Settings', 'Sent a test email to ' . $to);
+                flash('success', 'Test email sent to ' . $to . ' — check the inbox (and spam folder).');
+            } else {
+                $err = $GLOBALS['smtp_last_error'] ?? '';
+                flash('danger', 'Test email failed' . ($err ? ': ' . $err : '. Check host, port, username, and app password.') . ($err ? '' : ' If SMTP is not configured, the system fell back to PHP mail() which does not work on WAMP.'));
+            }
+        }
+        redirect(BASE_URL . '/registrar/settings.php');
+    }
+
     $settingsToUpdate = [
         'school_name','school_short_name','school_address','school_email','school_phone','school_website',
         'smtp_host','smtp_port','smtp_user','smtp_from_name','smtp_encryption',
         'notifications_enabled','current_school_year','current_semester',
+        'ai_enabled','groq_model',
     ];
     // Handle password separately (don't overwrite if empty)
     foreach ($settingsToUpdate as $key) {
         $val = post($key);
         db()->execute(
-            "UPDATE system_settings SET setting_value=?, updated_by=? WHERE setting_key=?",
-            [$val, currentUserId(), $key]
+            "INSERT INTO system_settings (setting_key, setting_value, updated_by)
+             VALUES (?,?,?)
+             ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_by = VALUES(updated_by)",
+            [$key, $val, currentUserId()]
         );
     }
-    // SMTP password - only update if provided
-    $smtpPass = post('smtp_pass');
-    if (!empty($smtpPass)) {
-        db()->execute(
-            "UPDATE system_settings SET setting_value=?, updated_by=? WHERE setting_key='smtp_pass'",
-            [$smtpPass, currentUserId()]
-        );
+    // Secrets - only update if provided (never blank them out)
+    foreach (['smtp_pass', 'groq_api_key'] as $secretKey) {
+        $secretVal = post($secretKey);
+        if (!empty($secretVal)) {
+            db()->execute(
+                "INSERT INTO system_settings (setting_key, setting_value, updated_by)
+                 VALUES (?,?,?)
+                 ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_by = VALUES(updated_by)",
+                [$secretKey, $secretVal, currentUserId()]
+            );
+        }
     }
     logActivity('SETTINGS_UPDATE','System Settings','Updated system settings.');
     flash('success','System settings saved successfully.');
@@ -88,6 +119,39 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
               <label class="form-label">Website</label>
               <input type="url" name="school_website" class="form-control"
                      value="<?= e($s['school_website'] ?? '') ?>" maxlength="200">
+            </div>
+          </div>
+        </div>
+      <?= ui_card_close() ?>
+
+      <!-- AI Assistant (Groq) -->
+      <?= ui_card_open('AI Assistant (Groq)', 'stars') ?>
+        <div class="content-card-body">
+          <div class="alert alert-info py-2 small">
+            TCC Assist appears on every page and can answer questions using live system data.
+            Get an API key at <strong>console.groq.com</strong> → API Keys.
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Enable Assistant</label>
+              <select name="ai_enabled" class="form-select">
+                <option value="1" <?= ($s['ai_enabled'] ?? '1') === '1' ? 'selected' : '' ?>>Enabled</option>
+                <option value="0" <?= ($s['ai_enabled'] ?? '1') === '0' ? 'selected' : '' ?>>Disabled</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Groq Model</label>
+              <input type="text" name="groq_model" class="form-control"
+                     value="<?= e($s['groq_model'] ?? 'openai/gpt-oss-120b') ?>"
+                     placeholder="openai/gpt-oss-120b">
+              <div class="form-text">e.g. <code>openai/gpt-oss-120b</code> or <code>openai/gpt-oss-20b</code></div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Groq API Key</label>
+              <input type="password" name="groq_api_key" class="form-control"
+                     placeholder="<?= ($s['groq_api_key'] ?? '') !== '' ? 'Saved — enter a new key to replace' : 'gsk_...' ?>"
+                     autocomplete="new-password">
+              <div class="form-text">Stored server-side; never sent to browsers. Leave blank to keep the current key.</div>
             </div>
           </div>
         </div>
@@ -175,10 +239,16 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
   </div>
 
   <div class="mt-3">
-    <button type="submit" class="btn btn-primary px-4">
-      <i class="bi bi-save me-1"></i>Save Settings
-    </button>
+    <?= ui_btn('Save Settings', ['type'=>'submit','class'=>'px-4','icon'=>'save']) ?>
   </div>
+</form>
+
+<!-- Test email: verify SMTP credentials without saving -->
+<form method="POST" class="mt-3 d-flex align-items-center gap-2">
+  <?= csrfField() ?>
+  <input type="hidden" name="send_test" value="1">
+  <?= ui_btn('Send Test Email', ['type'=>'submit','variant'=>'outline-primary','icon'=>'send-check']) ?>
+  <span class="text-muted small">Sends a test message to the SMTP username inbox to verify the credentials above.</span>
 </form>
 
 </div>

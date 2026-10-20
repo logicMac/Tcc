@@ -64,7 +64,7 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 
 <?= ui_page_header(
     'Staff Accounts', 'Create, activate, and manage staff members.', 'people',
-    '<a href="' . BASE_URL . '/registrar/create_staff.php" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add New Staff</a>'
+    ui_btn('Add New Staff', ['size'=>'sm','icon'=>'plus-lg','href'=>BASE_URL . '/registrar/create_staff.php'])
 ) ?>
 
 <?php
@@ -87,12 +87,11 @@ foreach ($result['data'] as $s) {
         . '<input type="hidden" name="user_id" value="' . (int)$s['id'] . '">';
     if ($s['is_active']) {
         $toggleForm .= '<input type="hidden" name="action" value="deactivate">'
-            . '<button type="submit" class="btn btn-sm btn-outline-warning py-0 px-2" data-confirm="Deactivate ' . e($s['full_name']) . '?">'
-            . '<i class="bi bi-pause-circle"></i></button>';
+            . ui_btn('', ['type'=>'submit','size'=>'sm','variant'=>'outline-warning','class'=>'py-0 px-2','icon'=>'pause-circle',
+                     'attrs'=>'data-confirm="Deactivate ' . e($s['full_name']) . '?"']);
     } else {
         $toggleForm .= '<input type="hidden" name="action" value="activate">'
-            . '<button type="submit" class="btn btn-sm btn-outline-success py-0 px-2">'
-            . '<i class="bi bi-play-circle"></i></button>';
+            . ui_btn('', ['type'=>'submit','size'=>'sm','variant'=>'outline-success','class'=>'py-0 px-2','icon'=>'play-circle']);
     }
     $toggleForm .= '</form>';
 
@@ -108,7 +107,8 @@ foreach ($result['data'] as $s) {
         '<span class="text-muted small">' . ($s['last_login'] ? formatDateTime($s['last_login']) : 'Never') . '</span>',
         '<span class="text-muted small">' . formatDate($s['created_at']) . '</span>',
         '<div class="d-flex gap-1">'
-            . '<a href="' . BASE_URL . '/registrar/edit_staff.php?id=' . (int)$s['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2"><i class="bi bi-pencil"></i></a>'
+            . ui_btn('', ['size'=>'sm','variant'=>'outline-primary','class'=>'py-0 px-2','icon'=>'pencil',
+                     'href'=>BASE_URL . '/registrar/edit_staff.php?id=' . (int)$s['id']])
             . $toggleForm
         . '</div>',
     ];

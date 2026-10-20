@@ -50,6 +50,20 @@ if (isPost()) {
         redirect(BASE_URL . '/' . currentRole() . '/view_document.php?id=' . $id);
     }
 
+    // ── Clear pickup appointment ─────────────────────────────────────────
+    if ($action === 'clear_pickup') {
+        db()->execute(
+            "UPDATE document_requests SET pickup_date = NULL, pickup_slot = NULL, pickup_booked_at = NULL WHERE id = ?",
+            [$id]
+        );
+        addStatusHistory('document_request', $id, $req['tracking_code'], $req['status'], $req['status'],
+            'Pickup appointment cleared by staff.');
+        logActivity('PICKUP_CLEAR', 'Document Request',
+            "Cleared pickup appointment for {$req['tracking_code']}", $req['tracking_code']);
+        flash('success', 'Pickup appointment cleared.');
+        redirect(BASE_URL . '/' . currentRole() . '/view_document.php?id=' . $id);
+    }
+
     // ── Issue official document (creates QR-verifiable issued record) ────
     if ($action === 'issue') {
         $existing = db()->fetchValue("SELECT id FROM issued_documents WHERE document_request_id = ?", [$id]);
@@ -129,9 +143,11 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
     'Document Request — Submitted ' . formatDateTime($req['submitted_at']),
     '',
     ui_back($backUrl)
-    . '<a href="' . BASE_URL . '/' . currentRole() . '/edit_document.php?id=' . (int)$id . '" class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i>Edit Record</a>'
-    . '<a href="' . e($trackingUrl) . '" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye me-1"></i>Student View</a>'
-    . '<button onclick="window.print()" class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer me-1"></i>Print</button>'
+    . ui_btn('Edit Record', ['size'=>'sm','icon'=>'pencil',
+            'href'=>BASE_URL . '/' . currentRole() . '/edit_document.php?id=' . (int)$id])
+    . ui_btn('Student View', ['size'=>'sm','variant'=>'outline-primary','icon'=>'eye',
+            'href'=>$trackingUrl, 'attrs'=>'target="_blank"'])
+    . ui_btn('Print', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'printer','attrs'=>'onclick="window.print()"'])
 ) ?>
 
 <div class="row g-3">
@@ -203,6 +219,13 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
             ['label' => 'Fee',             'value' => formatCurrency((float)($req['doc_fee'] ?? 0))],
             ['label' => 'Purpose',         'value' => e($req['purpose']), 'full' => true],
             ['label' => 'Delivery Method', 'value' => e($req['delivery_method'])],
+            ['label' => 'Scheduled Pickup', 'full' => true,
+             'value' => !empty($req['pickup_date'])
+                ? '<span class="badge bg-success-subtle text-success border border-success-subtle">'
+                  . '<i class="bi bi-calendar-check me-1"></i>'
+                  . e(formatDate($req['pickup_date'], 'D, M j, Y')) . ' · ' . e($req['pickup_slot'])
+                  . '</span>'
+                : '<span class="text-muted">—</span>'],
             ['label' => 'Date Needed',     'value' => $req['date_needed'] ? formatDate($req['date_needed']) : ''],
             ['label' => 'Additional Info', 'value' => e($req['additional_info']), 'full' => true],
         ]) ?>
@@ -233,9 +256,8 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
                       placeholder="Visible to the student..."
                       data-max-chars="500"><?= e($req['remarks']) ?></textarea>
           </div>
-          <button type="submit" class="btn btn-primary w-100" id="updateDocBtn">
-            <i class="bi bi-check-lg me-1"></i>Update Status
-          </button>
+          <?= ui_btn('Update Status', ['type'=>'submit','class'=>'w-100','icon'=>'check-lg',
+                     'attrs'=>'id="updateDocBtn"']) ?>
         </form>
       </div>
     <?= ui_card_close() ?>
@@ -248,15 +270,30 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
           <div class="small text-muted mt-1"><?= e($req['tracking_code']) ?></div>
         </div>
         <div class="d-flex gap-2 justify-content-center mt-2">
-          <button class="btn btn-sm btn-outline-primary" onclick="downloadQr('qr-section','<?= e($req['tracking_code']) ?>.png')">
-            <i class="bi bi-download"></i>
-          </button>
-          <button class="btn btn-sm btn-outline-secondary" onclick="printSection('qr-section')">
-            <i class="bi bi-printer"></i>
-          </button>
+          <?= ui_btn('', ['size'=>'sm','variant'=>'outline-primary','icon'=>'download',
+                     'attrs'=>'onclick="downloadQr(\'qr-section\',\'' . e($req['tracking_code']) . '.png\')"']) ?>
+          <?= ui_btn('', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'printer',
+                     'attrs'=>'onclick="printSection(\'qr-section\')"']) ?>
         </div>
       </div>
     <?= ui_card_close() ?>
+
+    <!-- Pickup appointment -->
+    <?php if (!empty($req['pickup_date'])): ?>
+    <?= ui_card_open('Pickup Appointment', 'calendar-check', '', 'mb-3') ?>
+      <div class="content-card-body">
+        <div class="fw-semibold"><?= formatDate($req['pickup_date'], 'l, F j, Y') ?></div>
+        <div class="text-muted small mb-2"><?= e($req['pickup_slot']) ?>
+          <?php if ($req['pickup_booked_at']): ?>· booked <?= timeAgo($req['pickup_booked_at']) ?><?php endif; ?>
+        </div>
+        <form method="POST" onsubmit="return confirm('Clear this pickup appointment?')">
+          <?= csrfField() ?>
+          <input type="hidden" name="action" value="clear_pickup">
+          <?= ui_btn('Clear Appointment', ['type'=>'submit','size'=>'sm','variant'=>'outline-danger','class'=>'w-100','icon'=>'x-circle']) ?>
+        </form>
+      </div>
+    <?= ui_card_close() ?>
+    <?php endif; ?>
 
     <!-- Timeline -->
     <?= ui_card_open('Status History', 'clock-history') ?>
@@ -279,9 +316,8 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
         </div>
         <div class="mb-1"><?= ui_code($issued['verification_code']) ?></div>
         <div class="text-muted small mb-3">Issued <?= formatDateTime($issued['issued_at']) ?></div>
-        <a href="<?= BASE_URL ?>/<?= currentRole() ?>/issue_document.php?id=<?= (int)$id ?>" class="btn btn-outline-primary btn-sm w-100">
-          <i class="bi bi-qr-code me-1"></i>View Verification Slip
-        </a>
+        <?= ui_btn('View Verification Slip', ['size'=>'sm','variant'=>'outline-primary','class'=>'w-100','icon'=>'qr-code',
+                   'href'=>BASE_URL . '/' . currentRole() . '/issue_document.php?id=' . (int)$id]) ?>
         <?php else: ?>
         <p class="text-muted small mb-2">
           Generate a QR-verifiable release slip for this document. Recipients can verify
@@ -290,9 +326,7 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
         <form method="POST" onsubmit="return confirm('Issue a verified document record for this request?')">
           <?= csrfField() ?>
           <input type="hidden" name="action" value="issue">
-          <button type="submit" class="btn btn-outline-success btn-sm w-100">
-            <i class="bi bi-patch-check me-1"></i>Issue Verified Document
-          </button>
+          <?= ui_btn('Issue Verified Document', ['type'=>'submit','size'=>'sm','variant'=>'outline-success','class'=>'w-100','icon'=>'patch-check']) ?>
         </form>
         <?php endif; ?>
       </div>
@@ -306,13 +340,9 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
           <?= csrfField() ?>
           <input type="hidden" name="action" value="<?= $req['is_archived'] ? 'restore' : 'archive' ?>">
           <?php if ($req['is_archived']): ?>
-          <button type="submit" class="btn btn-outline-success w-100">
-            <i class="bi bi-arrow-counterclockwise me-1"></i>Restore from Archive
-          </button>
+          <?= ui_btn('Restore from Archive', ['type'=>'submit','variant'=>'outline-success','class'=>'w-100','icon'=>'arrow-counterclockwise']) ?>
           <?php else: ?>
-          <button type="submit" class="btn btn-outline-secondary w-100">
-            <i class="bi bi-archive me-1"></i>Archive This Record
-          </button>
+          <?= ui_btn('Archive This Record', ['type'=>'submit','variant'=>'outline-secondary','class'=>'w-100','icon'=>'archive']) ?>
           <?php endif; ?>
         </form>
       </div>

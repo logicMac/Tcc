@@ -35,17 +35,11 @@ http_response_code(403);
   <h2 class="mb-3">Access Denied</h2>
   <p class="text-muted mb-4">You do not have permission to access this page.</p>
   <div class="d-flex gap-2 justify-content-center">
-    <a href="javascript:history.back()" class="btn btn-outline-secondary">
-      <i class="bi bi-arrow-left me-1"></i> Go Back
-    </a>
+    <?= ui_btn('Go Back', ['variant'=>'outline-secondary','icon'=>'arrow-left','href'=>'javascript:history.back()']) ?>
     <?php if (isLoggedIn()): ?>
-    <a href="<?= BASE_URL ?>/<?= currentRole() ?>/dashboard.php" class="btn btn-primary">
-      <i class="bi bi-house me-1"></i> Dashboard
-    </a>
+    <?= ui_btn('Dashboard', ['icon'=>'house','href'=>BASE_URL . '/' . currentRole() . '/dashboard.php']) ?>
     <?php else: ?>
-    <a href="<?= BASE_URL ?>/auth/login.php" class="btn btn-primary">
-      <i class="bi bi-box-arrow-in-right me-1"></i> Login
-    </a>
+    <?= ui_btn('Login', ['icon'=>'box-arrow-in-right','href'=>BASE_URL . '/auth/login.php']) ?>
     <?php endif; ?>
   </div>
 </div>

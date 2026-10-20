@@ -76,9 +76,8 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
     'System overview — ' . date('l, F d, Y'),
     '',
     '<div class="dropdown">
-       <button class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-         <i class="bi bi-plus-lg me-1"></i>Quick Create
-       </button>
+       ' . ui_btn('Quick Create', ['size'=>'sm','class'=>'dropdown-toggle','icon'=>'plus-lg',
+                                  'attrs'=>'data-bs-toggle="dropdown"']) . '
        <ul class="dropdown-menu dropdown-menu-end">
          <li><a class="dropdown-item" href="' . BASE_URL . '/registrar/create_staff.php"><i class="bi bi-person-plus me-2"></i>New Staff Account</a></li>
          <li><a class="dropdown-item" href="' . BASE_URL . '/registrar/registrations.php"><i class="bi bi-collection me-2"></i>View Registrations</a></li>
@@ -139,9 +138,8 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
       Recent Activity <span class="count"><?= count($recentLogs) ?></span>
     </button>
     <div class="ttab-spacer"></div>
-    <a href="<?= BASE_URL ?>/registrar/staff.php" class="btn btn-sm btn-outline-secondary">
-      <i class="bi bi-people me-1"></i>Manage Staff
-    </a>
+    <?= ui_btn('Manage Staff', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'people',
+               'href'=>BASE_URL . '/registrar/staff.php']) ?>
   </div>
 
   <div class="tbl-pane show" id="pane-staff">

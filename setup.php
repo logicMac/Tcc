@@ -243,12 +243,8 @@ $allOk = !in_array(false, array_column($steps, 'ok'), true);
       </div>
 
       <div class="d-flex gap-2">
-        <a href="<?= BASE_URL ?>/auth/login.php" class="btn btn-primary">
-          <i class="bi bi-box-arrow-in-right me-1"></i>Go to Login
-        </a>
-        <a href="<?= BASE_URL ?>/student/index.php" class="btn btn-outline-secondary">
-          <i class="bi bi-house me-1"></i>Student Portal
-        </a>
+        <?= ui_btn('Go to Login', ['icon'=>'box-arrow-in-right','href'=>BASE_URL . '/auth/login.php']) ?>
+        <?= ui_btn('Student Portal', ['variant'=>'outline-secondary','icon'=>'house','href'=>BASE_URL . '/student/index.php']) ?>
       </div>
     </div>
   </div>

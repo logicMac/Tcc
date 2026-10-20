@@ -68,6 +68,7 @@ CREATE TABLE students (
     email           VARCHAR(150)     NOT NULL,
     contact_number  VARCHAR(20)      NOT NULL,
     password_hash   VARCHAR(255)     NOT NULL,
+    must_change_password TINYINT(1)  NOT NULL DEFAULT 0,
     is_active       TINYINT(1)       NOT NULL DEFAULT 1,
     last_login      DATETIME             NULL DEFAULT NULL,
     created_at      DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -244,6 +245,10 @@ CREATE TABLE document_requests (
     remarks             TEXT                NULL DEFAULT NULL,
     processed_at        DATETIME            NULL DEFAULT NULL,
     released_at         DATETIME            NULL DEFAULT NULL,
+    -- Pickup appointment (booked by the student when Ready for Release)
+    pickup_date         DATE                NULL DEFAULT NULL,
+    pickup_slot         VARCHAR(40)         NULL DEFAULT NULL,
+    pickup_booked_at    DATETIME            NULL DEFAULT NULL,
     -- Link to student account (optional — guest submissions stay NULL)
     student_account_id  INT UNSIGNED        NULL DEFAULT NULL,
     -- Archival (records management)
@@ -326,6 +331,24 @@ CREATE TABLE notifications (
     created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     KEY idx_notif_tracking (tracking_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
+-- TABLE: student_notifications  (In-app feed for portal accounts)
+-- ============================================================
+CREATE TABLE student_notifications (
+    id            INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    student_id    INT UNSIGNED    NOT NULL,
+    tracking_code VARCHAR(30)     NOT NULL,
+    title         VARCHAR(200)    NOT NULL,
+    message       TEXT            NOT NULL,
+    link          VARCHAR(255)        NULL DEFAULT NULL,
+    is_read       TINYINT(1)      NOT NULL DEFAULT 0,
+    created_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_sn_student (student_id, is_read),
+    KEY idx_sn_created (created_at),
+    CONSTRAINT fk_sn_student FOREIGN KEY (student_id) REFERENCES students (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
@@ -481,7 +504,9 @@ INSERT INTO system_settings (setting_key, setting_value, label, description) VAL
     ('smtp_encryption',      'tls',                                   'SMTP Encryption',       'SMTP encryption: tls or ssl'),
     ('notifications_enabled','1',                                     'Enable Notifications',  '1 to enable email notifications, 0 to disable'),
     ('current_school_year',  '2026-2027',                             'Current School Year',   'Current academic year'),
-    ('current_semester',     '1st Semester',                          'Current Semester',      'Current semester');
+    ('current_semester',     '1st Semester',                          'Current Semester',      'Current semester'),
+    ('pickup_slot_capacity', '10',                                    'Pickup Slot Capacity',  'Maximum pickup appointments allowed per slot per day'),
+    ('pickup_slots',         '8:00 AM – 10:00 AM|10:00 AM – 12:00 PM|1:00 PM – 3:00 PM|3:00 PM – 5:00 PM', 'Pickup Time Slots', 'Pipe-separated list of pickup time slots offered per day');
 
 -- ── Tracking code sequences ───────────────────────────────
 INSERT INTO tracking_sequences (prefix, year, last_seq) VALUES

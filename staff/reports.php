@@ -62,7 +62,7 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
 
 <?= ui_page_header(
     'Reports', 'System-wide statistics for ' . e($sy) . '.', 'bar-chart-line',
-    '<button onclick="window.print()" class="btn btn-outline-dark btn-sm"><i class="bi bi-printer me-1"></i>Print Report</button>'
+    ui_btn('Print Report', ['size'=>'sm','variant'=>'outline-dark','icon'=>'printer','attrs'=>'onclick="window.print()"'])
 ) ?>
 
 <!-- Summary -->

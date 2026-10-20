@@ -96,7 +96,8 @@ foreach ($result['data'] as $d) {
         statusBadge($d['status'], 'document_request'),
         '<span class="text-muted small">' . e($d['assigned_name'] ?? 'Unassigned') . '</span>',
         '<span class="text-muted small">' . formatDate($d['submitted_at']) . '</span>',
-        '<a href="' . BASE_URL . '/registrar/view_document.php?id=' . (int)$d['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2">View</a>',
+        ui_btn('View', ['size'=>'sm','variant'=>'outline-primary','class'=>'py-0 px-2',
+               'href'=>BASE_URL . '/registrar/view_document.php?id=' . (int)$d['id']]),
     ];
 }
 

@@ -61,6 +61,51 @@ if ($code !== '') {
     }
 }
 
+// ── Pickup appointment booking ───────────────────────────────────────────────
+// Students may book/reschedule a pickup slot once a request is Ready for Release.
+if (isPost() && post('action') === 'book_pickup') {
+    abortCsrf();
+    $bookCode = strtoupper(preg_replace('/[^A-Z0-9\-]/', '', trim(post('code'))));
+    $doc = db()->fetchOne("SELECT * FROM document_requests WHERE tracking_code = ?", [$bookCode]);
+
+    if (!$doc || $doc['status'] !== 'Ready for Release' || $doc['delivery_method'] !== 'Pick-up') {
+        flash('danger', 'This request is not eligible for pickup scheduling.');
+    } else {
+        $pDate = post('pickup_date');
+        $pSlot = post('pickup_slot');
+        $valid = true;
+
+        if (!validateDate($pDate)) {
+            $valid = false;
+        } else {
+            $dow = (int) date('N', strtotime($pDate));
+            if ($pDate < date('Y-m-d') || $dow > 5) {
+                flash('danger', 'Pick a weekday (Mon–Fri), today or later.');
+                $valid = false;
+            }
+        }
+        if ($valid && !in_array($pSlot, pickupSlotOptions(), true)) {
+            flash('danger', 'Invalid time slot.');
+            $valid = false;
+        }
+        if ($valid && pickupSlotBookedCount($pDate, $pSlot, (int)$doc['id']) >= pickupSlotCapacity()) {
+            flash('danger', 'That slot is fully booked — please choose another.');
+            $valid = false;
+        }
+        if ($valid) {
+            db()->execute(
+                "UPDATE document_requests SET pickup_date = ?, pickup_slot = ?, pickup_booked_at = NOW() WHERE id = ?",
+                [$pDate, $pSlot, $doc['id']]
+            );
+            addStatusHistory('document_request', (int)$doc['id'], $bookCode,
+                $doc['status'], $doc['status'],
+                "Student scheduled pickup for " . formatDate($pDate) . ", {$pSlot}.");
+            flash('success', 'Pickup scheduled for ' . formatDate($pDate) . ', ' . e($pSlot) . '.');
+        }
+    }
+    redirect(BASE_URL . '/student/track.php?code=' . urlencode($bookCode));
+}
+
 // ── Status timeline steps ───────────────────────────────────────────────────
 $regSteps = ['Pending','Under Review','Processing','Approved'];
 $docSteps = ['Pending','Under Review','Processing','Approved','Ready for Release','Released'];
@@ -80,10 +125,26 @@ if ($result === 'registration') {
 
 $trackingUrl = $code ? trackingUrl($code) : '';
 $pageTitle   = 'Track Status';
-include __DIR__ . '/../includes/partials/portal_head.php';
-include __DIR__ . '/../includes/partials/portal_nav.php';
+$inPortal    = isStudentLoggedIn();
+if ($inPortal) {
+    include __DIR__ . '/../includes/partials/head.php';
+    include __DIR__ . '/../includes/partials/student_sidebar.php';
+    echo '<div class="main-content">';
+    include __DIR__ . '/../includes/partials/student_topbar.php';
+    echo '<div class="page-content"><div class="container py-1">';
+    ?>
+    <?= ui_portal_header(
+        'Track Status',
+        'Enter your tracking code or scan your receipt QR.',
+        'qr-code-scan',
+        BASE_URL . '/student/dashboard.php',
+        'Back to Dashboard'
+    ) ?>
+    <?php
+} else {
+    include __DIR__ . '/../includes/partials/portal_head.php';
+    include __DIR__ . '/../includes/partials/portal_nav.php';
 ?>
-
 <!-- breadcrumb bar -->
 <div class="portal-crumbs">
   <div class="container py-2 d-flex align-items-center gap-2">
@@ -98,24 +159,26 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
     <?php endif; ?>
   </div>
 </div>
-
 <div class="container py-5">
+<?php } ?>
 
   <!-- ── Search Bar ── -->
   <div class="row justify-content-center mb-5">
     <div class="col-lg-7 text-center">
+      <?php if (!$inPortal): ?>
       <i class="bi bi-qr-code-scan fs-1 text-primary mb-3 d-block"></i>
       <h2 class="fw-bold mb-1">Track Your Request</h2>
       <p class="text-muted mb-4">Enter your tracking code to view the current status of your submission.</p>
+      <?php else: ?>
+      <div class="mb-4"></div>
+      <?php endif; ?>
       <form action="<?= BASE_URL ?>/student/track.php" method="GET" id="track-form">
         <div class="d-flex gap-2">
           <input type="text" name="code" id="trackInput" class="form-control form-control-lg track-input"
                  value="<?= e($code) ?>"
                  placeholder="e.g. TCC-REG-2026-000001 or TCC-DOC-2026-000001"
                  autocomplete="off">
-          <button type="submit" class="btn btn-primary btn-lg px-4" style="border-radius:10px;white-space:nowrap;">
-            <i class="bi bi-search me-1"></i> Track
-          </button>
+          <?= ui_btn('Track', ['type'=>'submit','size'=>'lg','class'=>'px-4 track-btn','icon'=>'search']) ?>
         </div>
       </form>
       <?php if ($searchError): ?>
@@ -127,9 +190,8 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
 
       <!-- QR Scanner trigger -->
       <div class="mt-3">
-        <button class="btn btn-outline-secondary btn-sm" onclick="toggleScanner()">
-          <i class="bi bi-camera me-1"></i> Scan QR Code Instead
-        </button>
+        <?= ui_btn('Scan QR Code Instead', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'camera',
+                   'attrs'=>'onclick="toggleScanner()"']) ?>
       </div>
     </div>
   </div>
@@ -140,9 +202,8 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
       <div class="scan-area">
         <h6 class="fw-bold mb-3"><i class="bi bi-camera me-2"></i>QR Code Scanner</h6>
         <div id="qr-reader" style="width:100%;max-width:340px;margin:0 auto;"></div>
-        <button class="btn btn-sm btn-outline-danger mt-3" onclick="stopScanner()">
-          <i class="bi bi-x-circle me-1"></i> Stop Scanner
-        </button>
+        <?= ui_btn('Stop Scanner', ['size'=>'sm','variant'=>'outline-danger','icon'=>'x-circle','class'=>'mt-3',
+                   'attrs'=>'onclick="stopScanner()"']) ?>
         <p class="text-muted small mt-2 mb-0">Point your camera at the QR code from your submission receipt.</p>
       </div>
     </div>
@@ -238,6 +299,54 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
           <div class="alert alert-info d-flex gap-2 mb-4">
             <i class="bi bi-info-circle-fill flex-shrink-0"></i>
             <div><strong>Remarks from Registrar:</strong> <?= e($record['remarks']) ?></div>
+          </div>
+          <?php endif; ?>
+
+          <?php
+          // ── Pickup appointment (document requests only) ──
+          $canBook = !$isNeg && !$isReg && $status === 'Ready for Release'
+                  && $record['delivery_method'] === 'Pick-up';
+          ?>
+          <?php if ($canBook || (!$isReg && !empty($record['pickup_date']))): ?>
+          <div class="pickup-card mb-4">
+            <h6 class="fw-bold mb-2"><i class="bi bi-calendar-check me-1"></i>Pickup Appointment</h6>
+            <?php if (!empty($record['pickup_date'])): ?>
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+              <div>
+                <div class="fw-bold text-success"><?= formatDate($record['pickup_date'], 'l, F j, Y') ?></div>
+                <div class="small text-muted"><?= e($record['pickup_slot']) ?>
+                  · booked <?= timeAgo($record['pickup_booked_at']) ?></div>
+              </div>
+            </div>
+            <?php endif; ?>
+            <?php if ($canBook): ?>
+            <form method="POST" class="d-flex gap-2 flex-wrap align-items-end <?= !empty($record['pickup_date']) ? 'mt-3' : '' ?>">
+              <?= csrfField() ?>
+              <input type="hidden" name="action" value="book_pickup">
+              <input type="hidden" name="code" value="<?= e($code) ?>">
+              <div>
+                <label class="form-label small fw-semibold mb-1">Date</label>
+                <input type="date" name="pickup_date" class="form-control" required
+                       min="<?= date('Y-m-d') ?>" value="<?= e($record['pickup_date'] ?? '') ?>">
+              </div>
+              <div>
+                <label class="form-label small fw-semibold mb-1">Time slot</label>
+                <select name="pickup_slot" class="form-select" required>
+                  <option value="">— Choose —</option>
+                  <?php foreach (pickupSlotOptions() as $slot): ?>
+                  <option value="<?= e($slot) ?>" <?= ($record['pickup_slot'] ?? '') === $slot ? 'selected' : '' ?>>
+                    <?= e($slot) ?>
+                  </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <?= ui_btn(!empty($record['pickup_date']) ? 'Reschedule' : 'Book Pickup',
+                         ['type'=>'submit','icon'=>'calendar-plus']) ?>
+            </form>
+            <?php if (empty($record['pickup_date'])): ?>
+            <p class="small text-muted mt-2 mb-0">Reserve a slot to skip the line — bring a valid ID and this tracking code.</p>
+            <?php endif; ?>
+            <?php endif; ?>
           </div>
           <?php endif; ?>
 
@@ -341,18 +450,12 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
                     <div class="small text-muted text-center mt-1"><?= e($code) ?></div>
                   </div>
                   <div class="d-flex flex-column gap-2">
-                    <button class="btn btn-outline-primary btn-sm"
-                            onclick="downloadQr('print-section','<?= e($code) ?>.png')">
-                      <i class="bi bi-download me-1"></i>Download
-                    </button>
-                    <button class="btn btn-outline-secondary btn-sm"
-                            onclick="printSection('print-section')">
-                      <i class="bi bi-printer me-1"></i>Print
-                    </button>
-                    <button class="btn btn-outline-dark btn-sm"
-                            onclick="copyToClipboard('<?= e($code) ?>', this)">
-                      <i class="bi bi-clipboard me-1"></i>Copy Code
-                    </button>
+                    <?= ui_btn('Download', ['size'=>'sm','variant'=>'outline-primary','icon'=>'download',
+                               'attrs'=>'onclick="downloadQr(\'print-section\',\'' . e($code) . '.png\')"']) ?>
+                    <?= ui_btn('Print', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'printer',
+                               'attrs'=>'onclick="printSection(\'print-section\')"']) ?>
+                    <?= ui_btn('Copy Code', ['size'=>'sm','variant'=>'outline-dark','icon'=>'clipboard',
+                               'attrs'=>'onclick="copyToClipboard(\'' . e($code) . '\', this)"']) ?>
                   </div>
                 </div>
               </div>
@@ -419,12 +522,11 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
           </div><!-- /row -->
 
           <div class="text-center mt-4 pt-3 border-top">
-            <a href="<?= BASE_URL ?>/student/track.php" class="btn btn-outline-secondary me-2">
-              <i class="bi bi-arrow-left me-1"></i>Track Another
-            </a>
-            <a href="<?= BASE_URL ?>/student/index.php" class="btn btn-primary">
-              <i class="bi bi-house me-1"></i>Back to Portal
-            </a>
+            <?= ui_btn('Track Another', ['variant'=>'outline-secondary','icon'=>'arrow-left','class'=>'me-2',
+                       'href'=>BASE_URL . '/student/track.php']) ?>
+            <?= ui_btn($inPortal ? 'Back to Dashboard' : 'Back to Portal',
+                       ['icon'=>$inPortal ? 'grid-1x2' : 'house',
+                        'href'=>BASE_URL . ($inPortal ? '/student/dashboard.php' : '/student/index.php')]) ?>
           </div>
 
         </div><!-- /card-body -->
@@ -439,24 +541,22 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
     <div class="col-lg-7">
       <div class="row g-3">
         <div class="col-md-6">
-          <div class="p-4 bg-white rounded-3 border h-100">
-            <i class="bi bi-person-plus text-primary fs-4 mb-2 d-block"></i>
-            <h6 class="fw-bold">Don't have a tracking code?</h6>
-            <p class="text-muted small mb-3">Submit a pre-registration for enrollment to receive your unique code.</p>
-            <a href="<?= BASE_URL ?>/student/pre_registration.php" class="btn btn-primary btn-sm">
-              Pre-Register Now
-            </a>
-          </div>
+          <a href="<?= BASE_URL ?>/student/pre_registration.php" class="quick-tile track-help reveal">
+            <div class="quick-tile-ico"><i class="bi bi-person-plus"></i></div>
+            <div>
+              <div class="quick-tile-label">Don't have a tracking code?</div>
+              <div class="quick-tile-sub">Submit a pre-registration to receive your unique code →</div>
+            </div>
+          </a>
         </div>
         <div class="col-md-6">
-          <div class="p-4 bg-white rounded-3 border h-100">
-            <i class="bi bi-file-earmark-text text-success fs-4 mb-2 d-block"></i>
-            <h6 class="fw-bold">Need a document?</h6>
-            <p class="text-muted small mb-3">Request a TOR, COE, Good Moral, or other registrar documents online.</p>
-            <a href="<?= BASE_URL ?>/student/document_request.php" class="btn btn-primary btn-sm">
-              Request Document
-            </a>
-          </div>
+          <a href="<?= BASE_URL ?>/student/document_request.php" class="quick-tile track-help reveal">
+            <div class="quick-tile-ico"><i class="bi bi-file-earmark-text"></i></div>
+            <div>
+              <div class="quick-tile-label">Need a document?</div>
+              <div class="quick-tile-sub">Request a TOR, COE, Good Moral, and more online →</div>
+            </div>
+          </a>
         </div>
       </div>
     </div>
@@ -517,4 +617,7 @@ function stopScanner() {
   document.getElementById('scanner-section').classList.add('d-none');
 }
 </script>
-<?php include __DIR__ . '/../includes/partials/portal_foot.php'; ?>
+</div>
+<?php if ($inPortal): ?>
+<?php include __DIR__ . '/../includes/partials/footer.php'; ?>
+<?php else: include __DIR__ . '/../includes/partials/portal_foot.php'; endif; ?>

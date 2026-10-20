@@ -89,10 +89,15 @@ if (isPost()) {
             $binds
         );
 
+        $changes = describeRecordChanges($reg, $data);
         addStatusHistory('registration', $id, $reg['tracking_code'], $reg['status'], $reg['status'],
-            'Record details updated by staff.' . ($data['edit_note'] ? ' — ' . $data['edit_note'] : ''));
+            'Record details updated by staff.'
+            . ($data['edit_note'] ? ' — ' . $data['edit_note'] : '')
+            . ($changes ? ' Changed: ' . $changes : ''));
         logActivity('RECORD_EDIT', 'Records Management',
-            "Edited registration record {$reg['tracking_code']}", $reg['tracking_code']);
+            "Edited registration record {$reg['tracking_code']}"
+            . ($changes ? ' — ' . $changes : ' — no field changes'),
+            $reg['tracking_code']);
 
         flash('success', 'Record updated successfully.');
         redirect(BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . $id);
@@ -282,11 +287,8 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
               </td>
               <td>
                 <?php if (!empty($submitted[$ck])): ?>
-                <button type="button" class="btn btn-sm btn-outline-primary doc-view"
-                        data-url="<?= UPLOAD_URL . '/' . e($submitted[$ck]) ?>"
-                        data-label="<?= e($cred['label']) ?>">
-                  <i class="bi bi-paperclip me-1"></i>View
-                </button>
+                <?= ui_btn('View', ['size'=>'sm','variant'=>'outline-primary','icon'=>'paperclip','class'=>'doc-view',
+                           'attrs'=>'data-url="' . e(UPLOAD_URL . '/' . $submitted[$ck]) . '" data-label="' . e($cred['label']) . '"']) ?>
                 <?php else: ?>
                 <span class="text-muted small">—</span>
                 <?php endif; ?>
@@ -313,12 +315,9 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
                  placeholder="e.g. Corrected spelling per student request">
         </div>
         <div class="col-md-4 d-flex gap-2">
-          <button type="submit" class="btn btn-primary flex-fill">
-            <i class="bi bi-check-lg me-1"></i>Save Changes
-          </button>
-          <a href="<?= BASE_URL ?>/<?= currentRole() ?>/view_registration.php?id=<?= (int)$id ?>" class="btn btn-outline-secondary">
-            Cancel
-          </a>
+          <?= ui_btn('Save Changes', ['type'=>'submit','class'=>'flex-fill','icon'=>'check-lg']) ?>
+          <?= ui_btn('Cancel', ['variant'=>'outline-secondary',
+                     'href'=>BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . (int)$id]) ?>
         </div>
       </div>
     </div>

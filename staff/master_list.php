@@ -105,8 +105,8 @@ include isRegistrar()
     'Student Master List',
     'Master list of all registered students — filter, print, or export to CSV.',
     'people',
-    '<button onclick="window.print()" class="btn btn-sm btn-outline-dark"><i class="bi bi-printer me-1"></i>Print</button>'
-    . '<a href="' . e($exportUrl) . '" class="btn btn-sm btn-success"><i class="bi bi-file-earmark-spreadsheet me-1"></i>Export CSV</a>'
+    ui_btn('Print', ['size'=>'sm','variant'=>'outline-dark','icon'=>'printer','attrs'=>'onclick="window.print()"'])
+    . ui_btn('Export CSV', ['size'=>'sm','variant'=>'success','icon'=>'file-earmark-spreadsheet','href'=>$exportUrl])
 ) ?>
 
 <?php
@@ -144,11 +144,13 @@ foreach ($rows as $i => $r) {
         '<span class="small">' . e($r['enrollment_type']) . '</span>',
         '<span class="small text-muted">' . e($r['school_year']) . '<br>' . e($r['semester']) . '</span>',
         statusBadge($r['status']),
-        ['html' => '<a href="' . BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . (int)$r['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2">View</a>',
+        ['html' => ui_btn('View', ['size'=>'sm','variant'=>'outline-primary','class'=>'py-0 px-2',
+                   'href'=>BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . (int)$r['id']]),
          'class' => 'd-print-none'],
     ];
 }
 
+echo '<div class="d-print-none">';
 echo ui_card_open(
     'Students <span class="badge bg-light text-dark ms-1 fw-normal">' . number_format(count($rows)) . '</span>',
     'list-ul',
@@ -165,7 +167,82 @@ echo ui_table(
 echo '<div class="list-footer"><span class="list-footer-range">Generated ' . formatDateTime(date('Y-m-d H:i:s'))
    . ' · ' . count($rows) . ' record' . (count($rows) === 1 ? '' : 's') . '</span></div>';
 echo ui_card_close();
+echo '</div>';
 ?>
+
+<!-- ── Print-only tabular report ── -->
+<div class="d-none d-print-block">
+  <div class="print-header">
+    <div class="ph-brand">
+      <img class="ph-seal" src="<?= BASE_URL ?>/assets/images/school_logo.png" alt="">
+      <div>
+        <div class="ph-school"><?= e(getSetting('school_name', 'Tampakan Community College')) ?></div>
+        <div class="ph-addr">Registration &amp; Records System</div>
+      </div>
+      <div class="ph-meta">
+        <div class="ph-doc">STUDENT MASTER LIST</div>
+        <div class="ph-date">Generated <?= formatDateTime(date('Y-m-d H:i:s')) ?> · <?= count($rows) ?> record<?= count($rows) === 1 ? '' : 's' ?></div>
+      </div>
+    </div>
+  </div>
+
+  <?php
+  $filterDesc = [];
+  if ($filterSearch)  $filterDesc[] = 'Search: ' . $filterSearch;
+  if ($filterProgram) {
+      $progName = array_column($programs, 'name', 'id')[$filterProgram] ?? '';
+      $filterDesc[] = 'Program: ' . $progName;
+  }
+  if ($filterYear)    $filterDesc[] = 'Year Level: ' . $filterYear;
+  if ($filterType)    $filterDesc[] = 'Type: ' . $filterType;
+  if ($filterSY)      $filterDesc[] = 'S.Y.: ' . $filterSY;
+  if ($filterSem)     $filterDesc[] = 'Semester: ' . $filterSem;
+  if ($filterStatus)  $filterDesc[] = 'Status: ' . $filterStatus;
+  ?>
+  <?php if ($filterDesc): ?>
+  <div class="report-filters">Filters: <?= e(implode(' · ', $filterDesc)) ?></div>
+  <?php endif; ?>
+
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="width:28px;">#</th>
+        <th>Student Name</th>
+        <th>Email</th>
+        <th>LRN</th>
+        <th>Program</th>
+        <th>Year</th>
+        <th>Type</th>
+        <th>S.Y.</th>
+        <th>Semester</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($rows as $i => $r): ?>
+      <tr>
+        <td class="num"><?= $i + 1 ?></td>
+        <td><?= e(fullName($r, true)) ?></td>
+        <td><?= e($r['email']) ?></td>
+        <td class="mono"><?= e($r['lrn'] ?: '—') ?></td>
+        <td><?= e($r['program_other'] ?: ($r['prog_code'] ?? '—')) ?></td>
+        <td><?= e($r['year_level']) ?></td>
+        <td><?= e($r['enrollment_type']) ?></td>
+        <td><?= e($r['school_year']) ?></td>
+        <td><?= e($r['semester']) ?></td>
+        <td><?= e($r['status']) ?></td>
+      </tr>
+      <?php endforeach; ?>
+      <?php if (!$rows): ?>
+      <tr><td colspan="10" style="text-align:center;color:#666;">No records matched the selected filters.</td></tr>
+      <?php endif; ?>
+    </tbody>
+  </table>
+
+  <div class="print-footer">
+    <div class="pf-note">End of report — <?= count($rows) ?> record<?= count($rows) === 1 ? '' : 's' ?> · <?= e(getSetting('school_name', 'Tampakan Community College')) ?></div>
+  </div>
+</div>
 
 </div>
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>

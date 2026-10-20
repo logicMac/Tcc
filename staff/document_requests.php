@@ -109,9 +109,15 @@ foreach ($result['data'] as $i => $d) {
         '<span class="badge bg-light text-dark">' . e($d['doc_code'] ?? '—') . '</span>'
             . ($d['document_type_other'] ? '<div class="row-sub">' . e(mb_strimwidth($d['document_type_other'], 0, 25, '…')) . '</div>' : ''),
         ['html' => '<span class="small">' . (int)$d['copies'] . '</span>', 'class' => 'text-center'],
-        statusBadge($d['status'], 'document_request'),
+        statusBadge($d['status'], 'document_request')
+            . (!empty($d['pickup_date'])
+                ? '<div class="row-sub"><i class="bi bi-calendar-check me-1"></i>Pickup '
+                  . e(formatDate($d['pickup_date'], 'M j')) . ' ' . e($d['pickup_slot']) . '</div>'
+                : ''),
         '<span class="small text-muted">' . formatDate($d['submitted_at']) . '</span><div class="row-sub">' . timeAgo($d['submitted_at']) . '</div>',
-        '<a href="' . BASE_URL . '/' . currentRole() . '/view_document.php?id=' . (int)$d['id'] . '" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View &amp; Process"><i class="bi bi-eye"></i></a>',
+        ui_btn('', ['size'=>'sm','variant'=>'outline-primary','icon'=>'eye',
+               'href'=>BASE_URL . '/' . currentRole() . '/view_document.php?id=' . (int)$d['id'],
+               'attrs'=>'data-bs-toggle="tooltip" title="View &amp; Process"']),
     ];
 }
 

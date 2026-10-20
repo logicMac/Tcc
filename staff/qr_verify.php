@@ -59,19 +59,15 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
                    placeholder="TCC-REG-2026-000001"
                    style="text-transform:uppercase;"
                    id="codeInput" autofocus>
-            <button type="submit" class="btn btn-primary">
-              <i class="bi bi-search"></i>
-            </button>
+            <?= ui_btn('', ['type'=>'submit','icon'=>'search']) ?>
           </div>
         </form>
 
         <div class="text-center mb-3">
-          <button class="btn btn-outline-secondary btn-sm" id="startScanBtn" onclick="startScan()">
-            <i class="bi bi-camera me-1"></i>Start Camera Scan
-          </button>
-          <button class="btn btn-outline-danger btn-sm d-none" id="stopScanBtn" onclick="stopScan()">
-            <i class="bi bi-stop-circle me-1"></i>Stop Scan
-          </button>
+          <?= ui_btn('Start Camera Scan', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'camera',
+                     'attrs'=>'id="startScanBtn" onclick="startScan()"']) ?>
+          <?= ui_btn('Stop Scan', ['size'=>'sm','variant'=>'outline-danger','icon'=>'stop-circle','class'=>'d-none',
+                     'attrs'=>'id="stopScanBtn" onclick="stopScan()"']) ?>
         </div>
 
         <div id="qr-reader" class="rounded overflow-hidden" style="display:none;"></div>
@@ -123,13 +119,10 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
             ['label' => 'Issued On',         'value' => formatDateTime($record['issued_at'])],
         ]) ?>
         <div class="mt-3 pt-3 border-top d-flex gap-2">
-          <a href="<?= BASE_URL ?>/<?= currentRole() ?>/view_document.php?id=<?= (int)$record['document_request_id'] ?>"
-             class="btn btn-primary btn-sm">
-            <i class="bi bi-arrow-right me-1"></i>Open Original Request
-          </a>
-          <a href="<?= BASE_URL ?>/<?= currentRole() ?>/qr_verify.php" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-qr-code-scan me-1"></i>Verify Another
-          </a>
+          <?= ui_btn('Open Original Request', ['size'=>'sm','icon'=>'arrow-right',
+                     'href'=>BASE_URL . '/' . currentRole() . '/view_document.php?id=' . (int)$record['document_request_id']]) ?>
+          <?= ui_btn('Verify Another', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'qr-code-scan',
+                     'href'=>BASE_URL . '/' . currentRole() . '/qr_verify.php']) ?>
         </div>
       </div>
     </div>
@@ -199,12 +192,9 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
             ? BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . (int)$record['id']
             : BASE_URL . '/' . currentRole() . '/view_document.php?id='     . (int)$record['id'];
           ?>
-          <a href="<?= $viewUrl ?>" class="btn btn-primary btn-sm">
-            <i class="bi bi-arrow-right me-1"></i>Open Full Record
-          </a>
-          <a href="<?= BASE_URL ?>/<?= currentRole() ?>/qr_verify.php" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-qr-code-scan me-1"></i>Verify Another
-          </a>
+          <?= ui_btn('Open Full Record', ['size'=>'sm','icon'=>'arrow-right','href'=>$viewUrl]) ?>
+          <?= ui_btn('Verify Another', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'qr-code-scan',
+                     'href'=>BASE_URL . '/' . currentRole() . '/qr_verify.php']) ?>
         </div>
       </div>
     </div>

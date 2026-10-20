@@ -12,7 +12,7 @@ require_once __DIR__ . '/../includes/helpers.php';
 startSession();
 redirectIfLoggedIn();
 if (isStudentLoggedIn()) {
-    redirect(BASE_URL . '/student/account.php');
+    redirect(BASE_URL . '/student/dashboard.php');
 }
 
 $errors = [];
@@ -107,8 +107,14 @@ if (isPost()) {
                 claimSubmissionsForStudent((int) $student['id'], $student['email']);
                 logActivity('LOGIN', 'Auth', "Student logged in successfully.", '', null, $student['email'], 'student');
 
+                // Auto-created accounts must set a permanent password first
+                if (!empty($student['must_change_password'])) {
+                    flash('warning', 'For your security, please set a permanent password now.');
+                    redirect(BASE_URL . '/student/change_password.php?force=1');
+                }
+
                 flash('success', 'Welcome back, ' . $student['first_name'] . '!');
-                redirect($return ?: (BASE_URL . '/student/account.php'));
+                redirect($return ?: (BASE_URL . '/student/dashboard.php'));
             }
         }
     }
@@ -232,9 +238,7 @@ if (isPost()) {
           </button>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-3">
-          <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
-        </button>
+        <?= ui_btn('Sign In', ['type'=>'submit','class'=>'w-100 py-2 fw-bold rounded-3','icon'=>'box-arrow-in-right']) ?>
       </form>
 
       <div class="auth-alt">

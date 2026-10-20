@@ -1,7 +1,7 @@
 <?php
 /**
  * TCC RRS – Student Public Portal (Landing Page)
- * Direction: the page is the object — the registrar's case-file stack.
+ * Direction: full-bleed photo hero with a live tracking slip.
  */
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/db.php';
@@ -13,14 +13,21 @@ $semester   = getSetting('current_semester', '1st Semester');
 $activePage = 'home';
 $pageTitle  = 'Student Portal';
 
+// ── Hero carousel photos ─────────────────────────────────────────────────────
+// To add/replace photos: drop the file in assets/images/ and add its filename
+// here. First slide shows first; they autoplay in order.
+$heroPhotos = [
+    '763907380_122117045967389150_4219642318318615129_n.jpg',
+    '764593185_122117144415389150_5605248598061137387_n.jpg',
+    '765671674_122117144301389150_978875098484972382_n.jpg',
+    '766169334_122117145867389150_6577674959028172378_n.jpg',
+    '774469259_122119886589389150_898085851488283558_n.jpg',
+];
+
 // ── Live data ────────────────────────────────────────────────────────────────
-$programs   = db()->fetchAll("SELECT name FROM programs WHERE is_active = 1 ORDER BY name");
 $docTypes   = getActiveDocumentTypes();
 $docByCode  = [];
 foreach ($docTypes as $d) { $docByCode[$d['code']] = $d; }
-$servedCount = (int)(db()->fetchValue(
-    "SELECT (SELECT COUNT(*) FROM pre_registrations) + (SELECT COUNT(*) FROM document_requests) AS c"
-) ?? 0);
 
 // Fee board: bars grouped the way the registrar posts the price list
 $feeGroups = [
@@ -101,130 +108,73 @@ $faqs = [
      'a' => 'Every released document carries a TCC-VRF verification code and QR. Anyone can confirm it against registrar records on the Verify page.'],
 ];
 
-// Zigzag clip-path for the menu sheet's torn edges (generated, not guessed)
-function zigzagClip(int $teeth = 26, float $depthPct = 0.9): string {
-    $pts = [];
-    $step = 100 / $teeth;
-    for ($i = 0; $i <= $teeth; $i++) {
-        $x = $i * $step;
-        $pts[] = sprintf('%.2f%% %.2f%%', $x, $i % 2 ? $depthPct : 0);
-    }
-    for ($i = $teeth; $i >= 0; $i--) {
-        $x = $i * $step;
-        $pts[] = sprintf('%.2f%% %.2f%%', $x, $i % 2 ? 100 - $depthPct : 100);
-    }
-    return 'polygon(' . implode(',', $pts) . ')';
-}
-$sheetClip = zigzagClip();
-
 include __DIR__ . '/../includes/partials/portal_head.php';
 include __DIR__ . '/../includes/partials/portal_nav.php';
 ?>
 
-<!-- ══ Hero: the registrar's case-file stack ══════════════════════════════ -->
+<!-- ══ Hero: autoplay photo carousel + actions ═══════════════════════════ -->
 <section class="doss-hero">
+  <div class="hero-carousel" id="heroCarousel" aria-hidden="true">
+    <?php foreach ($heroPhotos as $hi => $photo): ?>
+    <div class="hc-slide<?= $hi === 0 ? ' on' : '' ?>"
+         style="background-image: url('<?= BASE_URL ?>/assets/images/<?= e($photo) ?>')"></div>
+    <?php endforeach; ?>
+    <div class="hc-scrim"></div>
+  </div>
+
   <div class="doss-top container">
     <h1 class="doss-title">Skip the line.</h1>
     <p class="doss-sub">Enroll, request documents, and track every submission —
       the <?= e($schoolName) ?> registrar, online for A.Y. <?= e($schoolYear) ?> · <?= e($semester) ?>.</p>
+
   </div>
 
-  <div class="doss-stack">
-    <?php
-    $folders = [
-      ['tone' => 'g800', 'tab' => 'Services',  'href' => '#services', 'pos' => '6%'],
-      ['tone' => 'gold', 'tab' => 'Fees',      'href' => '#fees',     'pos' => 'min(30%, calc(100% - 210px))'],
-      ['tone' => 'g600', 'tab' => 'The journey','href' => '#journey',  'pos' => 'min(56%, calc(100% - 210px))'],
-      ['tone' => 'gld2', 'tab' => 'Questions', 'href' => '#questions','pos' => 'min(80%, calc(100% - 145px))'],
-    ];
-    foreach ($folders as $f): ?>
-    <a class="doss-folder <?= $f['tone'] ?>" href="<?= $f['href'] ?>">
-      <span class="doss-tab" style="left: <?= $f['pos'] ?>"><?= e($f['tab']) ?></span>
-    </a>
-    <?php endforeach; ?>
-
-    <!-- Front folder: the live slip -->
-    <div class="doss-folder front" id="track">
-      <div class="container doss-front-in">
-        <div class="doss-front-grid">
-          <div class="doss-front-copy">
-            <b>Already submitted?</b>
-            <p>Type the code on your slip — or scan its QR on the Track page —
-              and watch the status move.</p>
-          </div>
-          <form action="<?= BASE_URL ?>/student/track.php" method="GET" class="doss-track">
-            <input type="text" name="code" required
-                   placeholder="TCC-REG-<?= e(substr($schoolYear, 0, 4)) ?>-000001"
-                   autocomplete="off" aria-label="Tracking code">
-            <button type="submit">Track status</button>
-          </form>
-          <div class="doss-actions">
-            <a href="<?= BASE_URL ?>/student/pre_registration.php">Pre-register</a>
-            <a href="<?= BASE_URL ?>/student/document_request.php">Request a document</a>
-            <a href="<?= BASE_URL ?>/verify.php">Verify a document</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ Proof: the printed register ════════════════════════════════════════ -->
-<section class="pg-reg">
-  <div class="reg-card reveal">
-    <h2 class="reg-title reveal" style="--rd:.08s">Programs on file</h2>
-    <img src="<?= BASE_URL ?>/assets/an-education-volunteer-with-his-high-school.jpg"
-         width="1920" height="1275" alt="Students gathered with a teacher in a Philippine classroom"
-         class="reg-photo reveal" style="--rd:.14s" loading="lazy">
-    <p class="reg-names reveal" style="--rd:.2s">
-      <?php foreach ($programs as $i => $p): ?>
-        <?= e($p['name']) ?><?= $i < count($programs) - 1 ? ' · ' : '' ?>
-      <?php endforeach; ?>
-    </p>
-    <p class="reg-foot reveal" style="--rd:.26s">
-      <?= number_format($servedCount) ?> submissions on file ·
-      <?= count($docTypes) ?> documents in the catalogue · open online, always
-    </p>
-  </div>
-</section>
-
-<!-- ══ Services: capabilities as a menu ═══════════════════════════════════ -->
-<section class="pg-menu" id="services">
-  <div class="container menu-grid">
-    <div class="menu-sheet reveal" style="clip-path: <?= $sheetClip ?>">
-      <h2 class="reveal" style="--rd:.08s">Services</h2>
-      <?php $gi = 0; foreach ($menuGroups as $group => $items): $gi++; ?>
-      <div class="menu-group reveal" style="--rd:<?= .1 + $gi * .07 ?>s">
-        <h3><?= e($group) ?></h3>
-        <?php foreach ($items as $it): ?>
-        <a class="menu-row" href="<?= e($it['link']) ?>" data-preview="<?= e($it['preview']) ?>">
-          <span class="menu-item">
-            <b><?= e($it['title']) ?></b>
-            <span class="menu-desc"><?= e($it['desc']) ?></span>
-          </span>
-          <span class="menu-leader" aria-hidden="true"></span>
-          <span class="menu-value"><?= e($it['value']) ?></span>
-          <img class="menu-inline" loading="lazy" alt=""
-               src="<?= BASE_URL ?>/assets/previews/<?= e($it['preview']) ?>.png">
-        </a>
+  <div class="doss-foot container">
+    <?php if (count($heroPhotos) > 1): ?>
+    <div class="hc-ui">
+      <button type="button" class="hc-arrow" id="hcPrev" aria-label="Previous photo"><i class="bi bi-chevron-left"></i></button>
+      <div class="hc-dots" id="hcDots">
+        <?php foreach ($heroPhotos as $hi => $photo): ?>
+        <button type="button" class="hc-dot<?= $hi === 0 ? ' on' : '' ?>" data-i="<?= $hi ?>"
+                aria-label="Photo <?= $hi + 1 ?>"></button>
         <?php endforeach; ?>
       </div>
-      <?php endforeach; ?>
+      <button type="button" class="hc-arrow" id="hcNext" aria-label="Next photo"><i class="bi bi-chevron-right"></i></button>
     </div>
-
-    <aside class="menu-preview" id="menuPreview" aria-hidden="true">
-      <?php foreach (['enroll','docs','track','verify'] as $pv): ?>
-      <img data-key="<?= $pv ?>" src="<?= BASE_URL ?>/assets/previews/<?= $pv ?>.png"
-           alt="Preview of the <?= $pv ?> page" loading="lazy">
-      <?php endforeach; ?>
-    </aside>
+    <?php endif; ?>
   </div>
 </section>
 
-<!-- ══ Fees: the posted price list ════════════════════════════════════════ -->
-<section class="pg-fees" id="fees">
-  <div class="container fees-col">
-    <h2 class="fees-word reveal" aria-label="Fees">FEES</h2>
+<!-- ══ Services ══════════════════════════════════════════════════════════ -->
+<section class="lp-sec" id="services">
+  <div class="container">
+    <div class="lp-head reveal">
+      <h2>Services</h2>
+      <p>Everything the Registrar's Office does — now online, no queue.</p>
+    </div>
+    <div class="lp-cards">
+      <?php $ci = 0; foreach ($menuGroups as $group => $items): foreach ($items as $it): $ci++; ?>
+      <a class="lp-card reveal" style="--rd:<?= .05 + $ci * .06 ?>s" href="<?= e($it['link']) ?>">
+        <span class="lp-card-tag"><?= e($group) ?></span>
+        <b><?= e($it['title']) ?></b>
+        <span class="lp-card-desc"><?= e($it['desc']) ?></span>
+        <span class="lp-card-foot">
+          <span class="lp-card-val"><?= e($it['value']) ?></span>
+          <i class="bi bi-arrow-right" aria-hidden="true"></i>
+        </span>
+      </a>
+      <?php endforeach; endforeach; ?>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Fees ══════════════════════════════════════════════════════════════ -->
+<section class="lp-sec lp-alt" id="fees">
+  <div class="container lp-narrow">
+    <div class="lp-head reveal">
+      <h2>Fees</h2>
+      <p>Paid at the Registrar's Office when you claim — nothing to pay online.</p>
+    </div>
     <div class="fees-bars reveal">
       <?php $first = true; $fi = 0; foreach ($feeGroups as $label => $codes): $fi++; ?>
       <details class="fee-bar reveal" style="--rd:<?= .08 + $fi * .06 ?>s" <?= $first ? 'open' : '' ?>>
@@ -252,14 +202,16 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
         </ul>
       </details>
     </div>
-    <p class="fees-note reveal" style="--rd:.2s">Paid at the Registrar's Office when you claim — nothing to pay online.</p>
   </div>
 </section>
 
 <!-- ══ The journey: a drag row of moments ═════════════════════════════════ -->
-<section class="pg-journey" id="journey">
+<section class="lp-sec lp-journey" id="journey">
   <div class="container jrny-head reveal">
-    <h2>From form to file</h2>
+    <div class="lp-head jrny-head-in">
+      <h2>From form to file</h2>
+      <p>What happens to your submission, step by step.</p>
+    </div>
     <div class="jrny-btns">
       <button type="button" id="jrnyPrev" aria-label="Scroll back"><i class="bi bi-arrow-left"></i></button>
       <button type="button" id="jrnyNext" aria-label="Scroll forward"><i class="bi bi-arrow-right"></i></button>
@@ -280,51 +232,79 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
   </div>
 </section>
 
-<!-- ══ Questions: tabbed index cards ══════════════════════════════════════ -->
-<section class="pg-faq" id="questions">
-  <div class="container faq-wrap">
-    <h2 class="reveal">Common questions</h2>
-    <div class="faq-stack" id="faqStack">
+<!-- ══ Questions ══════════════════════════════════════════════════════════ -->
+<section class="lp-sec lp-alt" id="questions">
+  <div class="container lp-narrow">
+    <div class="lp-head reveal">
+      <h2>Common questions</h2>
+      <p>Short answers, straight from the registrar's desk.</p>
+    </div>
+    <div class="lp-acc reveal">
       <?php foreach ($faqs as $i => $f): ?>
-      <div class="faq-card <?= $f['tone'] ?> <?= $i === 0 ? 'open' : '' ?> reveal"
-           style="--tab-x: <?= $i * 120 ?>px; --rd:<?= .08 + $i * .07 ?>s">
-        <button type="button" class="faq-tab" aria-expanded="<?= $i === 0 ? 'true' : 'false' ?>">
-          <span class="faq-tab-name"><?= e($f['tab']) ?></span>
-          <span class="faq-q"><?= e($f['q']) ?></span>
-        </button>
-        <div class="faq-a"><p><?= e($f['a']) ?></p></div>
-      </div>
+      <details class="fee-bar reveal" style="--rd:<?= .06 + $i * .05 ?>s" <?= $i === 0 ? 'open' : '' ?>>
+        <summary>
+          <span><?= e($f['q']) ?></span>
+          <i class="bi bi-plus"></i>
+        </summary>
+        <div class="lp-acc-a"><p><?= e($f['a']) ?></p></div>
+      </details>
       <?php endforeach; ?>
     </div>
   </div>
 </section>
 
-<!-- ══ CTA: the reply card ════════════════════════════════════════════════ -->
-<section class="pg-cta">
-  <div class="container cta-grid">
-    <div class="cta-aside">
-      <h2 class="reveal">Come to the office once.</h2>
-      <p class="reveal" style="--rd:.1s">Submit tonight, track tomorrow, claim when it's ready — the Registrar's Office, online.</p>
-    </div>
-    <div class="reply-card reveal" style="--rd:.16s">
-      <h2>Ready when you are</h2>
-      <p>Start a submission now — the Registrar takes it from there.</p>
-      <a class="reply-btn" href="<?= BASE_URL ?>/student/pre_registration.php">Begin a submission</a>
-      <div class="reply-foot">
+<!-- ══ CTA ═══════════════════════════════════════════════════════════════ -->
+<section class="lp-cta">
+  <div class="container">
+    <div class="lp-cta-panel reveal">
+      <div class="lp-cta-copy">
+        <h2>Come to the office once.</h2>
+        <p>Submit tonight, track tomorrow, claim when it's ready — the Registrar's Office, online.</p>
+      </div>
+      <div class="lp-cta-side">
+        <a class="lp-cta-btn" href="<?= BASE_URL ?>/student/pre_registration.php">Begin a submission</a>
+        <a class="lp-cta-alt" href="<?= BASE_URL ?>/student/document_request.php">Or request a document instead</a>
         <div id="replyQr" class="reply-qr"></div>
-        <a class="reply-alt" href="<?= BASE_URL ?>/student/document_request.php">Or request a document instead</a>
       </div>
     </div>
   </div>
   <p class="pg-credits container reveal" style="--rd:.2s">
     Archival photographs: Wikimedia Commons &amp; Openverse, public domain / CC — see assets/credits.json.
-    Page previews are live screenshots of this system.
   </p>
 </section>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   generateQrCode('replyQr', '<?= BASE_URL ?>/student/track.php', { width: 72, height: 72 });
+
+  /* Hero carousel: autoplay, dots, arrows, pause on hover */
+  var hc = document.getElementById('heroCarousel');
+  if (hc) {
+    var slides = hc.querySelectorAll('.hc-slide'),
+        dots   = document.querySelectorAll('.hc-dot'),
+        cur = 0, timer = null;
+    function go(i) {
+      slides[cur].classList.remove('on');
+      if (dots[cur]) dots[cur].classList.remove('on');
+      cur = (i + slides.length) % slides.length;
+      slides[cur].classList.add('on');
+      if (dots[cur]) dots[cur].classList.add('on');
+    }
+    function play() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      timer = setInterval(function () { go(cur + 1); }, 5500);
+    }
+    function reset() { clearInterval(timer); play(); }
+    document.getElementById('hcPrev')?.addEventListener('click', function () { go(cur - 1); reset(); });
+    document.getElementById('hcNext')?.addEventListener('click', function () { go(cur + 1); reset(); });
+    dots.forEach(function (d) {
+      d.addEventListener('click', function () { go(+d.dataset.i); reset(); });
+    });
+    var hero = hc.closest('.doss-hero');
+    hero.addEventListener('mouseenter', function () { clearInterval(timer); });
+    hero.addEventListener('mouseleave', play);
+    play();
+  }
 
   /* Journey row: buttons + progress bar */
   var row = document.getElementById('jrnyRow'),
@@ -342,40 +322,6 @@ document.addEventListener('DOMContentLoaded', function () {
     row.scrollBy({ left: 320, behavior: 'smooth' });
   });
 
-  /* Index cards: one open at a time */
-  var cards = document.querySelectorAll('#faqStack .faq-card');
-  cards.forEach(function (card) {
-    card.querySelector('.faq-tab').addEventListener('click', function () {
-      var wasOpen = card.classList.contains('open');
-      cards.forEach(function (c) {
-        c.classList.remove('open');
-        c.querySelector('.faq-tab').setAttribute('aria-expanded', 'false');
-      });
-      if (!wasOpen) {
-        card.classList.add('open');
-        card.querySelector('.faq-tab').setAttribute('aria-expanded', 'true');
-      }
-    });
-  });
-
-  /* Menu: index-with-preview on fine pointers */
-  var preview = document.getElementById('menuPreview');
-  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && preview) {
-    var imgs = preview.querySelectorAll('img');
-    var rows = document.querySelectorAll('.menu-row');
-    rows.forEach(function (r) {
-      r.addEventListener('mouseenter', function () {
-        var key = r.dataset.preview;
-        imgs.forEach(function (im) { im.classList.toggle('on', im.dataset.key === key); });
-        preview.classList.add('show');
-        rows.forEach(function (x) { x.classList.toggle('dim', x !== r); });
-      });
-      r.addEventListener('mouseleave', function () {
-        preview.classList.remove('show');
-        rows.forEach(function (x) { x.classList.remove('dim'); });
-      });
-    });
-  }
 });
 </script>
 <?php include __DIR__ . '/../includes/partials/portal_foot.php'; ?>

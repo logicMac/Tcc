@@ -83,7 +83,7 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 
 <?= ui_page_header(
     'Reports &amp; Analytics', 'System-wide statistics for S.Y. ' . e($sy), 'bar-chart-line',
-    '<button onclick="window.print()" class="btn btn-outline-dark btn-sm"><i class="bi bi-printer me-1"></i>Print</button>'
+    ui_btn('Print', ['size'=>'sm','variant'=>'outline-dark','icon'=>'printer','attrs'=>'onclick="window.print()"'])
 ) ?>
 
 <!-- KPIs -->

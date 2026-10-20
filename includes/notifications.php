@@ -132,7 +132,8 @@ function sendSmtpEmail(
 
         smtpCommand($conn, 'QUIT', ['221', '250', '']);
         return true;
-    } catch (Throwable) {
+    } catch (Throwable $e) {
+        $GLOBALS['smtp_last_error'] = $e->getMessage();
         return false;
     } finally {
         fclose($conn);

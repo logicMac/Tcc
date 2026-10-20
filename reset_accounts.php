@@ -135,9 +135,7 @@ foreach (glob($sessionPath . '/sess_*') ?: [] as $f) {
       </tbody>
     </table>
     <div class="d-flex gap-2 mt-3">
-      <a href="<?= BASE_URL ?>/auth/login.php" class="btn btn-primary btn-sm">
-        <i class="bi bi-box-arrow-in-right me-1"></i>Sign In
-      </a>
+      <?= ui_btn('Sign In', ['size'=>'sm','icon'=>'box-arrow-in-right','href'=>BASE_URL . '/auth/login.php']) ?>
     </div>
     <div class="alert alert-warning small mt-3 mb-0">
       <i class="bi bi-exclamation-triangle me-1"></i>

@@ -46,6 +46,14 @@ $navLinks = [
 
       <div class="portal-nav-actions d-flex align-items-lg-center gap-2 pb-3 pb-lg-0">
         <?php if (isStudentLoggedIn()): ?>
+          <a class="nav-ghost position-relative" href="<?= BASE_URL ?>/student/notifications.php"
+             aria-label="Notifications" title="Notifications">
+            <i class="bi bi-bell"></i>
+            <?php $pnUnread = unreadStudentNotifCount(); if ($pnUnread): ?>
+            <span class="position-absolute translate-middle badge rounded-pill bg-danger"
+                  style="font-size:.55rem;top:4px;right:0;"><?= $pnUnread > 99 ? '99+' : $pnUnread ?></span>
+            <?php endif; ?>
+          </a>
           <a class="nav-ghost <?= $activePage === 'account' ? 'active-page' : '' ?>"
              href="<?= BASE_URL ?>/student/account.php">
             <i class="bi bi-person-circle me-1"></i>My Account

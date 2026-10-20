@@ -53,7 +53,7 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
 
 <?= ui_page_header(
     'Monitor Pre-Registrations', 'Overview of all student enrollment submissions.', 'person-plus',
-    '<a href="' . BASE_URL . '/registrar/reports.php" class="btn btn-outline-secondary btn-sm"><i class="bi bi-bar-chart me-1"></i>View Reports</a>'
+    ui_btn('View Reports', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'bar-chart','href'=>BASE_URL . '/registrar/reports.php'])
 ) ?>
 
 <?php
@@ -100,7 +100,8 @@ foreach ($result['data'] as $r) {
         statusBadge($r['status']),
         '<span class="text-muted small">' . e($r['assigned_name'] ?? 'Unassigned') . '</span>',
         '<span class="text-muted small">' . formatDate($r['submitted_at']) . '</span>',
-        '<a href="' . BASE_URL . '/registrar/view_registration.php?id=' . (int)$r['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2">View</a>',
+        ui_btn('View', ['size'=>'sm','variant'=>'outline-primary','class'=>'py-0 px-2',
+               'href'=>BASE_URL . '/registrar/view_registration.php?id=' . (int)$r['id']]),
     ];
 }
 

@@ -79,18 +79,6 @@ $currentFile = basename($_SERVER['PHP_SELF']);
         <div class="user-role">Registrar</div>
       </div>
     </div>
-    <div class="footer-actions">
-      <a href="<?= BASE_URL ?>/auth/change_password.php"
-         class="btn btn-sm btn-outline-light flex-fill"
-         title="Change Password">
-        <i class="bi bi-key me-1"></i><span class="d-none d-xl-inline">Password</span>
-      </a>
-      <a href="<?= BASE_URL ?>/auth/logout.php"
-         class="btn btn-sm btn-outline-light flex-fill"
-         title="Sign Out">
-        <i class="bi bi-box-arrow-right me-1"></i><span>Sign Out</span>
-      </a>
-    </div>
   </div>
 
 </aside>

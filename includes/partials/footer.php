@@ -1,5 +1,5 @@
 <!-- Dashboard Footer / Scripts -->
-<footer class="py-3 px-4 border-top mt-auto bg-white">
+<footer class="py-3 px-4 border-top mt-auto dash-footer">
   <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
     <span class="text-muted small">
       &copy; <?= date('Y') ?> <?= e(getSetting('school_name','Tampakan Community College')) ?> – Registration &amp; Records System
@@ -54,6 +54,8 @@ document.addEventListener('DOMContentLoaded', function () {
   modalEl.addEventListener('hidden.bs.modal', function () { body.innerHTML = ''; });
 });
 </script>
+
+<?php include __DIR__ . '/ai_chat.php'; ?>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

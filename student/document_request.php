@@ -144,10 +144,17 @@ if ($submitted) {
     $docTypeName = $reqData['document_type_other'] ?: ($reqData['doc_type_name'] ?? 'Document');
 }
 $pageTitle = 'Document Request';
-include __DIR__ . '/../includes/partials/portal_head.php';
-include __DIR__ . '/../includes/partials/portal_nav.php';
+$inPortal  = isStudentLoggedIn();
+if ($inPortal) {
+    include __DIR__ . '/../includes/partials/head.php';
+    include __DIR__ . '/../includes/partials/student_sidebar.php';
+    echo '<div class="main-content">';
+    include __DIR__ . '/../includes/partials/student_topbar.php';
+    echo '<div class="page-content"><div class="container-fluid py-1 px-3 px-lg-4">';
+} else {
+    include __DIR__ . '/../includes/partials/portal_head.php';
+    include __DIR__ . '/../includes/partials/portal_nav.php';
 ?>
-
 <!-- breadcrumb bar -->
 <div class="portal-crumbs">
   <div class="container py-2 d-flex align-items-center gap-2">
@@ -158,10 +165,10 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
     <span class="fw-semibold text-dark">Request a Document</span>
   </div>
 </div>
-
 <div class="container py-4">
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
+<?php } ?>
+  <div class="row <?= $inPortal ? '' : 'justify-content-center' ?>">
+    <div class="<?= $inPortal ? 'col-12' : 'col-lg-8' ?>">
 
 <?php if ($submitted): ?>
 <!-- ════ SUCCESS ════ -->
@@ -186,21 +193,13 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
           </div>
         </div>
         <div class="d-flex flex-wrap gap-2 mb-3">
-          <button class="btn btn-sm btn-outline-secondary"
-                  onclick="copyToClipboard('<?= e($trackingCode) ?>',this)">
-            <i class="bi bi-clipboard me-1"></i>Copy Code
-          </button>
-          <a href="<?= e($trackingUrl) ?>" class="btn btn-sm btn-outline-primary">
-            <i class="bi bi-eye me-1"></i>View Status
-          </a>
-          <button class="btn btn-sm btn-outline-primary"
-                  onclick="downloadQr('qr-success','<?= e($trackingCode) ?>.png')">
-            <i class="bi bi-download me-1"></i>Download QR
-          </button>
-          <button class="btn btn-sm btn-outline-dark"
-                  onclick="printSection('qr-success')">
-            <i class="bi bi-printer me-1"></i>Print QR
-          </button>
+          <?= ui_btn('Copy Code', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'clipboard',
+                     'attrs' => 'onclick="copyToClipboard(\'' . e($trackingCode) . '\',this)"']) ?>
+          <?= ui_btn('View Status', ['size'=>'sm','variant'=>'outline-primary','icon'=>'eye','href'=>$trackingUrl]) ?>
+          <?= ui_btn('Download QR', ['size'=>'sm','variant'=>'outline-primary','icon'=>'download',
+                     'attrs' => 'onclick="downloadQr(\'qr-success\',\'' . e($trackingCode) . '.png\')"']) ?>
+          <?= ui_btn('Print QR', ['size'=>'sm','variant'=>'outline-dark','icon'=>'printer',
+                     'attrs' => 'onclick="printSection(\'qr-success\')"']) ?>
         </div>
         <div class="alert alert-info d-flex gap-2 py-2 mb-0">
           <i class="bi bi-info-circle-fill flex-shrink-0 mt-1"></i>
@@ -235,36 +234,35 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
       </div>
     </div>
     <div class="text-center mt-4 d-flex gap-2 justify-content-center">
-      <a href="<?= BASE_URL ?>/student/document_request.php" class="btn btn-outline-secondary">
-        <i class="bi bi-plus me-1"></i>New Request
-      </a>
-      <a href="<?= BASE_URL ?>/student/index.php" class="btn btn-primary">
-        <i class="bi bi-house me-1"></i>Back to Portal
-      </a>
+      <?= ui_btn('New Request', ['variant'=>'outline-secondary','icon'=>'plus',
+                 'href'=>BASE_URL . '/student/document_request.php']) ?>
+      <?= ui_btn($inPortal ? 'Back to Dashboard' : 'Back to Portal',
+                 ['icon'=>$inPortal ? 'grid-1x2' : 'house',
+                  'href'=>BASE_URL . ($inPortal ? '/student/dashboard.php' : '/student/index.php')]) ?>
     </div>
   </div>
 </div>
+<script>document.addEventListener('DOMContentLoaded',()=>generateQrCode('qrcode-doc-out','<?= e($trackingUrl) ?>'));</script>
+<?php if ($inPortal): ?>
+</div>
+<?php include __DIR__ . '/../includes/partials/footer.php'; ?>
+<?php else: ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="<?= BASE_URL ?>/assets/js/vendor/lenis.min.js"></script>
 <script src="<?= BASE_URL ?>/assets/js/main.js<?= assetVer("assets/js/main.js") ?>"></script>
-<script>document.addEventListener('DOMContentLoaded',()=>generateQrCode('qrcode-doc-out','<?= e($trackingUrl) ?>'));</script>
 </body></html>
+<?php endif; ?>
 <?php exit; endif; ?>
 
 <!-- ════ FORM ════ -->
-<div class="d-flex align-items-center gap-3 mb-4">
-  <div class="portal-card-icon" style="width:48px;height:48px;flex-shrink:0;">
-    <i class="bi bi-file-earmark-text-fill fs-5"></i>
-  </div>
-  <div>
-    <h3 class="fw-bold mb-0">Request a Registrar Document</h3>
-    <p class="text-muted mb-0 small">Fields marked <span class="text-danger fw-bold">*</span> are required.</p>
-  </div>
-  <a href="<?= BASE_URL ?>/student/index.php" class="btn-back ms-auto">
-    <i class="bi bi-arrow-left"></i> Back to Portal
-  </a>
-</div>
+<?= ui_portal_header(
+    'Request a Registrar Document',
+    'Fields marked * are required.',
+    'file-earmark-text-fill',
+    BASE_URL . ($inPortal ? '/student/dashboard.php' : '/student/index.php'),
+    $inPortal ? 'Back to Dashboard' : 'Back to Portal'
+) ?>
 
 <?php if (!empty($errors)): ?>
 <div class="alert alert-danger d-flex gap-2 mb-4">
@@ -285,8 +283,9 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
   <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
     <div class="card-header border-0 bg-white pt-4 px-4 pb-0">
       <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
-        <span class="section-num">1</span>
+        <span class="section-num"><i class="bi bi-person-fill"></i></span>
         Student Information
+        <span class="dreq-sec-sub ms-auto">Who is requesting</span>
       </h5>
       <hr class="mt-3 mb-0">
     </div>
@@ -346,7 +345,7 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
                  value="<?= e(post('program', $pre['program'])) ?>" maxlength="200">
         </div>
         <div class="col-md-3">
-          <label class="form-label">Year Graduated <small class="text-muted">(or last attended)</small></label>
+          <label class="form-label">Year Graduated / Last Attended</label>
           <input type="text" name="year_graduated" class="form-control"
                  value="<?= e(post('year_graduated', $pre['year_graduated'])) ?>" maxlength="10" placeholder="e.g. 2025">
         </div>
@@ -358,8 +357,9 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
   <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
     <div class="card-header border-0 bg-white pt-4 px-4 pb-0">
       <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
-        <span class="section-num">2</span>
+        <span class="section-num"><i class="bi bi-file-earmark-text-fill"></i></span>
         Document Details
+        <span class="dreq-sec-sub ms-auto">What you need</span>
       </h5>
       <hr class="mt-3 mb-0">
     </div>
@@ -367,7 +367,7 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
       <label class="form-label fw-semibold">Select Document Type <span class="required-mark">*</span></label>
       <div class="row g-2 mb-3" id="doc-type-grid">
         <?php foreach ($docTypes as $dt): ?>
-        <div class="col-sm-6 col-md-4">
+        <div class="col-sm-6 col-md-4 col-xl-3">
           <label class="d-block h-100" style="cursor:pointer;">
             <input type="radio" name="document_type_id" value="<?= (int)$dt['id'] ?>"
                    class="doc-type-radio visually-hidden"
@@ -413,14 +413,18 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
         </div>
         <div class="col-md-3">
           <label class="form-label">Delivery Method</label>
-          <select name="delivery_method" class="form-select">
-            <option value="Pick-up" <?= post('delivery_method','Pick-up')==='Pick-up'?'selected':'' ?>>
-              <i class="bi bi-building"></i> Pick-up at Office
-            </option>
-            <option value="Email" <?= post('delivery_method')==='Email'?'selected':'' ?>>
-              Send via Email
-            </option>
-          </select>
+          <div class="dreq-opts">
+            <label class="dreq-opt">
+              <input type="radio" name="delivery_method" value="Pick-up" hidden
+                     <?= post('delivery_method','Pick-up')==='Pick-up'?'checked':'' ?>>
+              <i class="bi bi-building"></i><span>Pick-up</span>
+            </label>
+            <label class="dreq-opt">
+              <input type="radio" name="delivery_method" value="Email" hidden
+                     <?= post('delivery_method')==='Email'?'checked':'' ?>>
+              <i class="bi bi-envelope"></i><span>Email</span>
+            </label>
+          </div>
         </div>
         <div class="col-12">
           <label class="form-label">Additional Information</label>
@@ -450,12 +454,12 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
         </label>
       </div>
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-        <a href="<?= BASE_URL ?>/student/index.php" class="btn-back">
-          <i class="bi bi-arrow-left"></i> Back to Portal
-        </a>
-        <button type="submit" class="btn btn-primary btn-lg px-5" id="submitBtn">
-          <i class="bi bi-send me-2"></i>Submit Document Request
-        </button>
+        <?= ui_back(BASE_URL . ($inPortal ? '/student/dashboard.php' : '/student/index.php'),
+                    $inPortal ? 'Back to Dashboard' : 'Back to Portal') ?>
+        <?= ui_btn('Submit Document Request', [
+            'type' => 'submit', 'size' => 'lg', 'class' => 'px-5',
+            'icon' => 'send', 'attrs' => 'id="submitBtn"'
+        ]) ?>
       </div>
     </div>
   </div>
@@ -493,5 +497,56 @@ document.getElementById('doc-form').addEventListener('submit',function(e){
   btn.disabled=true;
   btn.innerHTML='<span class="spinner-border spinner-border-sm me-2"></span>Submitting…';
 });
+
+// Returning-student autofill: once name + exact email are typed, pull the
+// student's previous submission and fill any still-empty fields.
+(function () {
+  var f      = document.getElementById('doc-form');
+  var first  = f.querySelector('[name="first_name"]');
+  var last   = f.querySelector('[name="last_name"]');
+  var email  = f.querySelector('[name="email"]');
+  var fields = ['middle_name','suffix','student_id','contact_number','address','program','year_graduated'];
+  var tried  = '', note = null;
+
+  function fillEmpty(key, val) {
+    if (!val) return;
+    var el = f.querySelector('[name="' + key + '"]');
+    if (el && !el.value.trim()) {
+      el.value = val;
+      el.classList.add('bg-light');
+      setTimeout(function(){ el.classList.remove('bg-light'); }, 1200);
+    }
+  }
+  function showNote() {
+    if (note) { note.classList.remove('d-none'); return; }
+    note = document.createElement('div');
+    note.className = 'col-12';
+    note.innerHTML = '<div class="alert alert-success small py-2 mb-0 d-flex gap-2 align-items-center">'
+      + '<i class="bi bi-magic"></i>'
+      + '<span>Welcome back — we filled in your details from your previous submission. Review before submitting.</span></div>';
+    email.closest('.row').appendChild(note);
+  }
+  function lookup() {
+    var q = [first.value, last.value, email.value].join('|').toLowerCase();
+    if (!first.value.trim() || !last.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) return;
+    if (q === tried) return;
+    tried = q;
+    fetch('<?= BASE_URL ?>/api/student_lookup.php?first=' + encodeURIComponent(first.value.trim())
+        + '&last=' + encodeURIComponent(last.value.trim())
+        + '&email=' + encodeURIComponent(email.value.trim()))
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.found) return;
+        fields.forEach(function (k) { fillEmpty(k, d.fields[k]); });
+        showNote();
+      })
+      .catch(function () {});
+  }
+  [first, last, email].forEach(function (el) { el.addEventListener('blur', lookup); });
+  lookup(); // covers browser autofill / pasted values
+})();
 </script>
-<?php include __DIR__ . '/../includes/partials/portal_foot.php'; ?>
+</div>
+<?php if ($inPortal): ?>
+<?php include __DIR__ . '/../includes/partials/footer.php'; ?>
+<?php else: include __DIR__ . '/../includes/partials/portal_foot.php'; endif; ?>

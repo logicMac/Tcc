@@ -231,10 +231,17 @@ if (isPost()) {
 
 $trackingUrl = $submitted ? trackingUrl($trackingCode) : '';
 $pageTitle   = 'Pre-Registration';
-include __DIR__ . '/../includes/partials/portal_head.php';
-include __DIR__ . '/../includes/partials/portal_nav.php';
+$inPortal    = isStudentLoggedIn();
+if ($inPortal) {
+    include __DIR__ . '/../includes/partials/head.php';
+    include __DIR__ . '/../includes/partials/student_sidebar.php';
+    echo '<div class="main-content">';
+    include __DIR__ . '/../includes/partials/student_topbar.php';
+    echo '<div class="page-content"><div class="container py-1">';
+} else {
+    include __DIR__ . '/../includes/partials/portal_head.php';
+    include __DIR__ . '/../includes/partials/portal_nav.php';
 ?>
-
 <!-- ── Page breadcrumb bar ── -->
 <div class="portal-crumbs">
   <div class="container py-2 d-flex align-items-center gap-2">
@@ -245,8 +252,8 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
     <span class="fw-semibold text-dark">Pre-Registration for Enrollment</span>
   </div>
 </div>
-
 <div class="container py-4">
+<?php } ?>
   <div class="row justify-content-center">
     <div class="col-lg-9">
 
@@ -276,21 +283,13 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
           </div>
         </div>
         <div class="d-flex flex-wrap gap-2 mb-3">
-          <button class="btn btn-sm btn-outline-secondary"
-                  onclick="copyToClipboard('<?= e($trackingCode) ?>',this)">
-            <i class="bi bi-clipboard me-1"></i>Copy Code
-          </button>
-          <a href="<?= e($trackingUrl) ?>" class="btn btn-sm btn-outline-primary">
-            <i class="bi bi-eye me-1"></i>View Status
-          </a>
-          <button class="btn btn-sm btn-outline-success"
-                  onclick="downloadQr('qr-success','<?= e($trackingCode) ?>.png')">
-            <i class="bi bi-download me-1"></i>Download QR
-          </button>
-          <button class="btn btn-sm btn-outline-dark"
-                  onclick="printSection('qr-success')">
-            <i class="bi bi-printer me-1"></i>Print QR
-          </button>
+          <?= ui_btn('Copy Code', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'clipboard',
+                     'attrs'=>'onclick="copyToClipboard(\'' . e($trackingCode) . '\',this)"']) ?>
+          <?= ui_btn('View Status', ['size'=>'sm','variant'=>'outline-primary','icon'=>'eye','href'=>$trackingUrl]) ?>
+          <?= ui_btn('Download QR', ['size'=>'sm','variant'=>'outline-success','icon'=>'download',
+                     'attrs'=>'onclick="downloadQr(\'qr-success\',\'' . e($trackingCode) . '.png\')"']) ?>
+          <?= ui_btn('Print QR', ['size'=>'sm','variant'=>'outline-dark','icon'=>'printer',
+                     'attrs'=>'onclick="printSection(\'qr-success\')"']) ?>
         </div>
         <div class="alert alert-info d-flex gap-2 py-2 mb-0">
           <i class="bi bi-info-circle-fill flex-shrink-0 mt-1"></i>
@@ -325,38 +324,35 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
       </div>
     </div>
     <div class="text-center mt-4 d-flex gap-2 justify-content-center">
-      <a href="<?= BASE_URL ?>/student/pre_registration.php" class="btn btn-outline-secondary">
-        <i class="bi bi-plus me-1"></i>New Registration
-      </a>
-      <a href="<?= BASE_URL ?>/student/index.php" class="btn btn-primary">
-        <i class="bi bi-house me-1"></i>Back to Portal
-      </a>
+      <?= ui_btn('New Registration', ['variant'=>'outline-secondary','icon'=>'plus',
+                 'href'=>BASE_URL . '/student/pre_registration.php']) ?>
+      <?= ui_btn($inPortal ? 'Back to Dashboard' : 'Back to Portal',
+                 ['icon'=>$inPortal ? 'grid-1x2' : 'house',
+                  'href'=>BASE_URL . ($inPortal ? '/student/dashboard.php' : '/student/index.php')]) ?>
     </div>
   </div>
 </div>
+<script>document.addEventListener('DOMContentLoaded',()=>generateQrCode('qrcode-output','<?= e($trackingUrl) ?>'));</script>
+<?php if ($inPortal): ?>
+</div>
+<?php include __DIR__ . '/../includes/partials/footer.php'; ?>
+<?php else: ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="<?= BASE_URL ?>/assets/js/vendor/lenis.min.js"></script>
 <script src="<?= BASE_URL ?>/assets/js/main.js<?= assetVer("assets/js/main.js") ?>"></script>
-<script>document.addEventListener('DOMContentLoaded',()=>generateQrCode('qrcode-output','<?= e($trackingUrl) ?>'));</script>
 </body></html>
+<?php endif; ?>
 <?php exit; endif; ?>
 
 <!-- ════ FORM — TCC-RRMO-FORM-001 layout ════ -->
-<div class="d-flex align-items-center gap-3 mb-4">
-  <div class="portal-card-icon" style="width:48px;height:48px;flex-shrink:0;">
-    <i class="bi bi-person-plus-fill fs-5"></i>
-  </div>
-  <div>
-    <h3 class="fw-bold mb-0">Application for Admission</h3>
-    <p class="text-muted mb-0 small">Fill out all required fields marked with
-      <span class="text-danger fw-bold">*</span>
-    </p>
-  </div>
-  <a href="<?= BASE_URL ?>/student/index.php" class="btn-back ms-auto">
-    <i class="bi bi-arrow-left"></i> Back to Portal
-  </a>
-</div>
+<?= ui_portal_header(
+    'Application for Admission',
+    'Fill out all required fields marked with *',
+    'person-plus-fill',
+    BASE_URL . ($inPortal ? '/student/dashboard.php' : '/student/index.php'),
+    $inPortal ? 'Back to Dashboard' : 'Back to Portal'
+) ?>
 
 <?php if (!empty($errors)): ?>
 <div class="alert alert-danger d-flex gap-2 mb-4" id="error-box">
@@ -842,12 +838,10 @@ include __DIR__ . '/../includes/partials/portal_nav.php';
           </div>
         </div>
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mt-3">
-          <a href="<?= BASE_URL ?>/student/index.php" class="btn-back">
-            <i class="bi bi-arrow-left"></i> Back to Portal
-          </a>
-          <button type="submit" class="btn btn-primary btn-lg px-5" id="submitBtn">
-            <i class="bi bi-send me-2"></i>Submit Application
-          </button>
+          <?= ui_back(BASE_URL . ($inPortal ? '/student/dashboard.php' : '/student/index.php'),
+                      $inPortal ? 'Back to Dashboard' : 'Back to Portal') ?>
+          <?= ui_btn('Submit Application', ['type'=>'submit','size'=>'lg','class'=>'px-5',
+                     'icon'=>'send','attrs'=>'id="submitBtn"']) ?>
         </div>
       </div>
     </div>
@@ -1040,4 +1034,7 @@ document.getElementById('reg-form').addEventListener('submit',function(e){
   btn.innerHTML='<span class="spinner-border spinner-border-sm me-2"></span>Submitting…';
 });
 </script>
-<?php include __DIR__ . '/../includes/partials/portal_foot.php'; ?>
+</div>
+<?php if ($inPortal): ?>
+<?php include __DIR__ . '/../includes/partials/footer.php'; ?>
+<?php else: include __DIR__ . '/../includes/partials/portal_foot.php'; endif; ?>

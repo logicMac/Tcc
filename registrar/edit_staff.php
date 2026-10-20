@@ -126,26 +126,22 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
               <div class="input-group">
                 <input type="password" name="password" id="pwd" class="form-control"
                        placeholder="Min. 8 characters">
-                <button type="button" class="btn btn-outline-secondary" onclick="togglePwd('pwd',this)">
-                  <i class="bi bi-eye"></i>
-                </button>
+                <?= ui_btn('', ['variant'=>'outline-secondary','icon'=>'eye',
+                           'attrs'=>'onclick="togglePwd(\'pwd\',this)"']) ?>
               </div>
             </div>
             <div class="col-md-6">
               <label class="form-label">Confirm New Password</label>
               <div class="input-group">
                 <input type="password" name="password_confirm" id="pwd2" class="form-control">
-                <button type="button" class="btn btn-outline-secondary" onclick="togglePwd('pwd2',this)">
-                  <i class="bi bi-eye"></i>
-                </button>
+                <?= ui_btn('', ['variant'=>'outline-secondary','icon'=>'eye',
+                           'attrs'=>'onclick="togglePwd(\'pwd2\',this)"']) ?>
               </div>
             </div>
           </div>
           <div class="mt-4 d-flex gap-2">
-            <button type="submit" class="btn btn-primary px-4">
-              <i class="bi bi-check-lg me-1"></i>Save Changes
-            </button>
-            <a href="<?= BASE_URL ?>/registrar/staff.php" class="btn btn-outline-secondary">Cancel</a>
+            <?= ui_btn('Save Changes', ['type'=>'submit','class'=>'px-4','icon'=>'check-lg']) ?>
+            <?= ui_btn('Cancel', ['variant'=>'outline-secondary','href'=>BASE_URL . '/registrar/staff.php']) ?>
           </div>
         </form>
       </div>

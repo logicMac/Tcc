@@ -191,9 +191,8 @@ if (isPost()) {
                 <input type="password" name="current_password" id="currentPwd"
                        class="form-control" required
                        placeholder="<?= $force ? 'Enter: password123' : 'Your current password' ?>">
-                <button type="button" class="btn btn-outline-secondary" onclick="togglePwd('currentPwd', this)">
-                  <i class="bi bi-eye"></i>
-                </button>
+                <?= ui_btn('', ['variant'=>'outline-secondary','icon'=>'eye',
+                           'attrs'=>'onclick="togglePwd(\'currentPwd\', this)"']) ?>
               </div>
             </div>
 
@@ -205,9 +204,8 @@ if (isPost()) {
                        class="form-control" required minlength="8"
                        placeholder="Min. 8 characters"
                        oninput="checkStrength(this.value)">
-                <button type="button" class="btn btn-outline-secondary" onclick="togglePwd('newPwd', this)">
-                  <i class="bi bi-eye"></i>
-                </button>
+                <?= ui_btn('', ['variant'=>'outline-secondary','icon'=>'eye',
+                           'attrs'=>'onclick="togglePwd(\'newPwd\', this)"']) ?>
               </div>
               <!-- Strength bar -->
               <div class="mt-2">
@@ -235,17 +233,15 @@ if (isPost()) {
                        class="form-control" required
                        placeholder="Re-enter new password"
                        oninput="checkMatch()">
-                <button type="button" class="btn btn-outline-secondary" onclick="togglePwd('confirmPwd', this)">
-                  <i class="bi bi-eye"></i>
-                </button>
+                <?= ui_btn('', ['variant'=>'outline-secondary','icon'=>'eye',
+                           'attrs'=>'onclick="togglePwd(\'confirmPwd\', this)"']) ?>
               </div>
               <div id="match-msg" class="mt-1" style="font-size:.75rem;"></div>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" id="submitBtn">
-              <i class="bi bi-shield-check me-2"></i>
-              <?= $force ? 'Set Password & Continue' : 'Change Password' ?>
-            </button>
+            <?= ui_btn($force ? 'Set Password & Continue' : 'Change Password',
+                       ['type'=>'submit','class'=>'w-100 py-2 fw-semibold','icon'=>'shield-check',
+                        'attrs'=>'id="submitBtn"']) ?>
 
             <?php if (!$force): ?>
             <div class="text-center mt-3">

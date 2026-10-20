@@ -133,6 +133,21 @@ function requireStudentAuth(): void
         $return = $_SERVER['REQUEST_URI'] ?? '';
         redirect(BASE_URL . '/auth/login.php?return=' . urlencode($return));
     }
+    // Force password change intercept (skip if already on the change page)
+    $currentScript = basename($_SERVER['PHP_SELF'] ?? '');
+    if ($currentScript !== 'change_password.php') {
+        try {
+            $mustChange = db()->fetchValue(
+                "SELECT must_change_password FROM students WHERE id = ?",
+                [currentStudentId()]
+            );
+        } catch (Throwable) {
+            $mustChange = 0;
+        }
+        if ($mustChange) {
+            redirect(BASE_URL . '/student/change_password.php?force=1');
+        }
+    }
 }
 
 /**
@@ -389,6 +404,126 @@ function addStatusHistory(
          VALUES (?, ?, ?, ?, ?, ?, ?)",
         [$refType, $refId, $trackingCode, $oldStatus, $newStatus, $remarks, $changedBy]
     );
+
+    // In-app notification for the linked student account (status changes only)
+    if ($oldStatus !== null && $oldStatus !== $newStatus) {
+        $table = $refType === 'registration' ? 'pre_registrations' : 'document_requests';
+        $studentId = (int) (db()->fetchValue(
+            "SELECT student_account_id FROM {$table} WHERE id = ?", [$refId]
+        ) ?? 0);
+        if ($studentId) {
+            $kind = $refType === 'registration' ? 'pre-registration' : 'document request';
+            $msg  = "Your {$kind} {$trackingCode} is now {$newStatus}."
+                  . ($remarks ? ' Remarks: ' . $remarks : '');
+            notifyStudentAccount(
+                $studentId, $trackingCode,
+                ($kind === 'pre-registration' ? 'Pre-registration' : 'Document request') . ' — ' . $newStatus,
+                $msg,
+                BASE_URL . '/student/track.php?code=' . urlencode($trackingCode)
+            );
+        }
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// STUDENT NOTIFICATIONS (in-app feed)
+// ══════════════════════════════════════════════════════════════════════════════
+
+function notifyStudentAccount(
+    int     $studentId,
+    string  $trackingCode,
+    string  $title,
+    string  $message,
+    ?string $link = null
+): void {
+    try {
+        db()->execute(
+            "INSERT INTO student_notifications (student_id, tracking_code, title, message, link)
+             VALUES (?, ?, ?, ?, ?)",
+            [$studentId, $trackingCode, $title, $message, $link]
+        );
+    } catch (Throwable) {
+        // Table may not exist yet on un-migrated installs — never block the action.
+    }
+}
+
+function unreadStudentNotifCount(?int $studentId = null): int
+{
+    $studentId = $studentId ?? currentStudentId();
+    if (!$studentId) return 0;
+    try {
+        return (int) db()->fetchValue(
+            "SELECT COUNT(*) FROM student_notifications WHERE student_id = ? AND is_read = 0",
+            [$studentId]
+        );
+    } catch (Throwable) {
+        return 0;
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PICKUP APPOINTMENTS
+// ══════════════════════════════════════════════════════════════════════════════
+
+function pickupSlotOptions(): array
+{
+    $raw = getSetting('pickup_slots',
+        '8:00 AM – 10:00 AM|10:00 AM – 12:00 PM|1:00 PM – 3:00 PM|3:00 PM – 5:00 PM');
+    return array_values(array_filter(array_map('trim', explode('|', $raw))));
+}
+
+function pickupSlotCapacity(): int
+{
+    return max(1, (int) getSetting('pickup_slot_capacity', '10'));
+}
+
+function pickupSlotBookedCount(string $date, string $slot, ?int $excludeId = null): int
+{
+    $sql = "SELECT COUNT(*) FROM document_requests
+            WHERE pickup_date = ? AND pickup_slot = ?
+              AND status NOT IN ('Released','Declined')";
+    $params = [$date, $slot];
+    if ($excludeId) { $sql .= " AND id <> ?"; $params[] = $excludeId; }
+    return (int) db()->fetchValue($sql, $params);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// RECORD DIFF (audit trail for staff edits)
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Describe field-level changes between a stored row and submitted data.
+ * Returns e.g. "Email: 'old@x.com' → 'new@x.com'; Copies: 1 → 2".
+ */
+function describeRecordChanges(array $before, array $after, array $ignore = ['edit_note']): string
+{
+    $labels = [
+        'first_name' => 'First name', 'middle_name' => 'Middle name', 'last_name' => 'Last name',
+        'suffix' => 'Suffix', 'student_id' => 'Student ID', 'email' => 'Email',
+        'contact_number' => 'Contact number', 'telephone_number' => 'Telephone',
+        'address' => 'Address', 'date_of_birth' => 'Date of birth', 'gender' => 'Gender',
+        'civil_status' => 'Civil status', 'nationality' => 'Nationality', 'religion' => 'Religion',
+        'birth_place' => 'Birthplace', 'document_type_id' => 'Document type',
+        'document_type_other' => 'Other document', 'copies' => 'Copies', 'purpose' => 'Purpose',
+        'date_needed' => 'Date needed', 'delivery_method' => 'Delivery method',
+        'program' => 'Program', 'program_id' => 'Program', 'program_other' => 'Other program',
+        'year_graduated' => 'Year graduated', 'year_level' => 'Year level',
+        'last_year_attended' => 'Last year attended', 'enrollment_type' => 'Enrollment type',
+        'school_year' => 'School year', 'semester' => 'Semester', 'lrn' => 'LRN',
+        'previous_school' => 'Previous school', 'previous_program' => 'Previous program',
+    ];
+    $changes = [];
+    foreach ($after as $key => $newVal) {
+        if (in_array($key, $ignore, true) || !array_key_exists($key, $before)) continue;
+        $oldVal = $before[$key];
+        if (is_array($newVal)) $newVal = json_encode($newVal);
+        if ((string)($oldVal ?? '') === (string)($newVal ?? '')) continue;
+        $label = $labels[$key] ?? ucwords(str_replace('_', ' ', $key));
+        $old   = mb_strimwidth((string)($oldVal ?? '—'), 0, 40, '…');
+        $new   = mb_strimwidth((string)($newVal === '' || $newVal === null ? '—' : $newVal), 0, 40, '…');
+        $changes[] = "{$label}: '{$old}' → '{$new}'";
+    }
+    return implode('; ', $changes);
 }
 
 function getStatusHistory(string $trackingCode): array

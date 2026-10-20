@@ -125,7 +125,9 @@ foreach ($result['data'] as $i => $r) {
         '<span class="small text-muted">' . e($r['year_level']) . '</span>',
         statusBadge($r['status']),
         '<span class="small text-muted">' . formatDate($r['submitted_at']) . '</span><div class="row-sub">' . timeAgo($r['submitted_at']) . '</div>',
-        '<a href="' . BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . (int)$r['id'] . '" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View &amp; Process"><i class="bi bi-eye"></i></a>',
+        ui_btn('', ['size'=>'sm','variant'=>'outline-primary','icon'=>'eye',
+               'href'=>BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . (int)$r['id'],
+               'attrs'=>'data-bs-toggle="tooltip" title="View &amp; Process"']),
     ];
 }
 

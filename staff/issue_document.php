@@ -66,7 +66,8 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
     'Attach this slip to the released document — its QR code verifies authenticity.',
     'patch-check',
     ui_back(BASE_URL . '/' . currentRole() . '/view_document.php?id=' . (int)$id, 'Back to Request')
-    . '<a href="?id=' . (int)$id . '&amp;print=1" target="_blank" class="btn btn-sm btn-outline-dark"><i class="bi bi-printer me-1"></i>Print Slip</a>'
+    . ui_btn('Print Slip', ['size'=>'sm','variant'=>'outline-dark','icon'=>'printer',
+            'href'=>'?id=' . (int)$id . '&amp;print=1', 'attrs'=>'target="_blank"'])
 ) ?>
 <?php endif; ?>
 

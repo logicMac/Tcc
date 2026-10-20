@@ -83,9 +83,8 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
     date('l, F d, Y') . ' — here\'s today\'s registrar activity.',
     '',
     '<div class="dropdown">
-       <button class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-         <i class="bi bi-plus-lg me-1"></i>Quick Create
-       </button>
+       ' . ui_btn('Quick Create', ['size'=>'sm','class'=>'dropdown-toggle','icon'=>'plus-lg',
+                                  'attrs'=>'data-bs-toggle="dropdown"']) . '
        <ul class="dropdown-menu dropdown-menu-end">
          <li><a class="dropdown-item" href="' . BASE_URL . '/' . currentRole() . '/registrations.php"><i class="bi bi-person-plus me-2"></i>View Registrations</a></li>
          <li><a class="dropdown-item" href="' . BASE_URL . '/' . currentRole() . '/document_requests.php"><i class="bi bi-file-earmark-plus me-2"></i>View Doc Requests</a></li>
@@ -148,9 +147,8 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
       Document Requests <span class="count"><?= count($recentDocs) ?></span>
     </button>
     <div class="ttab-spacer"></div>
-    <a href="<?= BASE_URL ?>/<?= currentRole() ?>/reports.php" class="btn btn-sm btn-outline-secondary">
-      <i class="bi bi-bar-chart me-1"></i>Reports
-    </a>
+    <?= ui_btn('Reports', ['size'=>'sm','variant'=>'outline-secondary','icon'=>'bar-chart',
+               'href'=>BASE_URL . '/' . currentRole() . '/reports.php']) ?>
   </div>
 
   <div class="tbl-pane show" id="pane-regs">
@@ -162,7 +160,8 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
             '<span class="badge bg-light text-dark small border">' . e($r['prog_code'] ?? '—') . '</span>',
             statusBadge($r['status']),
             '<span class="text-muted small">' . timeAgo($r['submitted_at']) . '</span>',
-            '<a href="' . BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . (int)$r['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2">View</a>',
+            ui_btn('View', ['size'=>'sm','variant'=>'outline-primary','class'=>'py-0 px-2',
+                   'href'=>BASE_URL . '/' . currentRole() . '/view_registration.php?id=' . (int)$r['id']]),
         ];
     }
     echo ui_table(['Applicant', 'Program', 'Status', 'Submitted', ''], $regRows,
@@ -183,7 +182,8 @@ include __DIR__ . '/../includes/partials/' . currentRole() . '_sidebar.php';
             '<span class="badge bg-light text-dark small border">' . e($d['doc_code'] ?? '—') . '</span>',
             statusBadge($d['status'], 'document_request'),
             '<span class="text-muted small">' . timeAgo($d['submitted_at']) . '</span>',
-            '<a href="' . BASE_URL . '/' . currentRole() . '/view_document.php?id=' . (int)$d['id'] . '" class="btn btn-sm btn-outline-primary py-0 px-2">View</a>',
+            ui_btn('View', ['size'=>'sm','variant'=>'outline-primary','class'=>'py-0 px-2',
+                   'href'=>BASE_URL . '/' . currentRole() . '/view_document.php?id=' . (int)$d['id']]),
         ];
     }
     echo ui_table(['Requester', 'Document', 'Status', 'Submitted', ''], $docRows,

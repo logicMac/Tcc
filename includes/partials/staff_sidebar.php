@@ -76,19 +76,6 @@ $pendingDoc = (int) db()->fetchValue("SELECT COUNT(*) FROM document_requests WHE
         <div class="user-role">Staff</div>
       </div>
     </div>
-    <div class="footer-actions">
-      <a href="<?= BASE_URL ?>/auth/change_password.php"
-         class="btn btn-sm btn-outline-light flex-fill"
-         title="Change Password"
-         data-bs-toggle="tooltip" data-bs-placement="top">
-        <i class="bi bi-key me-1"></i><span class="d-none d-xl-inline">Password</span>
-      </a>
-      <a href="<?= BASE_URL ?>/auth/logout.php"
-         class="btn btn-sm btn-outline-light flex-fill"
-         title="Sign Out">
-        <i class="bi bi-box-arrow-right me-1"></i><span>Sign Out</span>
-      </a>
-    </div>
   </div>
 
 </aside>

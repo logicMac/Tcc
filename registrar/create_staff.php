@@ -111,10 +111,8 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
               <div class="input-group">
                 <input type="password" name="password" id="pwd" class="form-control"
                        minlength="8" required placeholder="Min. 8 characters">
-                <button type="button" class="btn btn-outline-secondary"
-                        onclick="togglePwd('pwd',this)">
-                  <i class="bi bi-eye"></i>
-                </button>
+                <?= ui_btn('', ['variant'=>'outline-secondary','icon'=>'eye',
+                           'attrs'=>'onclick="togglePwd(\'pwd\',this)"']) ?>
               </div>
               <div class="form-text">At least 8 characters.</div>
             </div>
@@ -123,19 +121,15 @@ include __DIR__ . '/../includes/partials/registrar_sidebar.php';
               <div class="input-group">
                 <input type="password" name="password_confirm" id="pwd2" class="form-control"
                        required placeholder="Re-enter password">
-                <button type="button" class="btn btn-outline-secondary"
-                        onclick="togglePwd('pwd2',this)">
-                  <i class="bi bi-eye"></i>
-                </button>
+                <?= ui_btn('', ['variant'=>'outline-secondary','icon'=>'eye',
+                           'attrs'=>'onclick="togglePwd(\'pwd2\',this)"']) ?>
               </div>
             </div>
           </div>
 
           <div class="mt-4 d-flex gap-2">
-            <button type="submit" class="btn btn-primary px-4">
-              <i class="bi bi-person-check me-1"></i>Create Account
-            </button>
-            <a href="<?= BASE_URL ?>/registrar/staff.php" class="btn btn-outline-secondary">Cancel</a>
+            <?= ui_btn('Create Account', ['type'=>'submit','class'=>'px-4','icon'=>'person-check']) ?>
+            <?= ui_btn('Cancel', ['variant'=>'outline-secondary','href'=>BASE_URL . '/registrar/staff.php']) ?>
           </div>
           <div class="mt-2">
             <small class="text-muted">

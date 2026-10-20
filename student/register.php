@@ -8,7 +8,7 @@ require_once __DIR__ . '/../includes/helpers.php';
 startSession();
 
 if (isStudentLoggedIn()) {
-    redirect(BASE_URL . '/student/account.php');
+    redirect(BASE_URL . '/student/dashboard.php');
 }
 
 $schoolName = getSetting('school_name', 'Tampakan Community College');
@@ -60,7 +60,7 @@ if (isPost()) {
                 session_regenerate_id(true);
 
                 flash('success', 'Account created! Past submissions under this email are now linked to your account.');
-                redirect(BASE_URL . '/student/account.php');
+                redirect(BASE_URL . '/student/dashboard.php');
             } catch (Exception $e) {
                 $errors[] = 'Registration failed. Please try again.';
                 if (APP_DEBUG) $errors[] = $e->getMessage();
@@ -250,9 +250,7 @@ if (isPost()) {
           </label>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-3 mt-3">
-          <i class="bi bi-person-plus me-1"></i>Create Account
-        </button>
+        <?= ui_btn('Create Account', ['type'=>'submit','class'=>'w-100 py-2 fw-bold rounded-3 mt-3','icon'=>'person-plus']) ?>
       </form>
 
       <div class="auth-alt">
